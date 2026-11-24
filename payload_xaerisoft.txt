@@ -439,6 +439,31 @@ body.chatmode #view{height:calc(100vh - 56px - var(--dh) - 12px);height:calc(100
 .soc a:hover{background:var(--light)}
 .soc a:active{transform:translate(2px,2px);box-shadow:none}
 .soc svg{width:26px;height:26px}
+/* ===== v7: role & badge (Developer / Admin / VIP) ===== */
+.xn{display:flex;flex-wrap:wrap;align-items:center;column-gap:.4em;row-gap:0;max-width:100%;min-width:0}
+.xt{min-width:0;overflow-wrap:anywhere}
+.xbs{display:inline-flex;align-items:center;gap:.4em;flex:none;white-space:nowrap}
+.xbs:empty{display:none}
+.xv{display:block;width:var(--xc,14px);height:var(--xc,14px);flex:none}
+.xr{display:inline-flex;align-items:center;gap:.3em;font-size:var(--xf,11px);font-weight:800;letter-spacing:.05em;line-height:1.25;white-space:nowrap}
+.xs{width:.95em;height:.95em;flex:none}
+.xg{display:inline-block}
+.xr-dev{--g1:#5B21B6;--g2:#7C3AED;--g3:#6D28D9;--sh:rgba(255,255,255,.55);filter:drop-shadow(0 0 5px rgba(139,92,246,.26))}
+.xr-vip{--g1:#6B4700;--g2:#9A6A00;--g3:#6B4700;--sh:rgba(255,236,170,.95)}
+.xr-dev .xs{fill:var(--g2)}
+.xr-dev .xg,.xr-vip .xg{color:var(--g2);background:linear-gradient(105deg,transparent 40%,var(--sh) 50%,transparent 60%) no-repeat,linear-gradient(90deg,var(--g1),var(--g2) 50%,var(--g3)) no-repeat;background-size:250% 100%,100% 100%;background-position:160% 0,0 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:xsh 4.4s ease-in-out infinite}
+.xr-adm{--ac:#0F766E;color:var(--ac);background:rgba(15,118,110,.12);padding:1px 7px;border-radius:999px}
+:root[data-theme=obsidian] .xr-dev,:root[data-theme=universe] .xr-dev{--g1:#A78BFA;--g2:#C4B5FD;--g3:#8B5CF6;--sh:rgba(255,255,255,.9);filter:drop-shadow(0 0 5px rgba(167,139,250,.32))}
+:root[data-theme=obsidian] .xr-vip,:root[data-theme=universe] .xr-vip{--g1:#E0A92B;--g2:#FFD86B;--g3:#E0A92B;--sh:rgba(255,246,205,.95)}
+:root[data-theme=obsidian] .xr-adm,:root[data-theme=universe] .xr-adm{--ac:#5EEAD4;background:rgba(94,234,212,.14)}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.xr-dev .xg,.xr-vip .xg{background:none;-webkit-text-fill-color:currentColor}}
+@keyframes xsh{0%,20%{background-position:160% 0,0 0}75%,100%{background-position:-60% 0,0 0}}
+@media(prefers-reduced-motion:reduce){.xr-dev .xg,.xr-vip .xg{animation:none}}
+.kinfo>b{--xc:17px;--xf:12.5px}
+.kinfo>b .xn{flex-wrap:nowrap}
+.kinfo>b .xt{flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbn{--xc:16px;--xf:12px}
+.chatp .mb small{--xc:13px;--xf:10.5px}
 </style>
 </head>
 <body>
@@ -678,6 +703,16 @@ addEventListener("hashchange",route);
 
 /* ===== Kepo, berita, akun, chat ===== */
 const XA=()=>window.XA||{};
+/* Badge role. Sumber data: XA().role(uid) (users/{uid} di Firestore), bukan nama atau isi pesan. */
+const XB_CHECK='<svg class="xv" viewBox="0 0 24 24" role="img" aria-label="Terverifikasi"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.5l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const XB_STAR='<svg class="xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg>';
+const xbs=uid=>{const x=XA();if(!uid||!x.role)return"";const r=x.role(uid);
+ if(r.role==="owner")return XB_CHECK+`<span class="xr xr-dev">${XB_STAR}<span class="xg">Developer</span></span>`;
+ if(r.role==="admin")return'<span class="xr xr-adm">Admin</span>';
+ if(r.role==="vip")return'<span class="xr xr-vip"><span class="xg">VIP</span></span>';
+ return""};
+const nameHTML=(nm,uid)=>`<span class="xn"${uid?` data-bu="${esc(uid)}"`:""}><span class="xt">${esc(nm)}</span><span class="xbs">${xbs(uid)}</span></span>`;
+const xbRefresh=root=>root.querySelectorAll(".xn[data-bu]").forEach(n=>{const s=n.querySelector(".xbs"),h=xbs(n.dataset.bu);if(s&&s.innerHTML!==h)s.innerHTML=h});
 const UA=navigator.userAgent;
 const DEV=/Android/i.test(UA)?"Android":/iPhone|iPad/i.test(UA)?"iOS":/Windows/i.test(UA)?"Windows":/Mac/i.test(UA)?"macOS":/Linux/i.test(UA)?"Linux":"Perangkat";
 const BRW=/Edg\//.test(UA)?"Edge":/OPR\//.test(UA)?"Opera":/Firefox/.test(UA)?"Firefox":/Chrome/.test(UA)?"Chrome":/Safari/.test(UA)?"Safari":"Browser";
@@ -721,7 +756,7 @@ function tick(){const t=$("#kt");if(!t)return;
  const on=navigator.onLine;$("#ko").innerHTML=`<span class="${on?"up":"down"}">${on?"Online":"Offline"}</span>`;$("#kd").style.background=on?"":"var(--no)";
  $("#kb").textContent=batt?Math.round(batt.level*100)+"%"+(batt.charging?" ⚡":""):"—"}
 function kepo(){const u=XA().user,r=GEO.cc||regionOf(),nm=u?(u.displayName||(u.isAnonymous?"Tamu":(u.email||"Pengguna").split("@")[0])):"Tamu";
- $("#kepo").innerHTML=`<div class="kh"><div class="kavw"><div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><i class="kdot" id="kd"></i></div><div class="kinfo"><small>${greet()}</small><b>${esc(nm)}</b><span class="kmeta">${r?flag(r)+" "+esc(cname(r)):"Negara tidak diketahui"}, ${DEV}</span></div>${u?'<a class="btn alt kbtn" href="#profil">Profil</a>':'<button class="btn kbtn" type="button" data-k="in">Masuk</button>'}</div><div class="kw" aria-live="polite">${wxHTML()}</div><div class="kt"><div><span>Jam</span><b id="kt"></b></div><div><span>Browser</span><b>${BRW}</b></div><div><span>Baterai</span><b id="kb">—</b></div><div><span>Status</span><b id="ko"></b></div></div>`;
+ $("#kepo").innerHTML=`<div class="kh"><div class="kavw"><div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><i class="kdot" id="kd"></i></div><div class="kinfo"><small>${greet()}</small><b>${nameHTML(nm,u&&u.uid)}</b><span class="kmeta">${r?flag(r)+" "+esc(cname(r)):"Negara tidak diketahui"}, ${DEV}</span></div>${u?'<a class="btn alt kbtn" href="#profil">Profil</a>':'<button class="btn kbtn" type="button" data-k="in">Masuk</button>'}</div><div class="kw" aria-live="polite">${wxHTML()}</div><div class="kt"><div><span>Jam</span><b id="kt"></b></div><div><span>Browser</span><b>${BRW}</b></div><div><span>Baterai</span><b id="kb">—</b></div><div><span>Status</span><b id="ko"></b></div></div>`;
  $("#dkacc span").textContent=u?"Profil":"Masuk";tick()}
 const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
 document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut();if(k==="geo")geoStart()});
@@ -812,13 +847,13 @@ render(el){let un=null,uid=null,on=false;
    a.forEach(m=>{const t=m.at&&m.at.toMillis?m.at.toMillis():Date.now(),dk=new Date(t).toDateString(),nd=dk!==pd,g=!nd&&m.uid===pu&&t-pt<3e5,me=m.uid===uid,nm=m.name||"Pengguna";
     if(nd)h+=`<div class="ds">${dayLabel(t)}</div>`;
     const pp=me?"":XA().photo(m.uid)||m.photo||"",av=me?"":g?'<div class="ma"></div>':`<div class="ma" data-u="${esc(m.uid||"")}">${okP(pp)?`<img src="${esc(pp)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())}</div>`;
-    h+=`<div class="m${me?" me":""}${g?" g":""}">${av}<div class="mb">${me||g?"":`<small>${esc(nm)}</small>`}<p>${esc(m.text||"")}</p><time datetime="${new Date(t).toISOString()}">${hm(t)}</time></div></div>`;
+    h+=`<div class="m${me?" me":""}${g?" g":""}">${av}<div class="mb">${me||g?"":`<small>${nameHTML(nm,m.uid)}</small>`}<p>${esc(m.text||"")}</p><time datetime="${new Date(t).toISOString()}">${hm(t)}</time></div></div>`;
     pt=t;pu=m.uid;pd=dk});
    ms.innerHTML=h||'<div class="ec"><b>Belum ada pesan</b>Jadi yang pertama menyapa.</div>';
    $("#cc",el).textContent=a.length?a.length+" pesan":"";
    if(first||near||force)ms.scrollTop=ms.scrollHeight;first=false;force=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
   $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";i.focus();force=true;x.send(t).catch(er=>{force=false;i.value=t;toast("Gagal kirim: "+(er.code||er.message))})}};
- el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",()=>{draw();el.querySelectorAll(".ma[data-u]").forEach(a=>{const p=XA().photo(a.dataset.u);if(okP(p)&&!a.firstElementChild)a.innerHTML=`<img src="${esc(p)}" alt="">`})})}};
+ el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",()=>{draw();xbRefresh(el);el.querySelectorAll(".ma[data-u]").forEach(a=>{const p=XA().photo(a.dataset.u);if(okP(p)&&!a.firstElementChild)a.innerHTML=`<img src="${esc(p)}" alt="">`})})}};
 
 /* ===== Profil, Pengaturan, Customer service ===== */
 const LINKS={wa:"https://wa.me/62885384482069?text="+encodeURIComponent("Halo developer Xaerisoft, saya mau bertanya."),ig:"https://www.instagram.com/wilveil",tt:"https://www.tiktok.com/@xaerisoft"};
@@ -852,7 +887,7 @@ render(el){
   let top;
   if(!u)top='<div class="panel"><p>Kamu belum masuk.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';
   else{const nm=u.displayName||"Tamu",has=okP(XA().photo(u.uid));
-   const head=`<div class="row" style="align-items:center;flex-wrap:nowrap;gap:16px"><div class="pav"><div class="kav big">${avaInner(u,nm)}</div><button class="pedit" type="button" id="pe" aria-label="Ganti foto profil">${ico(IC.cam)}</button><input id="pfi" class="hide" type="file" accept="image/*"></div><div style="min-width:0"><b>${esc(nm)}</b><br><span style="color:var(--mute);font-size:14px;word-break:break-all">${u.isAnonymous?"Akun tamu":esc(u.email||"")}</span>${has?'<br><button class="plink" type="button" id="prm">Hapus foto</button>':""}</div></div>`;
+   const head=`<div class="row" style="align-items:center;flex-wrap:nowrap;gap:16px"><div class="pav"><div class="kav big">${avaInner(u,nm)}</div><button class="pedit" type="button" id="pe" aria-label="Ganti foto profil">${ico(IC.cam)}</button><input id="pfi" class="hide" type="file" accept="image/*"></div><div style="min-width:0"><b class="pbn">${nameHTML(nm,u.uid)}</b><br><span style="color:var(--mute);font-size:14px;word-break:break-all">${u.isAnonymous?"Akun tamu":esc(u.email||"")}</span>${has?'<br><button class="plink" type="button" id="prm">Hapus foto</button>':""}</div></div>`;
    top=u.isAnonymous?`<div class="panel">${head}<p>Login dulu untuk mengatur profil dan mengganti username. Chat yang sudah kamu kirim tetap terbawa.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button><button class="btn alt" data-k="out">Keluar</button></div></div>`
    :`<div class="panel">${head}<form class="f" id="pf"><label for="pn">Username</label><input id="pn" type="text" minlength="2" maxlength="24" required value="${esc(nm)}"><p id="pm" class="err hide" role="alert" style="margin-top:8px"></p></form><div class="row"><button class="btn" form="pf" type="submit">Simpan</button><button class="btn alt" data-k="out">Keluar</button></div></div>`}
   el.innerHTML=`<div class="stack">${top}${rows()}${SOC()}</div>`;
@@ -906,7 +941,19 @@ chips();list();route();
    Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
    Biarkan kosong untuk mematikan fitur akun dan chat. */
 const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject-563df.firebaseapp.com",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
-const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>""};
+/* ===== Role & badge: satu-satunya tempat konfigurasi =====
+   ownerUid = UID akun Google pemilik (Firebase Console > Authentication > Users > "User UID").
+   Dipakai hanya untuk TAMPILAN. Siapa yang boleh menulis role dijaga Firestore Rules, bukan kode ini. */
+const ROLE_CONFIG={ownerUid:"ISI_UID_OWNER_DI_SINI"};
+const toMs=v=>{if(!v)return 0;if(typeof v.toMillis==="function")return v.toMillis();if(typeof v==="number")return v;if(typeof v==="string"){const t=Date.parse(v);return isNaN(t)?0:t}return 0};
+/* Dihitung ulang setiap render: VIP yang lewat masa berlaku langsung tidak tampil. Data tidak valid = tanpa badge. */
+const roleOf=(uid,d)=>{
+ if(uid&&uid===ROLE_CONFIG.ownerUid)return{role:"owner",verified:true};
+ const r=d&&d.role;
+ if(r==="admin")return{role:"admin",verified:false};
+ if(r==="vip"){const e=toMs(d.vipExpiresAt);if(e>Date.now())return{role:"vip",verified:false,until:e}}
+ return{role:"user",verified:false}};
+const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>"",role:()=>({role:"user",verified:false})};
 const fire=()=>dispatchEvent(new Event("xa"));
 if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
@@ -924,6 +971,7 @@ if(FIREBASE_CONFIG.apiKey){try{
   setPhoto:async d=>{const cu=auth.currentUser;await Fs.setDoc(ud(cu.uid),{photo:d,name:cu.displayName||"",at:Fs.serverTimestamp()},{merge:true});P[cu.uid]={...P[cu.uid],photo:d};fire()},
   photo:id=>{const p=P[id];if(p===undefined&&!Q.has(id)){Q.add(id);Fs.getDoc(ud(id)).then(x=>{P[id]=x.exists()?x.data():{}}).catch(()=>{P[id]={}}).then(()=>fire())}return p&&p.photo||""},
   send:t=>Fs.addDoc(col,{text:t,uid:auth.currentUser.uid,name:auth.currentUser.displayName||(auth.currentUser.isAnonymous?"Tamu":"Pengguna"),photo:auth.currentUser.photoURL||"",at:Fs.serverTimestamp()}),
+  role:id=>{if(!id)return roleOf();XA.photo(id);return roleOf(id,P[id])},
   listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er)});
  Au.onAuthStateChanged(auth,u=>{XA.user=u;XA.ar=true;if(u)XA.photo(u.uid);fire()});
 }catch(e){console.error(e);XA.error=e.message}}
