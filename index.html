@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xaerisoft — Tools buatan Wilverse</title>
+<meta name="description" content="Kumpulan tools kecil yang berguna, berjalan langsung di browser. Dibuat oleh Wilverse.">
+<meta name="theme-color" content="#F6F3EA">
+<style>
+:root{--bg:#F6F3EA;--card:#fff;--blue:#B8DFFF;--accent:#447BA8;--light:#D4EAF7;--ink:#24344B;--mute:#5b6b80;--line:rgba(36,52,75,.12);--r:16px;--ease:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font:16px/1.55 ui-rounded,"Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--ink);min-height:100vh;
+background:linear-gradient(rgba(246,243,234,.9),rgba(246,243,234,.96)),url(background.jpg) center/cover fixed,var(--bg);overflow-x:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* header */
+header{position:sticky;top:0;z-index:20;background:rgba(246,243,234,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--blue);display:grid;place-items:center;color:var(--accent)}
+nav{display:flex;gap:4px}
+nav a{padding:8px 12px;border-radius:10px;color:var(--mute);text-decoration:none;font-weight:600;font-size:15px}
+nav a:hover{background:var(--light);color:var(--ink)}
+/* intro */
+.intro{display:grid;gap:18px;padding:22px 0 8px}
+.me{display:flex;gap:14px;align-items:center}
+.ava{width:76px;height:76px;border-radius:24px;overflow:hidden;background:var(--light);flex:none;display:grid;place-items:center;font-weight:800;font-size:30px;color:var(--accent);position:relative}
+.ava video,.ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.me b{display:block;font-size:17px}.me span{color:var(--mute);font-size:14px}
+h1{font-size:clamp(28px,7vw,46px);line-height:1.1;letter-spacing:-.03em;max-width:15em}
+.lead{color:var(--mute);max-width:36em}
+/* search + chips */
+.search{position:relative;margin-top:6px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}
+.search input{width:100%;height:50px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);padding:0 16px 0 44px;transition:border-color .15s}
+.search input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px var(--light)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px;white-space:nowrap;min-height:40px;transition:background .15s,border-color .15s}
+.chip:hover{background:var(--light)}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+/* sections */
+h2{font-size:15px;margin:22px 0 10px;color:var(--mute);font-weight:700}
+.feat{display:grid;gap:10px}
+.ft{display:flex;flex-direction:column;gap:10px;text-align:left;border:0;border-radius:20px;padding:18px;background:var(--blue);min-height:128px;transition:transform .18s var(--ease)}
+.ft:nth-child(2){background:var(--light)}
+.ft:hover{transform:translateY(-3px)}
+.ft .ic{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.7);display:grid;place-items:center;color:var(--accent)}
+.ft b{font-size:18px;letter-spacing:-.01em}.ft p{font-size:14px;color:#33465f}
+.grid{display:grid;gap:10px}
+.card{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;transition:transform .18s var(--ease),border-color .15s,box-shadow .18s}
+.card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 18px rgba(68,123,168,.12)}
+.card:active,.ft:active{transform:scale(.98)}
+.card .ic{width:42px;height:42px;border-radius:12px;background:var(--light);display:grid;place-items:center;color:var(--accent);flex:none}
+.card b{display:block;font-size:15.5px;line-height:1.3}
+.card p{font-size:13.5px;color:var(--mute);line-height:1.4}
+.tag{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent);background:var(--light);border-radius:999px;padding:3px 10px;flex:none;align-self:flex-start}
+.empty{text-align:center;padding:36px 16px;border:1.5px dashed var(--line);border-radius:var(--r);color:var(--mute)}
+.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.empty button{margin-top:12px}
+/* tool view */
+#view{padding:16px 0 40px}
+.back{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--light);border-radius:12px;padding:9px 14px 9px 10px;font-weight:700;font-size:14px;min-height:40px}
+.back:hover{background:var(--blue)}
+.th{display:flex;gap:12px;align-items:center;margin:16px 0}
+.th .ic{width:48px;height:48px;border-radius:14px;background:var(--blue);display:grid;place-items:center;color:var(--accent)}
+.th h1{font-size:24px;line-height:1.2}.th p{color:var(--mute);font-size:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:14px}
+.f label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.f input[type=text],.f input[type=number],.f textarea,.f input[type=file]{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff}
+.f textarea{min-height:150px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+.f input[type=range]{width:100%;accent-color:var(--accent)}
+.f textarea:focus,.f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--light)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-weight:700;background:var(--accent);color:#fff;min-height:44px;transition:transform .12s,background .15s;text-decoration:none;display:inline-flex;align-items:center}
+.btn:hover{background:#376a96}.btn:active{transform:scale(.97)}
+.btn.alt{background:var(--light);color:var(--ink)}.btn.alt:hover{background:var(--blue)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{background:var(--bg);border-radius:12px;padding:10px 12px}.stat b{font-size:22px;display:block;line-height:1.2}.stat span{font-size:13px;color:var(--mute)}
+.out{background:var(--bg);border-radius:12px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;word-break:break-all}
+.err{color:#9b2c2c;background:#fdecec;border-radius:10px;padding:10px 12px;font-size:14px}
+.chk{display:flex;gap:8px;align-items:center;font-size:15px;min-height:32px}.chk input{width:20px;height:20px;accent-color:var(--accent)}
+.pick{font-size:28px;font-weight:800;text-align:center;padding:22px 12px;background:var(--light);border-radius:14px;word-break:break-word}
+.sw{border-radius:14px;padding:18px;font-weight:700;font-size:18px;text-align:center}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols input[type=color]{width:100%;height:46px;border:1.5px solid var(--line);border-radius:12px;padding:3px;background:#fff}
+.ok{color:#1d6b3b;font-weight:700}.no{color:#9b2c2c;font-weight:700}
+/* footer */
+footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 32px;color:var(--mute);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.2s var(--ease);z-index:50}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.hide{display:none!important}
+.enter{animation:in .22s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}.feat{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:repeat(3,1fr)}.panel{padding:22px}}
+@media(min-width:960px){.grid{grid-template-columns:repeat(3,1fr)}.intro{grid-template-columns:1.3fr 1fr;align-items:end;padding-top:40px}.card{align-items:flex-start}.tag{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* ===== Identitas v2: "meja kerja" — garis tegas, bayangan offset, kertas bertitik ===== */
+body{background:radial-gradient(rgba(68,123,168,.2) 1.3px,transparent 1.5px) 0 0/22px 22px,linear-gradient(rgba(246,243,234,.9),rgba(246,243,234,.96)),url(background.jpg) center/cover fixed,var(--bg)}
+.logo{border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);border-radius:10px}
+.brand{font-weight:900;font-size:20px}
+.intro{gap:22px;padding:26px 0 14px;align-items:center}
+h1{font-size:clamp(36px,10vw,68px);font-weight:900;line-height:1;letter-spacing:-.045em;max-width:11em}
+.lead{font-size:16.5px;margin-top:14px}
+.polaroid{order:-1;width:132px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 8px 10px;transform:rotate(-4deg);box-shadow:6px 6px 0 var(--blue);position:relative;justify-self:start}
+.polaroid::before{content:"";position:absolute;top:-11px;left:50%;width:54px;height:18px;margin-left:-27px;background:var(--blue);border:2px solid var(--ink);border-radius:4px;transform:rotate(3deg)}
+.polaroid .ava{width:100%;height:auto;aspect-ratio:1;border-radius:6px;font-size:54px;border:2px solid var(--ink)}
+.polaroid figcaption{text-align:center;font-weight:800;margin-top:8px;line-height:1.2;font-size:15px}
+.polaroid small{display:block;font-weight:600;color:var(--mute);font-size:12px}
+.search input{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--blue);height:52px}
+.search input:focus{box-shadow:3px 3px 0 var(--accent)}
+.chip{border:2px solid var(--ink);background:var(--card);font-weight:700}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink)}
+h2{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin:28px 0 12px}
+.ft{border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:20px;position:relative;overflow:hidden}
+.ft:nth-child(3){background:#fff}
+.ft:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.ft:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.ft .ic{width:52px;height:52px;border:2px solid var(--ink);background:#fff;border-radius:14px}
+.ft:nth-child(3) .ic{background:var(--blue)}
+.ft b{font-size:20px;font-weight:900;letter-spacing:-.02em}
+.card{border:2px solid var(--ink);box-shadow:4px 4px 0 var(--blue);border-radius:16px}
+.card:hover{transform:translate(-2px,-2px);border-color:var(--ink);box-shadow:6px 6px 0 var(--accent)}
+.card:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--blue)}
+.card .ic{border:2px solid var(--ink);background:var(--blue)}
+.card:nth-child(3n+2) .ic{background:var(--light)}
+.card:nth-child(3n) .ic{background:var(--bg)}
+.tag{border:1.5px solid var(--ink);background:#fff;color:var(--ink)}
+.empty{border:2px dashed var(--ink)}
+.back{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:#fff}
+.back:hover{background:var(--blue)}
+.th .ic{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.th h1{font-size:28px;letter-spacing:-.03em}
+.panel{border:2px solid var(--ink);box-shadow:6px 6px 0 var(--blue);border-radius:20px}
+.f textarea,.f input[type=text],.f input[type=number],.f input[type=file]{border:2px solid var(--ink)}
+.btn{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:var(--accent)}
+.btn:hover{background:var(--accent);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn.alt{background:var(--light);color:var(--ink)}.btn.alt:hover{background:var(--blue)}
+.stat{border:2px solid var(--ink);background:#fff}
+.out,.pick{border:2px solid var(--ink)}
+footer{border-top:2px solid var(--ink)}
+@media(min-width:960px){.polaroid{order:0;width:220px;justify-self:end;transform:rotate(4deg)}.polaroid .ava{font-size:90px}.polaroid figcaption{font-size:18px}.intro{align-items:center}}
+
+/* ===== v3: hero media, kartu kepo, berita, dock, auth, chat ===== */
+body{padding-bottom:96px}
+#toast{bottom:100px}
+.hero{position:relative;margin:18px 0 16px;border:2px solid var(--ink);border-radius:24px;box-shadow:6px 6px 0 var(--blue);overflow:hidden;aspect-ratio:4/3;max-height:440px;width:100%;background:var(--blue)}
+.hero .ava{position:absolute;inset:0;width:100%;height:100%;border-radius:0;font-size:120px;background:repeating-linear-gradient(45deg,var(--blue) 0 14px,var(--light) 14px 28px)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(36,52,75,.88));pointer-events:none}
+.hero-t{position:absolute;left:18px;right:18px;bottom:16px;z-index:2;color:#fff}
+.hero-t h1{color:#fff;font-size:clamp(36px,11vw,64px)}
+.hero-t p{opacity:.95;margin-top:4px}
+.kepo{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:20px;box-shadow:4px 4px 0 var(--blue);padding:14px}
+.kav{width:68px;height:68px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:900;font-size:28px;overflow:hidden;border:2px solid var(--ink)}
+.kav img{width:100%;height:100%;object-fit:cover}
+.kinfo{min-width:0}.kinfo>b{font-size:18px;display:block}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13.5px;color:var(--mute);margin-top:4px}
+.kgrid span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kact{grid-column:1/-1}
+.up{color:#1d6b3b;font-weight:700}.down{color:#9b2c2c;font-weight:700}
+.nh{display:flex;align-items:center;justify-content:space-between}
+.nav2{display:none;gap:6px}
+.nav2 button{width:40px;height:40px;border-radius:12px;border:2px solid var(--ink);background:#fff;font-weight:900;font-size:18px}
+.nav2 button:hover{background:var(--blue)}
+.news{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:4px 16px 16px;scrollbar-width:none}
+.news::-webkit-scrollbar{display:none}
+.nc{flex:none;width:min(280px,78vw);scroll-snap-align:start;background:#fff;border:2px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--blue);overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .18s var(--ease),box-shadow .18s}
+.nc:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--accent)}
+.nimg{width:100%;aspect-ratio:16/9;object-fit:cover;border-bottom:2px solid var(--ink);background:var(--light);display:block}
+.nc .b{padding:12px;display:grid;gap:6px;align-content:start}
+.nc .b b{font-size:15px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nc small{color:var(--mute);font-size:12.5px}
+.nsk{flex:none;width:min(280px,78vw);height:220px;border-radius:18px;background:var(--light);border:2px dashed var(--ink);opacity:.5}
+.dock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 10px;box-shadow:4px 4px 0 var(--ink)}
+.dock a,.dock button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;background:transparent;color:var(--ink);text-decoration:none;font-size:11px;font-weight:700;padding:6px 16px;border-radius:999px;min-height:48px}
+.dock a:hover,.dock button:hover{background:var(--light)}
+.dock .mid{background:var(--accent);color:#fff;width:58px;height:58px;padding:0;margin:-20px 6px;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.dock .mid:hover{background:var(--accent)}
+dialog{border:2px solid var(--ink);border-radius:22px;padding:18px;width:min(92vw,380px);box-shadow:6px 6px 0 var(--blue);color:var(--ink);background:#fff;margin:auto}
+dialog::backdrop{background:rgba(36,52,75,.45)}
+dialog h2{margin:0;font-size:20px}
+dialog input{width:100%;border:2px solid var(--ink);border-radius:12px;padding:11px 12px;background:#fff}
+dialog input:focus{outline:none;box-shadow:0 0 0 4px var(--light)}
+.msgs{height:min(56vh,460px);overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px}
+.m{max-width:85%;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:8px 12px;align-self:flex-start}
+.m.me{align-self:flex-end;background:var(--light)}
+.m small{display:block;color:var(--mute);font-size:12px;font-weight:700}
+.m p{word-break:break-word;white-space:pre-wrap}
+.cf{display:flex;gap:8px}
+.cf input{flex:1;min-width:0;border:2px solid var(--ink);border-radius:12px;padding:11px 12px}
+@media(min-width:640px){.nav2{display:flex}}
+@media(min-width:960px){.hero{aspect-ratio:21/9}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="brand" href="#" aria-label="Xaerisoft, ke beranda"><span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Xaerisoft</a>
+  <nav aria-label="Navigasi utama"><a href="#tools" data-go="tools">Tools</a><a href="#berita" data-go="berita">Berita</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div id="home">
+    <section id="tentang" aria-label="Xaerisoft">
+      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><h1>Xaerisoft</h1><p>Tools kecil buatan Wilverse, langsung jalan di browser.</p></div></div>
+      <div class="kepo" id="kepo"></div>
+    </section>
+    <section id="berita" aria-label="Berita politik">
+      <div class="nh"><h2>Berita politik</h2><div class="nav2" id="nav2"><button data-d="-1" aria-label="Geser ke kiri">&#8249;</button><button data-d="1" aria-label="Geser ke kanan">&#8250;</button></div></div>
+      <div class="news" id="news"></div>
+    </section>
+
+    <section id="tools" aria-label="Cari tools">
+      <div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Cari tools…" aria-label="Cari tools" autocomplete="off"></div>
+      <div class="chips" id="chips" role="group" aria-label="Kategori"></div>
+      <div id="featWrap"><h2>Pilihan</h2><div class="feat" id="feat"></div></div>
+      <h2 id="listTitle">Semua tools</h2>
+      <div class="grid" id="grid" aria-live="polite"></div>
+      <div class="empty hide" id="empty"><b>Tools tidak ditemukan</b>Coba kata kunci lain atau pilih kategori berbeda.<br><button class="btn alt" id="reset">Reset pencarian</button></div>
+    </section>
+  </div>
+
+  <section id="view" class="hide" aria-live="polite">
+    <button class="back" id="back"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M15 18l-6-6 6-6"/></svg>Kembali</button>
+    <div class="th"><span class="ic" id="vIcon"></span><div><h1 id="vName"></h1><p id="vDesc"></p></div></div>
+    <div id="vBody"></div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span><b>Xaerisoft</b> — dibuat oleh Wilverse</span><span>Semua tools berjalan di perangkatmu.</span></div></footer>
+<dialog id="auth" aria-labelledby="at">
+  <div class="row" style="justify-content:space-between;align-items:center"><h2 id="at">Masuk ke Xaerisoft</h2><button class="back" id="ax" aria-label="Tutup">&#10005;</button></div>
+  <p id="asetup" class="err hide" style="margin-top:12px">Firebase belum dikonfigurasi. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html lebih dulu.</p>
+  <div id="aform" style="display:grid;gap:10px;margin-top:14px">
+    <button class="btn alt" data-p="google">Lanjut dengan Google</button>
+    <button class="btn alt" data-p="github">Lanjut dengan GitHub</button>
+    <div class="row"><button class="chip" data-m="in" aria-pressed="true">Masuk</button><button class="chip" data-m="up" aria-pressed="false">Daftar</button></div>
+    <form id="ef" style="display:grid;gap:10px">
+      <input id="an" class="hide" type="text" placeholder="Nama" aria-label="Nama" autocomplete="name">
+      <input id="ae" type="email" placeholder="Email" aria-label="Email" required autocomplete="email">
+      <input id="ap" type="password" placeholder="Sandi (min. 6 karakter)" aria-label="Sandi" required minlength="6" autocomplete="current-password">
+      <button class="btn" type="submit" id="asub">Masuk</button>
+    </form>
+    <div id="amsg" class="err hide" role="alert"></div>
+  </div>
+</dialog>
+<nav class="dock" aria-label="Menu cepat">
+  <a href="#"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
+  <a class="mid" href="#chat" aria-label="Chat Global"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></a>
+  <button id="dkacc"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg><span>Masuk</span></button>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ============ Utilitas ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const ico=p=>`<svg class="i" viewBox="0 0 24 24">${p}</svg>`;
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800)};
+const copy=async txt=>{try{await navigator.clipboard.writeText(txt);toast("Tersalin")}catch{toast("Gagal menyalin, salin manual")}};
+const rand=n=>{const a=new Uint32Array(1);const lim=4294967296-(4294967296%n);let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n};
+const fmtB=n=>n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB";
+
+/* ============ Registri tools ============
+   Tambah tools baru: push satu objek ke TOOLS.
+   { id, name, desc, cat, icon (isi svg), featured?, render(el) } */
+const CATS=["Semua","Utilities","Creator","Developer","Experiments"];
+const TOOLS=[];
+
+TOOLS.push({id:"hitung-kata",name:"Penghitung Kata",desc:"Hitung kata, karakter, kalimat, dan waktu baca.",cat:"Utilities",featured:true,
+icon:'<path d="M4 6h16M4 12h10M4 18h14"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="f"><label for="wc">Tulis atau tempel teks</label><textarea id="wc" placeholder="Mulai mengetik…"></textarea></div><div class="stats" id="wcs"></div></div>`;
+ const ta=$("#wc",el),st=$("#wcs",el);
+ const run=()=>{const t=ta.value,w=(t.trim().match(/\S+/g)||[]).length,s=(t.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[]).filter(x=>x.trim()).length;
+  const d=[["Kata",w],["Karakter",t.length],["Tanpa spasi",t.replace(/\s/g,"").length],["Kalimat",s],["Baris",t?t.split("\n").length:0],["Waktu baca",w?Math.max(1,Math.round(w/200))+" mnt":"0 mnt"]];
+  st.innerHTML=d.map(([a,b])=>`<div class="stat"><b>${b}</b><span>${a}</span></div>`).join("")};
+ ta.addEventListener("input",run);run();
+}});
+
+TOOLS.push({id:"json",name:"Perapi JSON",desc:"Validasi, rapikan, atau ringkas JSON.",cat:"Developer",featured:true,
+icon:'<path d="M8 4C6 4 6 6 6 8s0 4-2 4c2 0 2 2 2 4s0 4 2 4M16 4c2 0 2 2 2 4s0 4 2 4c-2 0-2 2-2 4s0 4-2 4"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="f"><label for="js">JSON</label><textarea id="js" spellcheck="false" placeholder='{"nama":"Xaerisoft"}'></textarea></div>
+ <div id="je" class="err hide"></div><div class="row"><button class="btn" data-a="p">Rapikan</button><button class="btn alt" data-a="m">Ringkas</button><button class="btn alt" data-a="c">Salin</button></div></div>`;
+ const ta=$("#js",el),er=$("#je",el);
+ el.addEventListener("click",e=>{const a=e.target.closest("[data-a]")?.dataset.a;if(!a)return;
+  if(a==="c"){ta.value&&copy(ta.value);return}
+  try{const o=JSON.parse(ta.value);ta.value=JSON.stringify(o,null,a==="p"?2:0);er.classList.add("hide")}
+  catch(x){er.textContent="JSON tidak valid: "+x.message;er.classList.remove("hide")}});
+}});
+
+TOOLS.push({id:"sandi",name:"Pembuat Sandi",desc:"Buat sandi acak yang kuat, dibuat lokal di perangkatmu.",cat:"Utilities",
+icon:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="out" id="pw" aria-live="polite"></div>
+ <div class="f"><label for="pl">Panjang: <span id="pn">16</span></label><input id="pl" type="range" min="8" max="64" value="16"></div>
+ <div><label class="chk"><input type="checkbox" id="c1" checked>Huruf besar</label><label class="chk"><input type="checkbox" id="c2" checked>Huruf kecil</label><label class="chk"><input type="checkbox" id="c3" checked>Angka</label><label class="chk"><input type="checkbox" id="c4" checked>Simbol</label></div>
+ <div class="row"><button class="btn" id="pg">Buat baru</button><button class="btn alt" id="pc">Salin</button></div></div>`;
+ const sets=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!@#$%^&*-_=+?"];
+ const gen=()=>{const on=sets.filter((_,i)=>$("#c"+(i+1),el).checked);const out=$("#pw",el);
+  if(!on.length){out.textContent="Pilih minimal satu jenis karakter";return}
+  const n=+$("#pl",el).value,all=on.join("");let r=on.map(s=>s[rand(s.length)]);
+  while(r.length<n)r.push(all[rand(all.length)]);
+  for(let i=r.length-1;i>0;i--){const j=rand(i+1);[r[i],r[j]]=[r[j],r[i]]}
+  out.textContent=r.join("")};
+ $("#pl",el).addEventListener("input",e=>{$("#pn",el).textContent=e.target.value;gen()});
+ el.querySelectorAll("input[type=checkbox]").forEach(c=>c.addEventListener("change",gen));
+ $("#pg",el).onclick=gen;$("#pc",el).onclick=()=>{const t=$("#pw",el).textContent;t&&!t.startsWith("Pilih")&&copy(t)};gen();
+}});
+
+TOOLS.push({id:"kontras",name:"Cek Kontras Warna",desc:"Periksa rasio kontras teks dan latar menurut WCAG.",cat:"Creator",featured:true,
+icon:'<circle cx="12" cy="12" r="8"/><path d="M12 4v16"/><path d="M12 4a8 8 0 010 16" fill="currentColor"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="cols"><div class="f"><label for="fg">Warna teks</label><input type="color" id="fg" value="#24344B"></div><div class="f"><label for="bgc">Warna latar</label><input type="color" id="bgc" value="#F6F3EA"></div></div>
+ <div class="sw" id="sw">Contoh teks Xaerisoft</div><div class="stats"><div class="stat"><b id="cr">—</b><span>Rasio</span></div><div class="stat"><span>Teks biasa</span><br><b id="r1" style="font-size:16px"></b></div><div class="stat"><span>Teks besar</span><br><b id="r2" style="font-size:16px"></b></div></div></div>`;
+ const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+ const run=()=>{const f=$("#fg",el).value,b=$("#bgc",el).value,a=lum(f),c=lum(b),r=(Math.max(a,c)+.05)/(Math.min(a,c)+.05);
+  const sw=$("#sw",el);sw.style.color=f;sw.style.background=b;$("#cr",el).textContent=r.toFixed(2)+":1";
+  const m=(x,t)=>x>=t?'<span class="ok">Lulus</span>':'<span class="no">Gagal</span>';
+  $("#r1",el).innerHTML=m(r,4.5)+" AA";$("#r2",el).innerHTML=m(r,3)+" AA"};
+ el.addEventListener("input",run);run();
+}});
+
+TOOLS.push({id:"kompres-gambar",name:"Kompres Gambar",desc:"Perkecil ukuran foto langsung di browser.",cat:"Creator",
+icon:'<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20 16l-5-5-8 8"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="f"><label for="im">Pilih gambar</label><input id="im" type="file" accept="image/*"></div>
+ <div class="f"><label for="iq">Kualitas: <span id="iqn">70</span>%</label><input id="iq" type="range" min="20" max="95" value="70"></div>
+ <div id="ir" class="hide"><div class="stats"><div class="stat"><b id="a1"></b><span>Sebelum</span></div><div class="stat"><b id="a2"></b><span>Sesudah (JPEG)</span></div></div><div class="row" style="margin-top:12px"><a class="btn" id="dl" download="xaerisoft-kompres.jpg">Unduh hasil</a></div></div><div id="ie" class="err hide"></div></div>`;
+ let file=null,url=null;const er=$("#ie",el);
+ const run=()=>{if(!file)return;const img=new Image(),u=URL.createObjectURL(file);
+  img.onload=()=>{const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0);URL.revokeObjectURL(u);
+   c.toBlob(b=>{if(!b){er.textContent="Gagal memproses gambar.";er.classList.remove("hide");return}
+    if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(b);er.classList.add("hide");$("#a1",el).textContent=fmtB(file.size);$("#a2",el).textContent=fmtB(b.size);$("#dl",el).href=url;$("#ir",el).classList.remove("hide")},"image/jpeg",$("#iq",el).value/100)};
+  img.onerror=()=>{er.textContent="File ini tidak bisa dibaca sebagai gambar.";er.classList.remove("hide");$("#ir",el).classList.add("hide")};img.src=u};
+ $("#im",el).addEventListener("change",e=>{file=e.target.files[0]||null;run()});
+ $("#iq",el).addEventListener("input",e=>{$("#iqn",el).textContent=e.target.value;run()});
+}});
+
+TOOLS.push({id:"pengacak",name:"Pengacak Pilihan",desc:"Tempel daftar nama atau opsi, lalu biarkan acak yang memilih.",cat:"Experiments",
+icon:'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="15" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/><circle cx="9" cy="15" r="1" fill="currentColor"/>',
+render(el){
+ el.innerHTML=`<div class="panel"><div class="f"><label for="pk">Satu opsi per baris</label><textarea id="pk" style="font-family:inherit" placeholder="Nasi goreng&#10;Mie ayam&#10;Soto"></textarea></div><div class="pick hide" id="pr" aria-live="polite"></div><div class="row"><button class="btn" id="go">Pilih acak</button></div></div>`;
+ $("#go",el).onclick=()=>{const l=$("#pk",el).value.split("\n").map(s=>s.trim()).filter(Boolean),p=$("#pr",el);
+  p.classList.remove("hide");p.textContent=l.length?l[rand(l.length)]:"Isi minimal satu opsi dulu";};
+}});
+
+/* ============ Aplikasi ============ */
+const state={cat:"Semua",q:"",scroll:0};
+const bodies=new Map();            // cache DOM tools agar state tidak hilang
+const byId=id=>TOOLS.find(t=>t.id===id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function chips(){
+ $("#chips").innerHTML=CATS.map(c=>`<button class="chip" aria-pressed="${c===state.cat}" data-c="${c}">${c}</button>`).join("");
+}
+function list(){
+ const q=state.q.trim().toLowerCase();
+ const res=TOOLS.filter(t=>(state.cat==="Semua"||t.cat===state.cat)&&(!q||(t.name+" "+t.desc+" "+t.cat).toLowerCase().includes(q)));
+ const showFeat=state.cat==="Semua"&&!q;
+ $("#featWrap").classList.toggle("hide",!showFeat);
+ if(showFeat)$("#feat").innerHTML=TOOLS.filter(t=>t.featured).map(t=>`<button class="ft" data-id="${t.id}"><span class="ic">${ico(t.icon)}</span><b>${esc(t.name)}</b><p>${esc(t.desc)}</p></button>`).join("");
+ $("#grid").innerHTML=res.map(t=>`<button class="card enter" data-id="${t.id}"><span class="ic">${ico(t.icon)}</span><span><b>${esc(t.name)}</b><p>${esc(t.desc)}</p></span><span class="tag">${t.cat}</span></button>`).join("");
+ $("#empty").classList.toggle("hide",res.length>0);
+ $("#listTitle").textContent=(state.cat==="Semua"&&!q?"Semua tools":"Hasil")+" ("+res.length+")";
+ $("#listTitle").classList.toggle("hide",!res.length);
+}
+function home(){
+ $("#view").classList.add("hide");$("#home").classList.remove("hide");
+ document.title="Xaerisoft — Tools buatan Wilverse";
+ scrollTo(0,state.scroll);
+}
+function open(t){
+ if(!$("#home").classList.contains("hide"))state.scroll=scrollY;
+ $("#home").classList.add("hide");const v=$("#view");v.classList.remove("hide");v.classList.add("enter");
+ $("#vIcon").innerHTML=ico(t.icon);$("#vName").textContent=t.name;$("#vDesc").textContent=t.desc;
+ const host=$("#vBody");host.textContent="";
+ let b=bodies.get(t.id);
+ if(!b){b=document.createElement("div");try{t.render(b)}catch(e){b.innerHTML='<div class="err">Tools gagal dimuat.</div>';console.error(e)}bodies.set(t.id,b)}
+ host.appendChild(b);b.start&&b.start();document.title=t.name+" — Xaerisoft";scrollTo(0,0);$("#back").focus({preventScroll:true});
+}
+function route(){
+ const m=location.hash.match(/^#tool-([\w-]+)$/),t=location.hash==="#chat"?CHAT:m&&byId(m[1]);
+ if(t)open(t);else home();if(t!==CHAT){const c=bodies.get("chat");c&&c.stop&&c.stop()}
+ if(!t&&/^#(tools|berita)$/.test(location.hash))$("#"+location.hash.slice(1)).scrollIntoView();
+}
+document.addEventListener("click",e=>{
+ const c=e.target.closest("[data-id]");if(c){location.hash="tool-"+c.dataset.id;return}
+ const ch=e.target.closest("[data-c]");if(ch){state.cat=ch.dataset.c;chips();list();}
+});
+$("#back").onclick=()=>{location.hash="tools"};
+$("#q").addEventListener("input",e=>{state.q=e.target.value;list()});
+$("#reset").onclick=()=>{state.q="";state.cat="Semua";$("#q").value="";chips();list()};
+addEventListener("hashchange",route);
+
+/* Profil: video -> foto -> inisial */
+(function(){
+ const a=$("#ava"),img=new Image();
+ img.alt="";img.onload=()=>{a.textContent="";a.appendChild(img);vid()};img.onerror=vid;img.src="profile.jpg";
+ function vid(){const v=document.createElement("video");v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.setAttribute("playsinline","");
+  v.addEventListener("loadeddata",()=>{a.textContent="";a.appendChild(v);v.play().catch(()=>{})});v.addEventListener("error",()=>v.remove());v.src="profile.mp4"}
+})();
+
+/* ===== Kepo, berita, akun, chat ===== */
+const XA=()=>window.XA||{};
+const UA=navigator.userAgent;
+const DEV=/Android/i.test(UA)?"Android":/iPhone|iPad/i.test(UA)?"iOS":/Windows/i.test(UA)?"Windows":/Mac/i.test(UA)?"macOS":/Linux/i.test(UA)?"Linux":"Perangkat";
+const BRW=/Edg\//.test(UA)?"Edge":/OPR\//.test(UA)?"Opera":/Firefox/.test(UA)?"Firefox":/Chrome/.test(UA)?"Chrome":/Safari/.test(UA)?"Safari":"Browser";
+const regionOf=()=>{const m=(navigator.language||"").match(/-([A-Za-z]{2})$/);return m?m[1].toUpperCase():null};
+const flag=r=>String.fromCodePoint(...[...r].map(c=>127397+c.charCodeAt(0)));
+const cname=r=>{try{return new Intl.DisplayNames(["id"],{type:"region"}).of(r)}catch{return r}};
+let batt=null;
+function tick(){const t=$("#kt");if(!t)return;
+ t.textContent="Jam "+new Date().toLocaleTimeString("id-ID");
+ $("#ko").innerHTML=navigator.onLine?'<span class="up">● Online</span>':'<span class="down">● Offline</span>';
+ if(batt){const b=$("#kb");b.classList.remove("hide");b.textContent="Baterai "+Math.round(batt.level*100)+"%"}}
+function kepo(){const u=XA().user,r=regionOf(),nm=u?(u.displayName||(u.email||"Pengguna").split("@")[0]):"Tamu";
+ $("#kepo").innerHTML=`<div class="kav">${u&&u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())}</div><div class="kinfo"><b>${esc(nm)}</b><div class="kgrid"><span>${r?flag(r)+" "+esc(cname(r)):"Lokasi tidak terdeteksi"}</span><span id="kt"></span><span>${DEV}</span><span>${BRW}</span><span id="kb" class="hide"></span><span id="ko"></span></div></div><div class="kact">${u?'<button class="btn alt" data-k="out">Keluar</button>':'<button class="btn" data-k="in">Masuk untuk chat</button>'}</div>`;
+ $("#dkacc span").textContent=u?"Keluar":"Masuk";tick()}
+const signOut=()=>{const x=XA();x.out&&x.out().then(()=>toast("Sudah keluar"))};
+document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut()});
+$("#dkacc").onclick=()=>XA().user?signOut():openAuth();
+
+/* Berita politik (RSS publik lewat rss2json) */
+const FEEDS=[["Antara","https://www.antaranews.com/rss/politik.xml"],["CNN Indonesia","https://www.cnnindonesia.com/nasional/rss"]];
+const ago=ts=>{const m=Math.round((ts-Date.now())/6e4),f=new Intl.RelativeTimeFormat("id",{numeric:"auto"});return Math.abs(m)<60?f.format(m,"minute"):Math.abs(m)<1440?f.format(Math.round(m/60),"hour"):f.format(Math.round(m/1440),"day")};
+async function news(){const box=$("#news");let items=null;
+ try{const c=JSON.parse(sessionStorage.getItem("xa-news")||"null");if(c&&Date.now()-c.t<6e5)items=c.i}catch{}
+ if(!items){box.innerHTML='<div class="nsk"></div>'.repeat(3);
+  const rs=await Promise.allSettled(FEEDS.map(([n,u])=>fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(u)).then(r=>r.json()).then(j=>{if(j.status!=="ok")throw 0;return j.items.map(i=>({s:n,t:i.title,l:i.link,i:i.thumbnail||(i.enclosure&&i.enclosure.link)||"",d:Date.parse((i.pubDate||"").replace(" ","T")+"Z")||0}))})));
+  items=rs.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).filter(i=>/^https?:/.test(i.l)).sort((a,b)=>b.d-a.d).slice(0,24);
+  if(items.length)try{sessionStorage.setItem("xa-news",JSON.stringify({t:Date.now(),i:items}))}catch{}}
+ if(!items.length){box.innerHTML='<div class="empty" style="width:100%"><b>Berita belum bisa dimuat</b>Periksa koneksi lalu coba lagi.<br><button class="btn alt" id="nr">Coba lagi</button></div>';$("#nr").onclick=news;return}
+ box.innerHTML=items.map(i=>`<a class="nc" href="${esc(i.l)}" target="_blank" rel="noopener noreferrer">${/^https?:/.test(i.i)?`<img class="nimg" src="${esc(i.i)}" alt="" loading="lazy" onerror="this.remove()">`:""}<div class="b"><b>${esc(i.t)}</b><small>${esc(i.s)}${i.d?" · "+ago(i.d):""}</small></div></a>`).join("")}
+$("#nav2").onclick=e=>{const d=e.target.closest("[data-d]")?.dataset.d;d&&$("#news").scrollBy({left:d*290,behavior:"smooth"})};
+
+/* Dialog masuk / daftar */
+const dlg=$("#auth");let amode="in";
+const AERR={"auth/invalid-credential":"Email atau sandi salah.","auth/email-already-in-use":"Email ini sudah terdaftar. Coba masuk.","auth/weak-password":"Sandi minimal 6 karakter.","auth/invalid-email":"Format email tidak valid.","auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.","auth/account-exists-with-different-credential":"Email ini sudah dipakai dengan metode masuk lain.","auth/operation-not-allowed":"Metode masuk ini belum diaktifkan di Firebase.","auth/unauthorized-domain":"Domain ini belum didaftarkan di Firebase (Authorized domains)."};
+const aerr=e=>{if(e&&e.code==="auth/popup-closed-by-user")return;const m=$("#amsg");m.textContent=AERR[e&&e.code]||("Gagal: "+(e&&e.message||e));m.classList.remove("hide")};
+function openAuth(){const r=!!XA().ready;$("#asetup").classList.toggle("hide",r);$("#aform").classList.toggle("hide",!r);$("#amsg").classList.add("hide");dlg.showModal()}
+$("#ax").onclick=()=>dlg.close();
+dlg.addEventListener("click",e=>{
+ const p=e.target.closest("[data-p]")?.dataset.p;if(p){XA().social(p).catch(aerr);return}
+ const m=e.target.closest("[data-m]")?.dataset.m;if(m){amode=m;dlg.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));$("#an").classList.toggle("hide",m==="in");$("#asub").textContent=m==="in"?"Masuk":"Daftar";$("#ap").autocomplete=m==="in"?"current-password":"new-password"}});
+$("#ef").addEventListener("submit",e=>{e.preventDefault();const x=XA(),em=$("#ae").value.trim(),pw=$("#ap").value;
+ (amode==="in"?x.signin(em,pw):x.signup($("#an").value.trim()||em.split("@")[0],em,pw)).catch(aerr)});
+addEventListener("xa",()=>{kepo();if(XA().user&&dlg.open)dlg.close()});
+
+/* Chat Global (Firestore, hanya saat tampil) */
+const CHAT={id:"chat",name:"Chat Global",desc:"Ngobrol bareng pengunjung Xaerisoft.",cat:"",icon:'<path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/>',
+render(el){let un=null,uid=null,on=false;
+ const unsub=()=>{un&&un();un=null};
+ const draw=()=>{if(!on)return;const x=XA(),u=x.user;
+  if(un&&uid!==(u&&u.uid))unsub();uid=u&&u.uid;
+  if(!x.loaded){el.innerHTML='<div class="panel"><p>Memuat…</p></div>';return}
+  if(!x.ready){unsub();el.innerHTML='<div class="panel"><p class="err">'+(x.error?"Firebase gagal dimuat: "+esc(x.error):"Chat butuh Firebase. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html.")+'</p></div>';return}
+  if(!u){unsub();el.innerHTML='<div class="panel"><p>Masuk dulu untuk membaca dan mengirim pesan.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';return}
+  if(un)return;
+  el.innerHTML='<div class="panel"><div class="msgs" id="ms" aria-live="polite"></div><form class="cf" id="cf"><input id="ci" type="text" maxlength="500" placeholder="Tulis pesan…" aria-label="Pesan" autocomplete="off"><button class="btn" type="submit">Kirim</button></form></div>';
+  const ms=$("#ms",el);let first=true;
+  un=x.listen(a=>{const near=ms.scrollHeight-ms.scrollTop-ms.clientHeight<80;
+   ms.innerHTML=a.length?a.map(m=>`<div class="m${m.uid===uid?" me":""}"><small>${esc(m.name||"Pengguna")}</small><p>${esc(m.text||"")}</p></div>`).join(""):'<p class="empty">Belum ada pesan. Mulai obrolan.</p>';
+   if(first||near)ms.scrollTop=ms.scrollHeight;first=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
+  $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";x.send(t).catch(()=>{i.value=t;toast("Pesan gagal dikirim")})}};
+ el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",draw)}};
+
+kepo();setInterval(tick,1000);addEventListener("online",tick);addEventListener("offline",tick);
+navigator.getBattery&&navigator.getBattery().then(b=>{batt=b;b.addEventListener("levelchange",tick);tick()}).catch(()=>{});
+news();
+chips();list();route();
+</script>
+<script type="module">
+/* ===== Firebase =====
+   Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
+   Biarkan kosong untuk mematikan fitur akun dan chat. */
+const FIREBASE_CONFIG={apiKey:"",authDomain:"",projectId:"",appId:""};
+const XA=window.XA={ready:false,user:null,loaded:false};
+const fire=()=>dispatchEvent(new Event("xa"));
+if(FIREBASE_CONFIG.apiKey){try{
+ const B="https://www.gstatic.com/firebasejs/10.12.2/";
+ const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
+ const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages");
+ Object.assign(XA,{ready:true,
+  social:p=>Au.signInWithPopup(auth,p==="github"?new Au.GithubAuthProvider():new Au.GoogleAuthProvider()),
+  signin:(e,p)=>Au.signInWithEmailAndPassword(auth,e,p),
+  signup:async(n,e,p)=>{const c=await Au.createUserWithEmailAndPassword(auth,e,p);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
+  out:()=>Au.signOut(auth),
+  send:t=>Fs.addDoc(col,{text:t,uid:auth.currentUser.uid,name:auth.currentUser.displayName||"Pengguna",photo:auth.currentUser.photoURL||"",at:Fs.serverTimestamp()}),
+  listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er)});
+ Au.onAuthStateChanged(auth,u=>{XA.user=u;fire()});
+}catch(e){console.error(e);XA.error=e.message}}
+XA.loaded=true;fire();
+</script>
+</body>
+</html>
