@@ -202,12 +202,71 @@ dialog input:focus{outline:none;box-shadow:0 0 0 4px var(--light)}
 .ma{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;overflow:hidden;flex:none;border:2px solid var(--ink)}
 .ma img{width:100%;height:100%;object-fit:cover}
 .mb{min-width:0}
+
+/* ===== v4: layer menu + chat baru ===== */
+.menubtn{width:44px;height:44px;border-radius:12px;border:2px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;color:var(--ink);transition:transform .12s,box-shadow .12s,background .15s}
+.menubtn:hover{background:var(--light)}
+.menubtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.layer{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));overflow-y:auto;
+ background:radial-gradient(rgba(68,123,168,.2) 1.3px,transparent 1.5px) 0 0/22px 22px,var(--bg);
+ opacity:0;visibility:hidden;transform:translateY(-14px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility 0s .2s}
+.layer.on{opacity:1;visibility:visible;transform:none;transition:opacity .2s var(--ease),transform .2s var(--ease)}
+.lh{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:520px;height:56px;margin:0 auto 14px}
+.layer ul{list-style:none;padding:0;display:grid;gap:12px;width:100%;max-width:520px;margin:0 auto}
+.mi{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 16px 12px 12px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--blue);font-weight:800;font-size:18px;letter-spacing:-.01em;text-decoration:none;transition:transform .12s,box-shadow .12s}
+.mi:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--accent)}
+.mi:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--blue)}
+.mi .ic{width:46px;height:46px;border-radius:14px;border:2px solid var(--ink);background:var(--blue);display:grid;place-items:center;color:var(--accent);flex:none}
+.mi:nth-child(2) .ic{background:var(--light)}
+.mi small{display:block;font-weight:600;font-size:13px;color:var(--mute);letter-spacing:0}
+.mi .go{margin-left:auto;color:var(--mute)}
+.mi.vip{background:var(--blue)}
+.mi.vip .ic{background:#fff}
+.mi.close{justify-content:center;background:var(--ink);color:#fff;box-shadow:4px 4px 0 var(--blue);margin-top:6px}
+.layer.on .mi{animation:in .28s var(--ease) backwards}
+.layer.on li:nth-child(2) .mi{animation-delay:.04s}.layer.on li:nth-child(3) .mi{animation-delay:.08s}.layer.on li:nth-child(4) .mi{animation-delay:.12s}.layer.on li:nth-child(5) .mi{animation-delay:.16s}
+
+/* chat: mengisi layar, input selalu di atas dock */
+body.chatmode footer{display:none}
+body.chatmode #view{display:flex;flex-direction:column;height:calc(100vh - 56px - 114px);height:calc(100dvh - 56px - 114px);min-height:420px;padding:10px 0 0}
+body.chatmode #vBody,body.chatmode #vBody>div{flex:1;min-height:0;display:flex;flex-direction:column}
+body.chatmode .th{margin:12px 0}
+body.chatmode .th .ic{width:40px;height:40px;border-radius:12px}
+body.chatmode .th h1{font-size:22px}
+body.chatmode .th p{font-size:13px;line-height:1.3}
+.chatp{flex:1;min-height:0;padding:0;gap:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.ch{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:2px solid var(--ink);background:var(--light);font-weight:800;font-size:13.5px}
+.ch .dot{width:9px;height:9px;border-radius:50%;background:#2e9e5b;border:1.5px solid var(--ink);animation:pulse 1.8s infinite}
+.ch span:last-child{margin-left:auto;color:var(--mute);font-weight:700}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(46,158,91,.18)}}
+.chatp .msgs{flex:1;height:auto;min-height:0;padding:12px 12px 10px;gap:0;overscroll-behavior:contain;background:radial-gradient(rgba(68,123,168,.14) 1.2px,transparent 1.4px) 0 0/20px 20px,#fff}
+.ds{align-self:center;margin:14px 0 6px;font-size:12px;font-weight:800;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:2px 12px}
+.ds:first-child{margin-top:2px}
+.chatp .m{max-width:84%;background:none;border:0;border-radius:0;padding:0;display:flex;gap:8px;align-items:flex-end;align-self:flex-start;margin-top:9px}
+.chatp .m.g{margin-top:3px}
+.chatp .m.me{align-self:flex-end;flex-direction:row}
+.chatp .ma{width:30px;height:30px;font-size:13px}
+.chatp .m.g .ma{visibility:hidden;border-color:transparent}
+.chatp .mb{background:#fff;border:2px solid var(--ink);border-radius:16px 16px 16px 4px;padding:6px 12px 4px;box-shadow:2px 2px 0 var(--blue);min-width:70px}
+.chatp .m.me .mb{background:var(--accent);color:#fff;border-radius:16px 16px 4px 16px;box-shadow:2px 2px 0 var(--ink)}
+.chatp .mb small{color:var(--accent);font-size:12.5px;margin-bottom:1px}
+.chatp .mb p{font-size:15.5px;line-height:1.4}
+.chatp .mb time{display:block;text-align:right;font-size:11px;font-weight:700;color:var(--mute);margin-top:1px}
+.chatp .m.me time{color:#e3f1ff}
+.chatp .empty,.ec{margin:auto;text-align:center;color:var(--mute);padding:20px}
+.ec b{display:block;color:var(--ink);font-size:17px;margin-bottom:2px}
+.chatp .cf{padding:10px 12px;border-top:2px solid var(--ink);background:var(--bg);align-items:center}
+.chatp .cf input{height:46px;border-radius:999px;padding:0 18px;background:#fff}
+.chatp .cf input:focus{outline:none;box-shadow:0 0 0 4px var(--light)}
+.chatp .cf .send{width:46px;height:46px;min-height:0;padding:0;border-radius:50%;justify-content:center;flex:none}
+.jb{position:absolute;right:14px;bottom:76px;width:40px;height:40px;border-radius:50%;border:2px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;z-index:2}
+.jb:active{transform:translate(2px,2px);box-shadow:0 0 0}
 </style>
 </head>
 <body>
 <header><div class="wrap bar">
   <a class="brand" href="#" aria-label="Xaerisoft, ke beranda"><span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Xaerisoft</a>
-  <nav aria-label="Navigasi utama"><a href="#tools" data-go="tools">Tools</a><a href="#berita" data-go="berita">Berita</a></nav>
+  <button class="menubtn" id="menubtn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="layer"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </div></header>
 
 <main class="wrap">
@@ -256,6 +315,11 @@ dialog input:focus{outline:none;box-shadow:0 0 0 4px var(--light)}
     <div id="amsg" class="err hide" role="alert"></div>
   </div>
 </dialog>
+<div class="layer" id="layer" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <div class="lh"><a class="brand" href="#" data-close aria-label="Xaerisoft, ke beranda"><span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Xaerisoft</a>
+  <button class="menubtn" type="button" data-close aria-label="Tutup menu"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <ul id="mlist"></ul>
+</div>
 <nav class="dock" aria-label="Menu cepat">
   <a href="#"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
   <a class="mid" href="#chat" aria-label="Chat Global"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></a>
@@ -379,12 +443,14 @@ function list(){
  $("#listTitle").classList.toggle("hide",!res.length);
 }
 function home(){
+ document.body.classList.remove("chatmode");
  $("#view").classList.add("hide");$("#home").classList.remove("hide");
  document.title="Xaerisoft — Tools buatan Wilverse";
  scrollTo(0,state.scroll);
 }
 function open(t){
  if(!$("#home").classList.contains("hide"))state.scroll=scrollY;
+ document.body.classList.toggle("chatmode",t===CHAT);
  $("#home").classList.add("hide");const v=$("#view");v.classList.remove("hide");v.classList.add("enter");
  $("#vIcon").innerHTML=ico(t.icon);$("#vName").textContent=t.name;$("#vDesc").textContent=t.desc;
  const host=$("#vBody");host.textContent="";
@@ -434,6 +500,26 @@ const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
 document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut()});
 $("#dkacc").onclick=()=>XA().user?(location.hash="#profil"):openAuth();
 
+/* ===== Menu layer (pojok kanan) =====
+   Isi "u" dengan link tujuan. Kosong = tampil "Segera hadir". Boleh "#hash" atau URL penuh. */
+const MENU=[
+ {n:"Nonton film",d:"Streaming film",u:"",i:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>'},
+ {n:"Dengar musik",d:"Putar lagu favoritmu",u:"",i:'<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/>'},
+ {n:"Upgrade VIP",d:"Buka semua fitur",u:"",cls:"vip",i:'<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>'},
+ {n:"API endpoint",d:"Untuk developer",u:"",i:'<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>'}];
+const layer=$("#layer"),mbtn=$("#menubtn");
+$("#mlist").innerHTML=MENU.map((m,x)=>`<li><button class="mi ${m.cls||""}" type="button" data-mi="${x}"><span class="ic">${ico(m.i)}</span><span>${esc(m.n)}<small>${esc(m.d)}</small></span><svg class="i go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></li>`).join("")+'<li><button class="mi close" type="button" data-close>Kembali</button></li>';
+function menu(on){layer.classList.toggle("on",on);layer.setAttribute("aria-hidden",!on);mbtn.setAttribute("aria-expanded",on);document.body.style.overflow=on?"hidden":"";
+ if(on)setTimeout(()=>layer.querySelector(".mi").focus({preventScroll:true}),60);else mbtn.focus({preventScroll:true})}
+mbtn.onclick=()=>menu(true);
+layer.addEventListener("click",e=>{
+ if(e.target.closest("[data-close]")){menu(false);return}
+ const b=e.target.closest("[data-mi]");if(!b)return;const m=MENU[+b.dataset.mi];
+ if(!m.u){toast(m.n+": segera hadir");return}
+ menu(false);if(m.u[0]==="#")location.hash=m.u;else location.href=m.u});
+addEventListener("keydown",e=>{if(e.key==="Escape"&&layer.classList.contains("on"))menu(false)});
+
+
 /* Berita politik (RSS publik lewat rss2json) */
 const FEEDS=[["Antara","https://www.antaranews.com/rss/politik.xml"],["CNN Indonesia","https://www.cnnindonesia.com/nasional/rss"]];
 const ago=ts=>{const m=Math.round((ts-Date.now())/6e4),f=new Intl.RelativeTimeFormat("id",{numeric:"auto"});return Math.abs(m)<60?f.format(m,"minute"):Math.abs(m)<1440?f.format(Math.round(m/60),"hour"):f.format(Math.round(m/1440),"day")};
@@ -461,6 +547,8 @@ $("#ef").addEventListener("submit",e=>{e.preventDefault();const x=XA(),em=$("#ae
 addEventListener("xa",()=>{kepo();if(XA().user&&dlg.open)dlg.close()});
 
 /* Chat Global (Firestore, hanya saat tampil) */
+const hm=t=>new Date(t).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+const dayLabel=t=>{const d=new Date(t),n=new Date(),y=new Date(Date.now()-864e5);return d.toDateString()===n.toDateString()?"Hari ini":d.toDateString()===y.toDateString()?"Kemarin":d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})};
 const CHAT={id:"chat",name:"Chat Global",desc:"Ngobrol bareng pengunjung Xaerisoft.",cat:"",icon:'<path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/>',
 render(el){let un=null,uid=null,on=false;
  const unsub=()=>{un&&un();un=null};
@@ -470,12 +558,21 @@ render(el){let un=null,uid=null,on=false;
   if(!x.ready){unsub();el.innerHTML='<div class="panel"><p class="err">'+(x.error?"Firebase gagal dimuat: "+esc(x.error):"Chat butuh Firebase. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html.")+'</p></div>';return}
   if(!u){unsub();el.innerHTML='<div class="panel"><p>Masuk dulu untuk membaca dan mengirim pesan.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';return}
   if(un)return;
-  el.innerHTML='<div class="panel"><div class="msgs" id="ms" aria-live="polite"></div><form class="cf" id="cf"><input id="ci" type="text" maxlength="500" placeholder="Tulis pesan…" aria-label="Pesan" autocomplete="off"><button class="btn" type="submit">Kirim</button></form></div>';
+  let force=false;
+  el.innerHTML='<div class="panel chatp"><div class="ch"><span class="dot" aria-hidden="true"></span><span>Live</span><span id="cc"></span></div><div class="msgs" id="ms" aria-live="polite"></div><button class="jb hide" id="jb" type="button" aria-label="Ke pesan terbaru"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button><form class="cf" id="cf"><input id="ci" type="text" maxlength="500" placeholder="Tulis pesan…" aria-label="Pesan" autocomplete="off" enterkeyhint="send"><button class="btn send" type="submit" aria-label="Kirim"><svg class="i" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form></div>';
   const ms=$("#ms",el);let first=true;ms.innerHTML='<p class="empty">Memuat pesan…</p>';setTimeout(()=>{if(first)ms.innerHTML='<p class="err">Belum tersambung ke database. Pastikan Firestore sudah dibuat dan aturannya sudah di-Publish.</p>'},8000);
+  const jb=$("#jb",el);ms.onscroll=()=>jb.classList.toggle("hide",ms.scrollHeight-ms.scrollTop-ms.clientHeight<120);jb.onclick=()=>ms.scrollTo({top:ms.scrollHeight,behavior:"smooth"});
   un=x.listen(a=>{const near=ms.scrollHeight-ms.scrollTop-ms.clientHeight<80;
-   ms.innerHTML=a.length?a.map(m=>`<div class="m${m.uid===uid?" me":""}"><div class="ma">${/^https:/.test(m.photo||"")?`<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">`:esc((m.name||"?")[0].toUpperCase())}</div><div class="mb"><small>${esc(m.name||"Pengguna")}</small><p>${esc(m.text||"")}</p></div></div>`).join(""):'<p class="empty">Belum ada pesan. Mulai obrolan.</p>';
-   if(first||near)ms.scrollTop=ms.scrollHeight;first=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
-  $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";x.send(t).catch(er=>{i.value=t;toast("Gagal kirim: "+(er.code||er.message))})}};
+   let h="",pt=0,pu=null,pd="";
+   a.forEach(m=>{const t=m.at&&m.at.toMillis?m.at.toMillis():Date.now(),dk=new Date(t).toDateString(),nd=dk!==pd,g=!nd&&m.uid===pu&&t-pt<3e5,me=m.uid===uid,nm=m.name||"Pengguna";
+    if(nd)h+=`<div class="ds">${dayLabel(t)}</div>`;
+    const av=me?"":g?'<div class="ma"></div>':`<div class="ma">${/^https:/.test(m.photo||"")?`<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())}</div>`;
+    h+=`<div class="m${me?" me":""}${g?" g":""}">${av}<div class="mb">${me||g?"":`<small>${esc(nm)}</small>`}<p>${esc(m.text||"")}</p><time datetime="${new Date(t).toISOString()}">${hm(t)}</time></div></div>`;
+    pt=t;pu=m.uid;pd=dk});
+   ms.innerHTML=h||'<div class="ec"><b>Belum ada pesan</b>Jadi yang pertama menyapa.</div>';
+   $("#cc",el).textContent=a.length?a.length+" pesan":"";
+   if(first||near||force)ms.scrollTop=ms.scrollHeight;first=false;force=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
+  $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";i.focus();force=true;x.send(t).catch(er=>{force=false;i.value=t;toast("Gagal kirim: "+(er.code||er.message))})}};
  el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",draw)}};
 
 const PROFIL={id:"profil",name:"Profil",desc:"Atur nama dan akun kamu.",cat:"",icon:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
