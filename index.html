@@ -60,7 +60,8 @@ dialog p{margin:8px 0 14px}
 </main>
 <dialog id="gd" aria-labelledby="gt">
   <b id="gt">Masuk sebagai tamu?</b>
-  <p>Akun tamu tersimpan di browser ini. Kalau data situs atau riwayat browser dihapus, akun tamu dan chat atas namanya ikut hilang.</p>
+  <p>Tulis nama yang mau tampil di chat. Akun tamu tersimpan di browser ini. Kalau data situs atau riwayat browser dihapus, akun tamu dan chat atas namanya ikut hilang.</p>
+  <input id="gn" type="text" maxlength="24" placeholder="Nama kamu (tampil di chat)" aria-label="Nama tamu" autocomplete="nickname" style="margin-bottom:12px">
   <div class="row"><button class="btn" id="gok" type="button">Lanjut sebagai tamu</button><button class="btn ghost" id="gno" type="button">Batal</button></div>
 </dialog>
 
@@ -103,7 +104,10 @@ if(!FIREBASE_CONFIG.apiKey){
     }catch(x){busy=false;fail(x)}};
   $("#gs").onclick=()=>$("#gd").showModal();
   $("#gno").onclick=()=>$("#gd").close();
-  $("#gok").onclick=()=>{$("#gd").close();Au.signInAnonymously(auth).catch(fail)};
+  $("#gok").onclick=async()=>{const n=$("#gn").value.trim();
+    if(n.length<2){$("#gn").focus();$("#gn").placeholder="Isi nama dulu (min. 2 huruf)";return}
+    $("#gd").close();busy=true;
+    try{const c=await Au.signInAnonymously(auth);await Au.updateProfile(c.user,{displayName:n});busy=false;enter()}catch(x){busy=false;fail(x)}};
   Au.onAuthStateChanged(auth,u=>{if(u&&!done&&!busy)enter()});
 }catch(e){msg("Firebase gagal dimuat: "+e.message)}}
 </script>
