@@ -1,0 +1,9 @@
+
+{
+  "rewrites": [
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://wilproject-563df.firebaseapp.com/__/auth/:path*"
+    }
+  ]
+}

@@ -940,7 +940,7 @@ chips();list();route();
 /* ===== Firebase =====
    Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
    Biarkan kosong untuk mematikan fitur akun dan chat. */
-const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject-563df.firebaseapp.com",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
+const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject.my.id",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
 /* ===== Role & badge: satu-satunya tempat konfigurasi =====
    ownerUid = UID akun Google pemilik (Firebase Console > Authentication > Users > "User UID").
    Dipakai hanya untuk TAMPILAN. Siapa yang boleh menulis role dijaga Firestore Rules, bukan kode ini. */
