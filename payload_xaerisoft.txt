@@ -471,11 +471,11 @@ render(el){let un=null,uid=null,on=false;
   if(!u){unsub();el.innerHTML='<div class="panel"><p>Masuk dulu untuk membaca dan mengirim pesan.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';return}
   if(un)return;
   el.innerHTML='<div class="panel"><div class="msgs" id="ms" aria-live="polite"></div><form class="cf" id="cf"><input id="ci" type="text" maxlength="500" placeholder="Tulis pesan…" aria-label="Pesan" autocomplete="off"><button class="btn" type="submit">Kirim</button></form></div>';
-  const ms=$("#ms",el);let first=true;
+  const ms=$("#ms",el);let first=true;ms.innerHTML='<p class="empty">Memuat pesan…</p>';setTimeout(()=>{if(first)ms.innerHTML='<p class="err">Belum tersambung ke database. Pastikan Firestore sudah dibuat dan aturannya sudah di-Publish.</p>'},8000);
   un=x.listen(a=>{const near=ms.scrollHeight-ms.scrollTop-ms.clientHeight<80;
    ms.innerHTML=a.length?a.map(m=>`<div class="m${m.uid===uid?" me":""}"><div class="ma">${/^https:/.test(m.photo||"")?`<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">`:esc((m.name||"?")[0].toUpperCase())}</div><div class="mb"><small>${esc(m.name||"Pengguna")}</small><p>${esc(m.text||"")}</p></div></div>`).join(""):'<p class="empty">Belum ada pesan. Mulai obrolan.</p>';
    if(first||near)ms.scrollTop=ms.scrollHeight;first=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
-  $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";x.send(t).catch(()=>{i.value=t;toast("Pesan gagal dikirim")})}};
+  $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";x.send(t).catch(er=>{i.value=t;toast("Gagal kirim: "+(er.code||er.message))})}};
  el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",draw)}};
 
 const PROFIL={id:"profil",name:"Profil",desc:"Atur nama dan akun kamu.",cat:"",icon:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
