@@ -1,5 +1,17 @@
-
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.wilproject.my.id"
+        }
+      ],
+      "destination": "https://wilproject.my.id/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/__/auth/:path*",
