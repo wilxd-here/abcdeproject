@@ -358,9 +358,110 @@ details.faq summary::-webkit-details-marker{display:none}
 details.faq summary::after{content:"+";font-weight:900;font-size:18px}
 details.faq[open] summary::after{content:"\2013"}
 details.faq p{padding:0 14px 12px;color:var(--mute);font-size:14.5px}
+
+/* ===== v6: gate login, dock datar, menu datar, tools 2 kolom, kartu profil + cuaca ===== */
+:root{--dh:62px}
+body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 18px)}
+#toast{bottom:calc(var(--dh) + 18px + env(safe-area-inset-bottom,0px))}
+/* gate */
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;overflow:auto;background:var(--deco),radial-gradient(var(--dot) 1.3px,transparent 1.5px) 0 0/22px 22px,var(--bg)}
+.gate.off{display:none}
+.gbox{width:min(100%,400px);background:var(--card);border:2px solid var(--bd);border-radius:20px;box-shadow:6px 6px 0 var(--blue);padding:22px;display:grid;gap:14px}
+.gbox .logo{width:48px;height:48px;border-radius:14px}
+.gbox h1{font-size:34px}
+.gbox .btn{justify-content:center;width:100%}
+/* dock datar */
+.dock{left:0;right:0;bottom:0;transform:none;width:100%;gap:0;padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-top:2px solid var(--bd);border-radius:0;box-shadow:none;background:var(--card)}
+.dock a,.dock button{flex:1;position:relative;min-height:var(--dh);padding:8px 4px 6px;border-radius:0;font-size:12px;color:var(--mute)}
+.dock a+a,.dock a+button{border-left:1px solid var(--line)}
+.dock [aria-current=page]{color:var(--ink);background:var(--light)}
+.dock [aria-current=page]::before{content:"";position:absolute;left:0;right:0;top:-2px;height:4px;background:var(--accent)}
+body.chatmode #view{height:calc(100vh - 56px - var(--dh) - 12px);height:calc(100dvh - 56px - var(--dh) - env(safe-area-inset-bottom,0px) - 12px)}
+/* menu datar */
+.layer ul{gap:0;border-top:2px solid var(--bd)}
+.layer .mi{background:none;border:0;border-bottom:2px solid var(--bd);border-radius:0;box-shadow:none;padding:18px 6px;gap:16px;font-size:26px;font-weight:900;letter-spacing:-.03em;transition:padding .15s var(--ease),background .15s}
+.layer .mi:hover,.layer .mi:focus-visible{transform:none;box-shadow:none;background:var(--light);padding-left:14px}
+.layer .mi:active{transform:none;box-shadow:none;background:var(--blue)}
+.layer .mi .ic{width:auto;height:auto;border:0;border-radius:0;background:none;color:var(--ic)}
+.layer .mi .ic svg{width:28px;height:28px}
+.layer .mi small{font-size:14px;font-weight:600;letter-spacing:0}
+.layer .mi.vip{background:var(--c3)}
+.layer .mi.close{justify-content:center;margin-top:22px;padding:13px;border:2px solid var(--bd);border-radius:12px;background:var(--ink);color:var(--bg);font-size:16px;font-weight:800}
+.layer .mi.close:hover{padding-left:13px;background:var(--ink)}
+/* tools: kotak 2 kolom */
+.grid{grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:12px;aspect-ratio:1;text-align:left;padding:14px;border:2px solid var(--bd);border-radius:14px;box-shadow:4px 4px 0 var(--bd);background:var(--blue);color:var(--ink);transition:transform .15s var(--ease),box-shadow .15s}
+.tile.t1{background:var(--light)}.tile.t2{background:var(--c3)}.tile.t3{background:var(--card)}
+.tile .ic{width:46px;height:46px;border-radius:12px;border:2px solid var(--bd);background:var(--card);display:grid;place-items:center;color:var(--ic)}
+.tile.t3 .ic{background:var(--blue)}
+.tile b{display:block;font-size:16px;line-height:1.2;letter-spacing:-.01em}
+.tile p{margin-top:3px;font-size:12.5px;line-height:1.35;opacity:.78;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--bd)}
+.tile:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--bd)}
+@media(min-width:720px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+/* kartu profil beranda */
+.kepo{display:block;padding:0;overflow:hidden;box-shadow:5px 5px 0 var(--blue)}
+.kh{display:flex;align-items:center;gap:14px;padding:16px 16px 14px}
+.kavw{position:relative;flex:none}
+.kavw .kav{width:64px;height:64px;font-size:26px}
+.kdot{position:absolute;right:0;bottom:0;width:16px;height:16px;border-radius:50%;background:var(--ok);border:3px solid var(--card)}
+.kinfo{flex:1;min-width:0}
+.kinfo small{display:block;font-size:13px;font-weight:700;color:var(--mute)}
+.kinfo>b{display:block;font-size:20px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kmeta{display:block;margin-top:1px;font-size:13px;color:var(--mute)}
+.kbtn{flex:none;min-height:40px;padding:8px 14px;text-decoration:none;justify-content:center}
+.kw{margin:0 12px;padding:12px 14px;display:grid;gap:10px;border:2px solid var(--bd);border-radius:16px;background:var(--blue)}
+.wl{display:flex;align-items:center;gap:6px;font-size:14px}
+.wl svg{width:18px;height:18px}
+.wl b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wr{flex:none;width:32px;height:32px;min-height:0;padding:0;display:grid;place-items:center;border:2px solid var(--bd);border-radius:50%;background:var(--card);color:var(--ink)}
+.wr svg{width:15px;height:15px}
+.wm{display:flex;align-items:center;gap:12px}
+.wi{color:var(--ic)}
+.wi svg{width:54px;height:54px;stroke-width:1.5}
+.wt{font-size:48px;font-weight:900;letter-spacing:-.05em;line-height:1}
+.wd{margin-left:auto;display:grid;text-align:right}
+.wd b{font-size:16px;line-height:1.25}
+.wd span{font-size:13px;opacity:.75}
+.wf{display:flex;justify-content:space-between;gap:8px;padding-top:9px;border-top:2px dashed var(--bd);font-size:12.5px}
+.wf span{display:grid}
+.wf b{font-size:14px}
+.wn{font-size:13.5px}
+.wb{justify-self:start;min-height:38px;padding:7px 14px}
+.kt{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 14px 14px}
+.kt>div{display:grid;min-width:0}
+.kt span{font-size:11.5px;font-weight:700;color:var(--mute)}
+.kt b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* sosmed: logo saja, bawah tengah */
+.soc{display:flex;justify-content:center;gap:16px;margin-top:14px}
+.soc a{width:56px;height:56px;display:grid;place-items:center;border:2px solid var(--bd);border-radius:50%;background:var(--card);color:var(--ink);box-shadow:3px 3px 0 var(--bd);transition:transform .12s,box-shadow .12s}
+.soc a:hover{background:var(--light)}
+.soc a:active{transform:translate(2px,2px);box-shadow:none}
+.soc svg{width:26px;height:26px}
 </style>
 </head>
 <body>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Masuk ke Xaerisoft">
+ <div class="gbox">
+  <span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+  <div><h1>Xaerisoft</h1><p class="hint" id="gh">Memuat akun…</p></div>
+  <div id="gf" class="hide" style="display:grid;gap:12px">
+   <button class="btn alt" type="button" data-gp="google">Lanjut dengan Google</button>
+   <div class="row"><button class="chip" type="button" data-gm="in" aria-pressed="true">Masuk</button><button class="chip" type="button" data-gm="up" aria-pressed="false">Daftar</button></div>
+   <form id="gef" style="display:grid;gap:10px">
+    <input id="gn" class="hide" type="text" placeholder="Nama" aria-label="Nama" autocomplete="name">
+    <input id="ge" type="email" placeholder="Email" aria-label="Email" required autocomplete="email">
+    <input id="gp" type="password" placeholder="Sandi (min. 6 karakter)" aria-label="Sandi" required minlength="6" autocomplete="current-password">
+    <button class="btn" id="gs" type="submit">Masuk</button>
+   </form>
+   <button class="btn alt" id="gg" type="button">Masuk sebagai tamu</button>
+   <div id="gnw" class="hide" style="display:grid;gap:10px"><input id="gnm" type="text" maxlength="24" placeholder="Nama kamu (tampil di chat)" aria-label="Nama tamu" autocomplete="nickname"><p class="hint">Akun tamu tersimpan di browser ini. Kalau data situs dihapus, akun tamu ikut hilang.</p><button class="btn" id="gok" type="button">Lanjut sebagai tamu</button></div>
+  </div>
+  <button class="btn alt hide" id="gx" type="button">Lanjut tanpa akun</button>
+  <div id="gmsg" class="err hide" role="alert"></div>
+ </div>
+</div>
 <header><div class="wrap bar">
   <a class="brand" href="#" aria-label="Xaerisoft, ke beranda"><span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Xaerisoft</a>
   <button class="menubtn" id="menubtn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="layer"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -381,7 +482,6 @@ details.faq p{padding:0 14px 12px;color:var(--mute);font-size:14.5px}
       <div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="q" type="search" placeholder="Cari tools…" aria-label="Cari tools" autocomplete="off"></div>
       <div class="chips" id="chips" role="group" aria-label="Kategori"></div>
-      <div id="featWrap"><h2>Pilihan</h2><div class="feat" id="feat"></div></div>
       <h2 id="listTitle">Semua tools</h2>
       <div class="grid" id="grid" aria-live="polite"></div>
       <div class="empty hide" id="empty"><b>Tools tidak ditemukan</b>Coba kata kunci lain atau pilih kategori berbeda.<br><button class="btn alt" id="reset">Reset pencarian</button></div>
@@ -398,7 +498,7 @@ details.faq p{padding:0 14px 12px;color:var(--mute);font-size:14.5px}
 <footer><div class="wrap"><span><b>Xaerisoft</b> — dibuat oleh Wilverse</span><span>Semua tools berjalan di perangkatmu.</span></div></footer>
 <dialog id="auth" aria-labelledby="at">
   <div class="row" style="justify-content:space-between;align-items:center"><h2 id="at">Masuk ke Xaerisoft</h2><button class="back" id="ax" aria-label="Tutup">&#10005;</button></div>
-  <p id="asetup" class="err hide" style="margin-top:12px">Firebase belum dikonfigurasi. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html lebih dulu.</p>
+  <p id="asetup" class="err hide" style="margin-top:12px">Firebase belum dikonfigurasi. Isi <b>FIREBASE_CONFIG</b> di bagian bawah payload_xaerisoft.txt lebih dulu.</p>
   <div id="aform" style="display:grid;gap:10px;margin-top:14px">
     <button class="btn alt" data-p="google">Lanjut dengan Google</button>
     <button class="btn alt" data-p="github">Lanjut dengan GitHub</button>
@@ -418,9 +518,9 @@ details.faq p{padding:0 14px 12px;color:var(--mute);font-size:14.5px}
   <ul id="mlist"></ul>
 </div>
 <nav class="dock" aria-label="Menu cepat">
-  <a href="#"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
-  <a class="mid" href="#chat" aria-label="Chat Global"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></a>
-  <button id="dkacc"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg><span>Masuk</span></button>
+  <a href="#" data-t="home"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
+  <a href="#chat" data-t="chat"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg><span>Chat</span></a>
+  <button id="dkacc" type="button" data-t="profil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg><span>Masuk</span></button>
 </nav>
 <div id="toast" role="status"></div>
 
@@ -531,10 +631,7 @@ function chips(){
 function list(){
  const q=state.q.trim().toLowerCase();
  const res=TOOLS.filter(t=>(state.cat==="Semua"||t.cat===state.cat)&&(!q||(t.name+" "+t.desc+" "+t.cat).toLowerCase().includes(q)));
- const showFeat=state.cat==="Semua"&&!q;
- $("#featWrap").classList.toggle("hide",!showFeat);
- if(showFeat)$("#feat").innerHTML=TOOLS.filter(t=>t.featured).map(t=>`<button class="ft" data-id="${t.id}"><span class="ic">${ico(t.icon)}</span><b>${esc(t.name)}</b><p>${esc(t.desc)}</p></button>`).join("");
- $("#grid").innerHTML=res.map(t=>`<button class="card enter" data-id="${t.id}"><span class="ic">${ico(t.icon)}</span><span><b>${esc(t.name)}</b><p>${esc(t.desc)}</p></span><span class="tag">${t.cat}</span></button>`).join("");
+ $("#grid").innerHTML=res.map((t,i)=>`<button class="tile t${i%4} enter" data-id="${t.id}"><span class="ic">${ico(t.icon)}</span><span><b>${esc(t.name)}</b><p>${esc(t.desc)}</p></span></button>`).join("");
  $("#empty").classList.toggle("hide",res.length>0);
  $("#listTitle").textContent=(state.cat==="Semua"&&!q?"Semua tools":"Hasil")+" ("+res.length+")";
  $("#listTitle").classList.toggle("hide",!res.length);
@@ -555,7 +652,9 @@ function open(t){
  if(!b){b=document.createElement("div");try{t.render(b)}catch(e){b.innerHTML='<div class="err">Tools gagal dimuat.</div>';console.error(e)}bodies.set(t.id,b)}
  host.appendChild(b);b.start&&b.start();document.title=t.name+" — Xaerisoft";scrollTo(0,0);$("#back").focus({preventScroll:true});
 }
+function dockSet(){const h=location.hash,k=h==="#chat"?"chat":/^#(profil|pengaturan|cs)$/.test(h)?"profil":"home";document.querySelectorAll(".dock [data-t]").forEach(b=>b.dataset.t===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"))}
 function route(){
+ dockSet();
  const m=location.hash.match(/^#tool-([\w-]+)$/),t=PAGES[location.hash]||(m&&byId(m[1]));
  if(t)open(t);else home();if(t!==CHAT){const c=bodies.get("chat");c&&c.stop&&c.stop()}
  if(!t&&/^#(tools|berita)$/.test(location.hash))$("#"+location.hash.slice(1)).scrollIntoView();
@@ -586,15 +685,46 @@ const regionOf=()=>{const m=(navigator.language||"").match(/-([A-Za-z]{2})$/);re
 const flag=r=>String.fromCodePoint(...[...r].map(c=>127397+c.charCodeAt(0)));
 const cname=r=>{try{return new Intl.DisplayNames(["id"],{type:"region"}).of(r)}catch{return r}};
 let batt=null;
+const greet=()=>{const h=new Date().getHours();return"Selamat "+(h<4?"malam":h<11?"pagi":h<15?"siang":h<18?"sore":"malam")};
+const WI={sun:'<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>',moon:'<path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/>',cloud:'<path d="M18 10h-1.3A8 8 0 109 20h9a5 5 0 000-10z"/>',
+ psun:'<circle cx="8" cy="8" r="2.8"/><path d="M8 2v1M2 8h1M3.8 3.8l.7.7M12.2 3.8l-.7.7"/><path d="M18.5 20h-8a3.8 3.8 0 01-.4-7.6 5.2 5.2 0 019.9 1.4 3.1 3.1 0 01-1.5 6.2z"/>',fog:'<path d="M4 9h16M3 13h18M6 17h12M9 21h6"/>',
+ drz:'<path d="M8 19v2M8 13v2M16 19v2M16 13v2M12 21v2M12 15v2"/><path d="M20 16.6A5 5 0 0018 7h-1.3A8 8 0 104 15.3"/>',rain:'<path d="M16 13v8M8 13v8M12 15v8"/><path d="M20 16.6A5 5 0 0018 7h-1.3A8 8 0 104 15.3"/>',
+ snow:'<path d="M20 17.6A5 5 0 0018 8h-1.3A8 8 0 104 16.3"/><path d="M8 16h.01M8 20h.01M12 18h.01M12 22h.01M16 16h.01M16 20h.01"/>',bolt:'<path d="M19 16.9A5 5 0 0018 7h-1.3a8 8 0 10-11.6 9"/><path d="M13 11l-4 6h6l-4 6"/>',
+ pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',ref:'<path d="M20 11a8 8 0 00-14.5-4.5M4 4v4h4M4 13a8 8 0 0014.5 4.5M20 20v-4h-4"/>'};
+const WX={0:["Cerah","sun"],1:["Cerah berawan","psun"],2:["Berawan sebagian","psun"],3:["Mendung","cloud"],45:["Berkabut","fog"],48:["Berkabut","fog"],51:["Gerimis","drz"],53:["Gerimis","drz"],55:["Gerimis lebat","drz"],56:["Gerimis beku","drz"],57:["Gerimis beku","drz"],61:["Hujan ringan","rain"],63:["Hujan","rain"],65:["Hujan lebat","rain"],66:["Hujan beku","rain"],67:["Hujan beku","rain"],71:["Salju ringan","snow"],73:["Salju","snow"],75:["Salju lebat","snow"],77:["Butiran salju","snow"],80:["Hujan lokal","rain"],81:["Hujan lokal","rain"],82:["Hujan deras","rain"],85:["Hujan salju","snow"],86:["Hujan salju","snow"],95:["Badai petir","bolt"],96:["Badai petir","bolt"],99:["Badai petir","bolt"]};
+const GEO={s:"idle",w:null,place:"",cc:""};let geoDone=0;
+function wxHTML(){const g=GEO,w=g.w;
+ if(g.s==="ok"&&w){const x=WX[w.c]||["Cuaca","cloud"],k=!w.day&&(x[1]==="sun"||x[1]==="psun")?"moon":x[1];
+  return`<div class="wl">${ico(WI.pin)}<b>${esc(g.place||"Lokasi terdeteksi")}</b><button class="wr" type="button" data-k="geo" aria-label="Perbarui cuaca">${ico(WI.ref)}</button></div><div class="wm"><span class="wi">${ico(WI[k])}</span><div class="wt">${Math.round(w.t)}°</div><div class="wd"><b>${x[0]}</b><span>${Math.round(w.lo)}° / ${Math.round(w.hi)}°</span></div></div><div class="wf"><span>Terasa<b>${Math.round(w.f)}°</b></span><span>Lembap<b>${w.h}%</b></span><span>Angin<b>${Math.round(w.wd)} km/j</b></span></div>`}
+ if(g.s==="ask")return`<div class="wl">${ico(WI.pin)}<b>Mencari lokasi…</b></div><p class="wn">Izinkan akses lokasi di jendela yang muncul untuk melihat cuaca.</p>`;
+ return`<div class="wl">${ico(WI.pin)}<b>Unknown</b></div><p class="wn">${g.s==="denied"?"Izin lokasi ditolak, jadi cuaca belum bisa tampil. Aktifkan lagi lewat pengaturan situs di browser.":"Lokasi belum bisa dibaca."}</p>${g.s==="denied"?"":'<button class="btn alt wb" type="button" data-k="geo">Coba lagi</button>'}`}
+async function getWx(la,lo){const j=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto`)).json(),c=j.current;if(!c)throw 0;
+ return{t:c.temperature_2m,f:c.apparent_temperature,h:c.relative_humidity_2m,c:c.weather_code,wd:c.wind_speed_10m,day:c.is_day,hi:j.daily.temperature_2m_max[0],lo:j.daily.temperature_2m_min[0]}}
+async function getPlace(la,lo){const u=(v,i,a)=>v&&a.indexOf(v)===i;
+ try{const j=await(await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${la}&longitude=${lo}&localityLanguage=id`)).json(),a=[j.city||j.locality,j.principalSubdivision].filter(u);if(a.length)return{place:a.join(", "),cc:j.countryCode||""}}catch{}
+ try{const j=await(await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=id&lat=${la}&lon=${lo}`)).json(),d=j.address||{},a=[d.city||d.town||d.village||d.county||d.suburb,d.state].filter(u);if(a.length)return{place:a.join(", "),cc:(d.country_code||"").toUpperCase()}}catch{}
+ return{place:la.toFixed(2)+", "+lo.toFixed(2),cc:""}}
+async function geoStart(){
+ if(!navigator.geolocation||!isSecureContext){GEO.s="na";kepo();return}
+ let st="prompt";try{st=(await navigator.permissions.query({name:"geolocation"})).state}catch{}
+ if(st==="denied"){GEO.s="denied";GEO.w=null;kepo();return}
+ if(st==="granted"&&GEO.s!=="ok")try{const c=JSON.parse(localStorage.getItem("xa-geo")||"null");if(c&&c.w){Object.assign(GEO,{s:"ok",w:c.w,place:c.place,cc:c.cc});kepo()}}catch{}
+ if(GEO.s!=="ok"){GEO.s="ask";kepo()}
+ navigator.geolocation.getCurrentPosition(async p=>{
+  try{const[w,pl]=await Promise.all([getWx(p.coords.latitude,p.coords.longitude),getPlace(p.coords.latitude,p.coords.longitude)]);
+   Object.assign(GEO,{s:"ok",w,place:pl.place,cc:pl.cc});try{localStorage.setItem("xa-geo",JSON.stringify({w,place:pl.place,cc:pl.cc}))}catch{}}
+  catch{if(GEO.s!=="ok")GEO.s="fail"}kepo()},
+ e=>{if(e.code===1){GEO.s="denied";GEO.w=null;try{localStorage.removeItem("xa-geo")}catch{}}else if(GEO.s!=="ok")GEO.s="fail";kepo()},
+ {timeout:15000,maximumAge:6e5})}
 function tick(){const t=$("#kt");if(!t)return;
- t.textContent="Jam "+new Date().toLocaleTimeString("id-ID");
- $("#ko").innerHTML=navigator.onLine?'<span class="up">● Online</span>':'<span class="down">● Offline</span>';
- if(batt){const b=$("#kb");b.classList.remove("hide");b.textContent="Baterai "+Math.round(batt.level*100)+"%"}}
-function kepo(){const u=XA().user,r=regionOf(),nm=u?(u.displayName||(u.isAnonymous?"Tamu":(u.email||"Pengguna").split("@")[0])):"Tamu";
- $("#kepo").innerHTML=`<div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><div class="kinfo"><b>${esc(nm)}</b><div class="kgrid"><span>${r?flag(r)+" "+esc(cname(r)):"Lokasi tidak terdeteksi"}</span><span id="kt"></span><span>${DEV}</span><span>${BRW}</span><span id="kb" class="hide"></span><span id="ko"></span></div></div><div class="kact">${u?'<a class="btn alt" href="#profil" style="text-decoration:none;justify-content:center">Profil</a>':'<button class="btn" data-k="in">Masuk untuk chat</button>'}</div>`;
+ t.textContent=new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"}).replace(/\./g,":");
+ const on=navigator.onLine;$("#ko").innerHTML=`<span class="${on?"up":"down"}">${on?"Online":"Offline"}</span>`;$("#kd").style.background=on?"":"var(--no)";
+ $("#kb").textContent=batt?Math.round(batt.level*100)+"%"+(batt.charging?" ⚡":""):"—"}
+function kepo(){const u=XA().user,r=GEO.cc||regionOf(),nm=u?(u.displayName||(u.isAnonymous?"Tamu":(u.email||"Pengguna").split("@")[0])):"Tamu";
+ $("#kepo").innerHTML=`<div class="kh"><div class="kavw"><div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><i class="kdot" id="kd"></i></div><div class="kinfo"><small>${greet()}</small><b>${esc(nm)}</b><span class="kmeta">${r?flag(r)+" "+esc(cname(r)):"Negara tidak diketahui"}, ${DEV}</span></div>${u?'<a class="btn alt kbtn" href="#profil">Profil</a>':'<button class="btn kbtn" type="button" data-k="in">Masuk</button>'}</div><div class="kw" aria-live="polite">${wxHTML()}</div><div class="kt"><div><span>Jam</span><b id="kt"></b></div><div><span>Browser</span><b>${BRW}</b></div><div><span>Baterai</span><b id="kb">—</b></div><div><span>Status</span><b id="ko"></b></div></div>`;
  $("#dkacc span").textContent=u?"Profil":"Masuk";tick()}
 const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
-document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut()});
+document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut();if(k==="geo")geoStart()});
 $("#dkacc").onclick=()=>XA().user?(location.hash="#profil"):openAuth();
 
 /* ===== Menu layer (pojok kanan) =====
@@ -641,7 +771,25 @@ dlg.addEventListener("click",e=>{
  const m=e.target.closest("[data-m]")?.dataset.m;if(m){amode=m;dlg.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));$("#an").classList.toggle("hide",m==="in");$("#asub").textContent=m==="in"?"Masuk":"Daftar";$("#ap").autocomplete=m==="in"?"current-password":"new-password"}});
 $("#ef").addEventListener("submit",e=>{e.preventDefault();const x=XA(),em=$("#ae").value.trim(),pw=$("#ap").value;
  (amode==="in"?x.signin(em,pw):x.signup($("#an").value.trim()||em.split("@")[0],em,pw)).catch(aerr)});
-addEventListener("xa",()=>{kepo();if(XA().user&&dlg.open)dlg.close()});
+const gate=$("#gate");let gm="in";
+const gmsg=t=>{const m=$("#gmsg");m.textContent=t||"";m.classList.toggle("hide",!t)};
+const gerr=e=>{if(e&&e.code==="auth/popup-closed-by-user")return;gmsg(AERR[e&&e.code]||"Gagal: "+(e&&e.message||e))};
+function gateSync(){const x=XA();
+ if(x.user){gate.classList.add("off");return}
+ gate.classList.remove("off");
+ const wait=!x.loaded||(x.ready&&!x.ar);
+ $("#gh").textContent=wait?"Memuat akun…":x.ready?"Masuk untuk membuka tools dan chat.":"Firebase belum bisa dimuat."+(x.error?" "+x.error:"");
+ $("#gf").classList.toggle("hide",!x.ready||wait);
+ $("#gx").classList.toggle("hide",!(x.loaded&&!x.ready))}
+gate.addEventListener("click",e=>{
+ const p=e.target.closest("[data-gp]")?.dataset.gp;if(p){gmsg();XA().social(p).catch(gerr);return}
+ const m=e.target.closest("[data-gm]")?.dataset.gm;
+ if(m){gm=m;gate.querySelectorAll("[data-gm]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.gm===m));$("#gn").classList.toggle("hide",m==="in");$("#gs").textContent=m==="in"?"Masuk":"Daftar";$("#gp").autocomplete=m==="in"?"current-password":"new-password";gmsg();return}
+ if(e.target.closest("#gg")){$("#gnw").classList.toggle("hide");$("#gnm").focus();return}
+ if(e.target.closest("#gok")){const n=$("#gnm").value.trim();if(n.length<2){$("#gnm").focus();gmsg("Isi nama dulu (min. 2 huruf).");return}gmsg();XA().guest(n).catch(gerr);return}
+ if(e.target.closest("#gx"))gate.classList.add("off")});
+$("#gef").addEventListener("submit",e=>{e.preventDefault();gmsg();const x=XA(),em=$("#ge").value.trim(),pw=$("#gp").value;(gm==="in"?x.signin(em,pw):x.signup($("#gn").value.trim()||em.split("@")[0],em,pw)).catch(gerr)});
+addEventListener("xa",()=>{kepo();gateSync();if(XA().user&&dlg.open)dlg.close();if(XA().user&&!geoDone){geoDone=1;geoStart()}});
 
 /* Chat Global (Firestore, hanya saat tampil) */
 const hm=t=>new Date(t).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
@@ -652,7 +800,7 @@ render(el){let un=null,uid=null,on=false;
  const draw=()=>{if(!on)return;const x=XA(),u=x.user;
   if(un&&uid!==(u&&u.uid))unsub();uid=u&&u.uid;
   if(!x.loaded){el.innerHTML='<div class="panel"><p>Memuat…</p></div>';return}
-  if(!x.ready){unsub();el.innerHTML='<div class="panel"><p class="err">'+(x.error?"Firebase gagal dimuat: "+esc(x.error):"Chat butuh Firebase. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html.")+'</p></div>';return}
+  if(!x.ready){unsub();el.innerHTML='<div class="panel"><p class="err">'+(x.error?"Firebase gagal dimuat: "+esc(x.error):"Chat butuh Firebase. Isi <b>FIREBASE_CONFIG</b> di bagian bawah payload_xaerisoft.txt.")+'</p></div>';return}
   if(!u){unsub();el.innerHTML='<div class="panel"><p>Masuk dulu untuk membaca dan mengirim pesan.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';return}
   if(un)return;
   let force=false;
@@ -663,14 +811,14 @@ render(el){let un=null,uid=null,on=false;
    let h="",pt=0,pu=null,pd="";
    a.forEach(m=>{const t=m.at&&m.at.toMillis?m.at.toMillis():Date.now(),dk=new Date(t).toDateString(),nd=dk!==pd,g=!nd&&m.uid===pu&&t-pt<3e5,me=m.uid===uid,nm=m.name||"Pengguna";
     if(nd)h+=`<div class="ds">${dayLabel(t)}</div>`;
-    const av=me?"":g?'<div class="ma"></div>':`<div class="ma">${/^https:/.test(m.photo||"")?`<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())}</div>`;
+    const pp=me?"":XA().photo(m.uid)||m.photo||"",av=me?"":g?'<div class="ma"></div>':`<div class="ma" data-u="${esc(m.uid||"")}">${okP(pp)?`<img src="${esc(pp)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())}</div>`;
     h+=`<div class="m${me?" me":""}${g?" g":""}">${av}<div class="mb">${me||g?"":`<small>${esc(nm)}</small>`}<p>${esc(m.text||"")}</p><time datetime="${new Date(t).toISOString()}">${hm(t)}</time></div></div>`;
     pt=t;pu=m.uid;pd=dk});
    ms.innerHTML=h||'<div class="ec"><b>Belum ada pesan</b>Jadi yang pertama menyapa.</div>';
    $("#cc",el).textContent=a.length?a.length+" pesan":"";
    if(first||near||force)ms.scrollTop=ms.scrollHeight;first=false;force=false},()=>{ms.innerHTML='<p class="err">Pesan tidak bisa dimuat. Periksa aturan Firestore.</p>'});
   $("#cf",el).onsubmit=e=>{e.preventDefault();const i=$("#ci",el),t=i.value.trim();if(!t)return;i.value="";i.focus();force=true;x.send(t).catch(er=>{force=false;i.value=t;toast("Gagal kirim: "+(er.code||er.message))})}};
- el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",draw)}};
+ el.start=()=>{on=true;draw()};el.stop=()=>{on=false;unsub()};addEventListener("xa",()=>{draw();el.querySelectorAll(".ma[data-u]").forEach(a=>{const p=XA().photo(a.dataset.u);if(okP(p)&&!a.firstElementChild)a.innerHTML=`<img src="${esc(p)}" alt="">`})})}};
 
 /* ===== Profil, Pengaturan, Customer service ===== */
 const LINKS={wa:"https://wa.me/62885384482069?text="+encodeURIComponent("Halo developer Xaerisoft, saya mau bertanya."),ig:"https://www.instagram.com/wilveil",tt:"https://www.tiktok.com/@xaerisoft"};
@@ -686,15 +834,15 @@ const IC={
 const CHV='<svg class="i go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
 const EXT='<svg class="i go" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>';
 const row=(href,ic,t,d,ext)=>`<a class="mi" href="${href}"${ext?' target="_blank" rel="noopener noreferrer"':""}><span class="ic">${ico(ic)}</span><span>${t}<small>${d}</small></span>${ext?EXT:CHV}</a>`;
-const rows=()=>`<div class="plist">${row("#pengaturan",IC.gear,"Pengaturan","Tema dan tampilan")}${row("#cs",IC.head,"Customer service","Bantuan untuk kamu")}${row(LINKS.wa,IC.wa,"Hubungi developer","Chat lewat WhatsApp",1)}${row(LINKS.ig,IC.ig,"Instagram","@wilveil",1)}${row(LINKS.tt,IC.tt,"TikTok","@xaerisoft",1)}</div>`;
+const SOC=()=>`<div class="soc">${[["ig",LINKS.ig,"Instagram @wilveil"],["tt",LINKS.tt,"TikTok @xaerisoft"]].map(([k,h,l])=>`<a href="${h}" target="_blank" rel="noopener noreferrer" aria-label="${l}" title="${l}">${ico(IC[k])}</a>`).join("")}</div>`;
+const rows=()=>`<div class="plist">${row("#pengaturan",IC.gear,"Pengaturan","Tema dan tampilan")}${row("#cs",IC.head,"Customer service","Bantuan untuk kamu")}${row(LINKS.wa,IC.wa,"Hubungi developer","Chat lewat WhatsApp",1)}</div>`;
 
 /* Foto profil: disimpan di localStorage perangkat ini */
-const photoKey=u=>"xa-photo-"+u.uid;
-const getPhoto=u=>{try{return u?localStorage.getItem(photoKey(u))||"":""}catch{return""}};
-const avaInner=(u,nm)=>{const p=getPhoto(u)||(/^https:/.test(u.photoURL||"")?u.photoURL:"");return p?`<img src="${esc(p)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())};
-const cropPhoto=(file,size=256)=>new Promise((ok,no)=>{const url=URL.createObjectURL(file),img=new Image();
+const okP=p=>/^(data:image\/jpeg;base64,[A-Za-z0-9+\/=]+|https:\/\/[^\s"'<>]+)$/.test(p||"");
+const avaInner=(u,nm)=>{const p=XA().photo&&XA().photo(u.uid)||(/^https:/.test(u.photoURL||"")?u.photoURL:"");return okP(p)?`<img src="${esc(p)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase())};
+const cropPhoto=(file,size=160)=>new Promise((ok,no)=>{const url=URL.createObjectURL(file),img=new Image();
  img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d"),m=Math.min(img.naturalWidth,img.naturalHeight);
-  x.fillStyle="#fff";x.fillRect(0,0,size,size);x.drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,size,size);URL.revokeObjectURL(url);ok(c.toDataURL("image/jpeg",.85))};
+  x.fillStyle="#fff";x.fillRect(0,0,size,size);x.drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,size,size);URL.revokeObjectURL(url);ok(c.toDataURL("image/jpeg",.8))};
  img.onerror=()=>{URL.revokeObjectURL(url);no(new Error("bad"))};img.src=url});
 
 const PROFIL={id:"profil",name:"Profil",desc:"Atur nama dan akun kamu.",cat:"",icon:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
@@ -703,17 +851,17 @@ render(el){
   if(!x.loaded){el.innerHTML='<div class="panel"><p>Memuat…</p></div>';return}
   let top;
   if(!u)top='<div class="panel"><p>Kamu belum masuk.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';
-  else{const nm=u.displayName||"Tamu",has=!!getPhoto(u);
+  else{const nm=u.displayName||"Tamu",has=okP(XA().photo(u.uid));
    const head=`<div class="row" style="align-items:center;flex-wrap:nowrap;gap:16px"><div class="pav"><div class="kav big">${avaInner(u,nm)}</div><button class="pedit" type="button" id="pe" aria-label="Ganti foto profil">${ico(IC.cam)}</button><input id="pfi" class="hide" type="file" accept="image/*"></div><div style="min-width:0"><b>${esc(nm)}</b><br><span style="color:var(--mute);font-size:14px;word-break:break-all">${u.isAnonymous?"Akun tamu":esc(u.email||"")}</span>${has?'<br><button class="plink" type="button" id="prm">Hapus foto</button>':""}</div></div>`;
    top=u.isAnonymous?`<div class="panel">${head}<p>Login dulu untuk mengatur profil dan mengganti username. Chat yang sudah kamu kirim tetap terbawa.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button><button class="btn alt" data-k="out">Keluar</button></div></div>`
    :`<div class="panel">${head}<form class="f" id="pf"><label for="pn">Username</label><input id="pn" type="text" minlength="2" maxlength="24" required value="${esc(nm)}"><p id="pm" class="err hide" role="alert" style="margin-top:8px"></p></form><div class="row"><button class="btn" form="pf" type="submit">Simpan</button><button class="btn alt" data-k="out">Keluar</button></div></div>`}
-  el.innerHTML=`<div class="stack">${top}${rows()}</div>`;
+  el.innerHTML=`<div class="stack">${top}${rows()}${SOC()}</div>`;
   if(!u)return;
   const pe=$("#pe",el),fi=$("#pfi",el);
   pe.onclick=()=>fi.click();
   fi.onchange=async()=>{const f=fi.files[0];fi.value="";if(!f)return;if(!/^image\//.test(f.type)){toast("File harus berupa gambar");return}
-   try{localStorage.setItem(photoKey(u),await cropPhoto(f));toast("Foto profil diganti");kepo();draw()}catch{toast("Gagal menyimpan foto")}};
-  const rm=$("#prm",el);if(rm)rm.onclick=()=>{try{localStorage.removeItem(photoKey(u))}catch{}toast("Foto dihapus");kepo();draw()};
+   try{await x.setPhoto(await cropPhoto(f));toast("Foto profil diganti")}catch(er){toast("Gagal menyimpan foto: "+(er.code||er.message))}};
+  const rm=$("#prm",el);if(rm)rm.onclick=async()=>{try{await x.setPhoto("");toast("Foto dihapus")}catch{toast("Gagal menghapus foto")}};
   const pf=$("#pf",el);if(pf)pf.onsubmit=async e=>{e.preventDefault();const v=$("#pn",el).value.trim(),pm=$("#pm",el);
    if(v.length<2){pm.textContent="Username minimal 2 karakter.";pm.classList.remove("hide");return}
    try{await x.rename(v);toast("Username disimpan")}catch(er){pm.textContent="Gagal menyimpan: "+er.message;pm.classList.remove("hide")}}};
@@ -740,7 +888,7 @@ render(el){
 
 const CS={id:"cs",name:"Customer service",desc:"Bantuan untuk pengguna Xaerisoft.",cat:"",icon:IC.head,
 render(el){
- const faq=[["Cara ganti username?","Buka Profil, ubah kolom Username, lalu tekan Simpan."],["Cara ganti foto profil?","Di Profil, tekan ikon kamera pada foto. Foto disimpan di perangkat ini."],["Cara ganti tema?","Buka Profil, pilih Pengaturan, lalu Ubah tema."]];
+ const faq=[["Cara ganti username?","Buka Profil, ubah kolom Username, lalu tekan Simpan."],["Cara ganti foto profil?","Di Profil, tekan ikon kamera pada foto. Foto bisa dilihat pengguna lain, misalnya di Chat Global."],["Cara ganti tema?","Buka Profil, pilih Pengaturan, lalu Ubah tema."],["Kenapa diminta izin lokasi?","Untuk menampilkan nama kota dan cuaca di Beranda. Koordinat dikirim ke layanan cuaca dan peta, tidak disimpan oleh Xaerisoft. Kalau ditolak, lokasi tampil Unknown."]];
  el.innerHTML=`<div class="stack"><div class="panel"><div class="csh"><span class="ic">${ico(IC.head)}</span><div><b>Ada kendala?</b><p class="hint">Pilih topik, lalu ceritakan masalahmu.</p></div></div><div class="cs-status"><i></i>Layanan belum aktif. Segera hadir.</div><div class="topics" role="group" aria-label="Topik">${["Akun dan login","Chat Global","Upgrade VIP","API endpoint","Lainnya"].map(t=>`<button class="chip" type="button" data-tp aria-pressed="false">${t}</button>`).join("")}</div><form class="f" id="csf"><label for="csm">Pesan</label><textarea id="csm" maxlength="500" placeholder="Tulis kendalamu…" style="min-height:110px;font-family:inherit"></textarea><div class="row" style="margin-top:12px"><button class="btn" type="submit">Kirim</button></div></form></div>
  <div class="panel"><h2 style="margin:0">Pertanyaan umum</h2>${faq.map(f=>`<details class="faq"><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join("")}</div></div>`;
  el.addEventListener("click",e=>{const c=e.target.closest("[data-tp]");if(!c)return;el.querySelectorAll("[data-tp]").forEach(b=>b.setAttribute("aria-pressed",b===c&&b.getAttribute("aria-pressed")!=="true"))});
@@ -748,7 +896,7 @@ render(el){
 
 const PAGES={"#chat":CHAT,"#profil":PROFIL,"#pengaturan":SETTINGS,"#cs":CS};
 
-kepo();setInterval(tick,1000);addEventListener("online",tick);addEventListener("offline",tick);
+kepo();gateSync();setInterval(tick,1000);setInterval(()=>{GEO.s==="ok"&&geoStart()},9e5);addEventListener("online",tick);addEventListener("offline",tick);
 navigator.getBattery&&navigator.getBattery().then(b=>{batt=b;b.addEventListener("levelchange",tick);tick()}).catch(()=>{});
 news();
 chips();list();route();
@@ -757,13 +905,13 @@ chips();list();route();
 /* ===== Firebase =====
    Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
    Biarkan kosong untuk mematikan fitur akun dan chat. */
-const FIREBASE_CONFIG=window.__FB||{apiKey:"",authDomain:"",projectId:"",appId:""};
-const XA=window.XA={ready:false,user:null,loaded:false};
+const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject-563df.firebaseapp.com",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
+const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>""};
 const fire=()=>dispatchEvent(new Event("xa"));
 if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
  const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
- const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages");
+ const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i);
  Object.assign(XA,{ready:true,
   social:async p=>{const pr=p==="github"?new Au.GithubAuthProvider():new Au.GoogleAuthProvider(),cu=auth.currentUser;
    if(cu&&cu.isAnonymous){try{await Au.linkWithPopup(cu,pr);XA.user=auth.currentUser;fire();return}catch(e){if(e.code==="auth/credential-already-in-use"){const c=(p==="github"?Au.GithubAuthProvider:Au.GoogleAuthProvider).credentialFromError(e);if(c){await Au.signInWithCredential(auth,c);return}}throw e}}
@@ -771,10 +919,13 @@ if(FIREBASE_CONFIG.apiKey){try{
   signin:(e,p)=>Au.signInWithEmailAndPassword(auth,e,p),
   signup:async(n,e,p)=>{const cu=auth.currentUser;let c;if(cu&&cu.isAnonymous)c=await Au.linkWithCredential(cu,Au.EmailAuthProvider.credential(e,p));else c=await Au.createUserWithEmailAndPassword(auth,e,p);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
   out:()=>Au.signOut(auth),
-  rename:async n=>{await Au.updateProfile(auth.currentUser,{displayName:n});XA.user=auth.currentUser;fire()},
+  rename:async n=>{await Au.updateProfile(auth.currentUser,{displayName:n});try{await Fs.setDoc(ud(auth.currentUser.uid),{name:n},{merge:true})}catch{}XA.user=auth.currentUser;fire()},
+  guest:async n=>{const c=await Au.signInAnonymously(auth);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
+  setPhoto:async d=>{const cu=auth.currentUser;await Fs.setDoc(ud(cu.uid),{photo:d,name:cu.displayName||"",at:Fs.serverTimestamp()},{merge:true});P[cu.uid]={...P[cu.uid],photo:d};fire()},
+  photo:id=>{const p=P[id];if(p===undefined&&!Q.has(id)){Q.add(id);Fs.getDoc(ud(id)).then(x=>{P[id]=x.exists()?x.data():{}}).catch(()=>{P[id]={}}).then(()=>fire())}return p&&p.photo||""},
   send:t=>Fs.addDoc(col,{text:t,uid:auth.currentUser.uid,name:auth.currentUser.displayName||(auth.currentUser.isAnonymous?"Tamu":"Pengguna"),photo:auth.currentUser.photoURL||"",at:Fs.serverTimestamp()}),
   listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er)});
- Au.onAuthStateChanged(auth,u=>{XA.user=u;fire()});
+ Au.onAuthStateChanged(auth,u=>{XA.user=u;XA.ar=true;if(u)XA.photo(u.uid);fire()});
 }catch(e){console.error(e);XA.error=e.message}}
 XA.loaded=true;fire();
 </script>

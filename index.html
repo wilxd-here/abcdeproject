@@ -2,114 +2,91 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Masuk — Xaerisoft</title>
-<meta name="theme-color" content="#F6F3EA">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xaerisoft</title>
+<meta name="theme-color" content="#FBF3E4">
+<script>
+/* Ikuti tema yang dipilih pengguna supaya tidak berkedip */
+(function(){var T={default:["#FBF3E4","#FFFCF6","#2E2A3B","#CF4226","#A6E3D3","#FFE08A","#fff","#2E2A3B"],mono:["#F1F1EF","#fff","#141414","#141414","#D6D6D6","#BEBEBC","#fff","#141414"],obsidian:["#0E0A18","#181226","#EEE8FF","#7C4DF0","#2C1F55","#4B2370","#fff","#6E52C8"],universe:["#060A1C","#0F1636","#E7EDFF","#22D3EE","#1B2766","#43206A","#04141F","#4E67D6"]},k="default",a=null;
+try{k=localStorage.getItem("xa-theme");a=localStorage.getItem("xa-accent")}catch(e){}
+if(!T[k])k="default";var v=T[k].slice();
+if(k==="default"&&/^#[0-9a-f]{6}$/i.test(a||"")){v[3]=a;var r=parseInt(a.substr(1,2),16),g=parseInt(a.substr(3,2),16),b=parseInt(a.substr(5,2),16);v[6]=(.299*r+.587*g+.114*b)>150?"#1b1722":"#fff"}
+var n=["bg","card","ink","accent","blue","c3","on","bd"],s=document.documentElement.style;
+n.forEach(function(x,i){s.setProperty("--"+x,v[i])});
+document.querySelector("meta[name=theme-color]").content=v[0]})();
+</script>
 <style>
-:root{--bg:#F6F3EA;--blue:#B8DFFF;--accent:#447BA8;--light:#D4EAF7;--ink:#24344B;--mute:#5b6b80}
 *{box-sizing:border-box;margin:0}
-body{font:16px/1.5 ui-rounded,"Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--ink);min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(rgba(68,123,168,.2) 1.3px,transparent 1.5px) 0 0/22px 22px,var(--bg)}
-button,input{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
-.box{width:min(100%,400px);background:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:6px 6px 0 var(--blue);padding:22px;display:grid;gap:14px}
-.logo{width:44px;height:44px;border-radius:13px;background:var(--blue);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;color:var(--accent)}
-.logo svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
-h1{font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1}
-.sub{color:var(--mute);margin-top:6px}
-.btn{width:100%;border:2px solid var(--ink);border-radius:12px;padding:11px 16px;font-weight:700;min-height:46px;background:var(--accent);color:#fff;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:transform .12s,box-shadow .12s}
-.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-.btn.alt{background:var(--light);color:var(--ink)}
-.btn.ghost{background:#fff;color:var(--ink);box-shadow:none}
-.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}.or::before,.or::after{content:"";flex:1;height:2px;background:rgba(36,52,75,.12)}
-.tabs{display:flex;gap:6px}
-.tab{flex:1;border:2px solid var(--ink);background:#fff;border-radius:999px;padding:8px;font-weight:700;cursor:pointer;min-height:40px}
-.tab[aria-pressed=true]{background:var(--ink);color:#fff}
-form{display:grid;gap:10px}
-input{width:100%;border:2px solid var(--ink);border-radius:12px;padding:11px 12px;background:#fff}
-input:focus{outline:none;box-shadow:0 0 0 4px var(--light)}
-.err{color:#9b2c2c;background:#fdecec;border-radius:10px;padding:10px 12px;font-size:14px}
-.hide{display:none!important}
-dialog{border:2px solid var(--ink);border-radius:20px;padding:18px;width:min(92vw,360px);box-shadow:6px 6px 0 var(--blue);margin:auto;color:var(--ink)}
-dialog::backdrop{background:rgba(36,52,75,.45)}
-dialog p{margin:8px 0 14px}
-.row{display:grid;gap:8px}
-#load{text-align:center;color:var(--mute)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+html,body{height:100%}
+body{background:radial-gradient(color-mix(in srgb,var(--accent) 18%,transparent) 1.3px,transparent 1.5px) 0 0/22px 22px,var(--bg);color:var(--ink);font:16px/1.5 ui-rounded,"Avenir Next","Segoe UI",system-ui,sans-serif;overflow:hidden;--ease:cubic-bezier(.2,.7,.2,1)}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 24px calc(24px + env(safe-area-inset-bottom,0px));text-align:center;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+body.out main{opacity:0;transform:translateY(-10px) scale(.97)}
+.stage{position:relative;width:min(300px,86vw);height:210px;margin-bottom:6px}
+.logo{position:absolute;left:50%;top:50%;width:104px;height:104px;margin:-52px 0 0 -52px;border-radius:30px;background:var(--accent);color:var(--on);border:3px solid var(--bd);box-shadow:6px 6px 0 var(--bd);display:grid;place-items:center;animation:drop .8s var(--ease) both}
+.logo svg{width:52px;height:52px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.s{position:absolute;width:50px;height:50px;border:2px solid var(--bd);border-radius:15px;box-shadow:3px 3px 0 var(--bd);display:grid;place-items:center;background:var(--blue);color:var(--ink);opacity:0;transform:rotate(var(--r));animation:pop .45s var(--ease) forwards;animation-delay:calc(.6s + var(--d)*.13s)}
+.s:nth-child(2){background:var(--c3)}.s:nth-child(3){background:var(--card)}.s:nth-child(4){background:color-mix(in srgb,var(--accent) 24%,var(--card))}
+.s svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.wm{font-size:clamp(42px,13vw,60px);font-weight:900;line-height:1;letter-spacing:-.045em}
+.wm span{display:inline-block;opacity:0;transform:translateY(.45em);animation:rise .5s var(--ease) forwards;animation-delay:calc(.8s + var(--i)*.05s)}
+.tag{max-width:19em;opacity:0;animation:rise .6s var(--ease) 1.3s forwards;color:color-mix(in srgb,var(--ink) 68%,var(--bg))}
+.bar{width:min(240px,70vw);height:16px;border:2px solid var(--bd);border-radius:999px;background:var(--card);overflow:hidden;margin-top:10px;opacity:0;animation:rise .4s var(--ease) 1.2s forwards}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-right:2px solid var(--bd);transition:width .35s var(--ease)}
+#st{font-size:14px;font-weight:700;min-height:1.5em}
+.er{max-width:320px;display:grid;gap:8px;justify-items:center;padding:14px;border:2px solid var(--bd);border-radius:16px;background:var(--card);box-shadow:4px 4px 0 var(--accent)}
+.er[hidden]{display:none}
+.er span{font-size:14px}
+.er button{font:inherit;font-weight:700;border:2px solid var(--bd);border-radius:12px;padding:9px 18px;min-height:44px;background:var(--accent);color:var(--on);box-shadow:3px 3px 0 var(--bd);cursor:pointer}
+.er button:active{transform:translate(2px,2px);box-shadow:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@keyframes drop{0%{transform:translateY(-90px) rotate(-14deg) scale(1.15);opacity:0;box-shadow:18px 18px 0 var(--bd)}50%{opacity:1}72%{transform:translateY(0) rotate(2deg) scale(.95);box-shadow:2px 2px 0 var(--bd)}100%{transform:none;box-shadow:6px 6px 0 var(--bd)}}
+@keyframes pop{0%{transform:scale(0) rotate(var(--r));opacity:0}70%{transform:scale(1.14) rotate(var(--r))}100%{transform:scale(1) rotate(var(--r));opacity:1}}
+@keyframes rise{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
 </style>
 </head>
 <body>
-<main class="box">
-  <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
-  <div><h1>Xaerisoft</h1><p class="sub">Masuk untuk membuka tools dan chat.</p></div>
-  <div id="setup" class="err hide">Firebase belum dikonfigurasi. Isi <b>FIREBASE_CONFIG</b> di bagian bawah index.html.</div>
-  <div id="form" style="display:grid;gap:14px">
-    <button class="btn alt" id="g" type="button">Lanjut dengan Google</button>
-    <div class="or">atau pakai email</div>
-    <div class="tabs"><button class="tab" data-m="in" aria-pressed="true" type="button">Masuk</button><button class="tab" data-m="up" aria-pressed="false" type="button">Daftar</button></div>
-    <form id="ef">
-      <input id="nm" class="hide" type="text" placeholder="Nama" aria-label="Nama" autocomplete="name">
-      <input id="em" type="email" placeholder="Email" aria-label="Email" required autocomplete="email">
-      <input id="pw" type="password" placeholder="Sandi (min. 6 karakter)" aria-label="Sandi" required minlength="6" autocomplete="current-password">
-      <button class="btn" id="sub" type="submit">Masuk</button>
-    </form>
-    <div id="msg" class="err hide" role="alert"></div>
-    <div class="or">atau</div>
-    <button class="btn ghost" id="gs" type="button">Masuk sebagai tamu</button>
+<main aria-busy="true">
+  <div class="stage" aria-hidden="true">
+    <i class="s" style="--r:-10deg;--d:0;left:2px;top:16px"><svg viewBox="0 0 24 24"><path d="M8 4C6 4 6 6 6 8s0 4-2 4c2 0 2 2 2 4s0 4 2 4M16 4c2 0 2 2 2 4s0 4 2 4c-2 0-2 2-2 4s0 4-2 4"/></svg></i>
+    <i class="s" style="--r:9deg;--d:1;right:4px;top:2px"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></i>
+    <i class="s" style="--r:7deg;--d:2;left:14px;bottom:4px"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="15" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/><circle cx="9" cy="15" r="1" fill="currentColor"/></svg></i>
+    <i class="s" style="--r:-8deg;--d:3;right:0;bottom:16px"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></i>
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
   </div>
-  <p id="load" class="hide" role="status">Memuat Xaerisoft…</p>
+  <h1 class="wm" aria-label="Xaerisoft"></h1>
+  <p class="tag">Tools kecil buatan Wilverse, langsung jalan di browser.</p>
+  <div class="bar" role="progressbar" aria-label="Memuat Xaerisoft" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="f"></i></div>
+  <p id="st" role="status">Menyiapkan meja kerja…</p>
+  <div id="er" class="er" hidden><b>Xaerisoft gagal dimuat</b><span id="em"></span><button id="rt" type="button">Coba lagi</button></div>
 </main>
-<dialog id="gd" aria-labelledby="gt">
-  <b id="gt">Masuk sebagai tamu?</b>
-  <p>Tulis nama yang mau tampil di chat. Akun tamu tersimpan di browser ini. Kalau data situs atau riwayat browser dihapus, akun tamu dan chat atas namanya ikut hilang.</p>
-  <input id="gn" type="text" maxlength="24" placeholder="Nama kamu (tampil di chat)" aria-label="Nama tamu" autocomplete="nickname" style="margin-bottom:12px">
-  <div class="row"><button class="btn" id="gok" type="button">Lanjut sebagai tamu</button><button class="btn ghost" id="gno" type="button">Batal</button></div>
-</dialog>
-
-<script type="module">
-/* Isi dari Firebase Console > Project settings > Your apps (Web) */
-const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject-563df.firebaseapp.com",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
-const PAYLOAD="payload_xaerisoft.txt";
-const $=s=>document.querySelector(s);
-const msg=t=>{const m=$("#msg");m.textContent=t;m.classList.toggle("hide",!t)};
-const ERR={"auth/invalid-credential":"Email atau sandi salah.","auth/email-already-in-use":"Email ini sudah terdaftar. Coba masuk.","auth/weak-password":"Sandi minimal 6 karakter.","auth/invalid-email":"Format email tidak valid.","auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.","auth/operation-not-allowed":"Metode masuk ini belum diaktifkan di Firebase.","auth/unauthorized-domain":"Domain ini belum ada di Authorized domains Firebase.","auth/account-exists-with-different-credential":"Email ini sudah dipakai dengan metode masuk lain."};
-let mode="in",done=false,busy=false;
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-pressed",t===b));$("#nm").classList.toggle("hide",mode==="in");$("#sub").textContent=mode==="in"?"Masuk":"Daftar";$("#pw").autocomplete=mode==="in"?"current-password":"new-password";msg("")});
-
-async function enter(){
-  done=true;$("#form").classList.add("hide");$("#load").classList.remove("hide");
+<noscript><p style="position:fixed;inset:auto 0 24px;text-align:center">Xaerisoft butuh JavaScript untuk berjalan.</p></noscript>
+<script>
+(function(){
+var SRC="payload_xaerisoft.txt",$=function(s){return document.querySelector(s)},red=matchMedia("(prefers-reduced-motion:reduce)").matches;
+var w=$(".wm");"Xaerisoft".split("").forEach(function(c,i){var e=document.createElement("span");e.textContent=c;e.style.setProperty("--i",i);w.appendChild(e)});
+var f=$("#f"),st=$("#st"),bar=$(".bar");
+function set(p){p=Math.max(0,Math.min(1,p));f.style.width=p*100+"%";bar.setAttribute("aria-valuenow",Math.round(p*100));st.textContent=p>=1?"Siap":p>.7?"Hampir siap…":p>.25?"Memuat tools…":"Menyiapkan meja kerja…"}
+var wait=new Promise(function(r){setTimeout(r,red?300:2400)});
+async function get(){
+  var r=await fetch(SRC,{cache:"no-cache"});if(!r.ok)throw new Error("HTTP "+r.status);
+  if(!r.body||!r.body.getReader)return r.text();
+  var tot=+r.headers.get("content-length")||0,est=tot&&!r.headers.get("content-encoding")?tot:90000,got=0,t="",rd=r.body.getReader(),d=new TextDecoder();
+  for(;;){var x=await rd.read();if(x.done)break;got+=x.value.length;t+=d.decode(x.value,{stream:true});set(Math.min(.9,got/est))}
+  return t+d.decode()}
+async function go(){
+  $("#er").hidden=true;set(0);
   try{
-    const r=await fetch(PAYLOAD,{cache:"no-cache"});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    const t=await r.text();
-    window.__FB=FIREBASE_CONFIG;
+    var t=(await Promise.all([get(),wait]))[0];
+    set(1);await new Promise(function(r){setTimeout(r,320)});
+    document.body.classList.add("out");await new Promise(function(r){setTimeout(r,red?0:380)});
     document.open();document.write(t);document.close();
   }catch(e){
-    done=false;$("#load").classList.add("hide");$("#form").classList.remove("hide");
-    msg("Gagal memuat "+PAYLOAD+": "+e.message+". Buka lewat server (Vercel/GitHub Pages), bukan langsung dari file.");
-  }
-}
-
-if(!FIREBASE_CONFIG.apiKey){
-  $("#setup").classList.remove("hide");$("#form").classList.add("hide");
-}else{try{
-  const B="https://www.gstatic.com/firebasejs/10.12.2/";
-  const [A,Au]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js")]);
-  const auth=Au.getAuth(A.initializeApp(FIREBASE_CONFIG));
-  const fail=e=>{if(e&&e.code==="auth/popup-closed-by-user")return;msg(ERR[e&&e.code]||"Gagal: "+(e&&e.message||e))};
-  $("#g").onclick=()=>{msg("");Au.signInWithPopup(auth,new Au.GoogleAuthProvider()).catch(fail)};
-  $("#ef").onsubmit=async e=>{e.preventDefault();msg("");const em=$("#em").value.trim(),pw=$("#pw").value;
-    try{
-      if(mode==="in")await Au.signInWithEmailAndPassword(auth,em,pw);
-      else{busy=true;const c=await Au.createUserWithEmailAndPassword(auth,em,pw);await Au.updateProfile(c.user,{displayName:$("#nm").value.trim()||em.split("@")[0]});busy=false;enter()}
-    }catch(x){busy=false;fail(x)}};
-  $("#gs").onclick=()=>$("#gd").showModal();
-  $("#gno").onclick=()=>$("#gd").close();
-  $("#gok").onclick=async()=>{const n=$("#gn").value.trim();
-    if(n.length<2){$("#gn").focus();$("#gn").placeholder="Isi nama dulu (min. 2 huruf)";return}
-    $("#gd").close();busy=true;
-    try{const c=await Au.signInAnonymously(auth);await Au.updateProfile(c.user,{displayName:n});busy=false;enter()}catch(x){busy=false;fail(x)}};
-  Au.onAuthStateChanged(auth,u=>{if(u&&!done&&!busy)enter()});
-}catch(e){msg("Firebase gagal dimuat: "+e.message)}}
+    $("#em").textContent=e.message+". Buka lewat server (GitHub Pages), bukan langsung dari file.";
+    $("#er").hidden=false;wait=Promise.resolve();
+  }}
+$("#rt").onclick=go;go();
+})();
 </script>
 </body>
 </html>
