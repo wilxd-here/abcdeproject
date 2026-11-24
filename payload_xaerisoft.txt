@@ -944,7 +944,7 @@ const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDoma
 /* ===== Role & badge: satu-satunya tempat konfigurasi =====
    ownerUid = UID akun Google pemilik (Firebase Console > Authentication > Users > "User UID").
    Dipakai hanya untuk TAMPILAN. Siapa yang boleh menulis role dijaga Firestore Rules, bukan kode ini. */
-const ROLE_CONFIG={ownerUid:"ISI_UID_OWNER_DI_SINI"};
+const ROLE_CONFIG={ownerUid:"WSotJB5ThCfUfk3cPqGda8B3FtQ2"};
 const toMs=v=>{if(!v)return 0;if(typeof v.toMillis==="function")return v.toMillis();if(typeof v==="number")return v;if(typeof v==="string"){const t=Date.parse(v);return isNaN(t)?0:t}return 0};
 /* Dihitung ulang setiap render: VIP yang lewat masa berlaku langsung tidak tampil. Data tidak valid = tanpa badge. */
 const roleOf=(uid,d)=>{
