@@ -959,10 +959,14 @@ if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
  const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
  const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i);
+ Au.getRedirectResult(auth).catch(e=>{console.error("Auth redirect error:",e)});
  Object.assign(XA,{ready:true,
-  social:async p=>{const pr=p==="github"?new Au.GithubAuthProvider():new Au.GoogleAuthProvider(),cu=auth.currentUser;
-   if(cu&&cu.isAnonymous){try{await Au.linkWithPopup(cu,pr);XA.user=auth.currentUser;fire();return}catch(e){if(e.code==="auth/credential-already-in-use"){const c=(p==="github"?Au.GithubAuthProvider:Au.GoogleAuthProvider).credentialFromError(e);if(c){await Au.signInWithCredential(auth,c);return}}throw e}}
-   return Au.signInWithPopup(auth,pr)},
+  social:async p=>{
+   const pr=p==="github"?new Au.GithubAuthProvider():new Au.GoogleAuthProvider();
+   const cu=auth.currentUser;
+   if(cu&&cu.isAnonymous)return Au.linkWithRedirect(cu,pr);
+   return Au.signInWithRedirect(auth,pr);
+  },
   signin:(e,p)=>Au.signInWithEmailAndPassword(auth,e,p),
   signup:async(n,e,p)=>{const cu=auth.currentUser;let c;if(cu&&cu.isAnonymous)c=await Au.linkWithCredential(cu,Au.EmailAuthProvider.credential(e,p));else c=await Au.createUserWithEmailAndPassword(auth,e,p);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
   out:()=>Au.signOut(auth),
