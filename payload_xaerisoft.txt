@@ -519,6 +519,22 @@ body.chatmode #view{height:calc(100vh - 56px - var(--dh) - 12px);height:calc(100
 .ep button:hover{background:var(--light)}
 .chatp .cf .send:disabled{opacity:.45;box-shadow:none;cursor:default}
 @media(prefers-reduced-motion:reduce){.m.fl .mb,.xcm .sh{animation:none}}
+/* ===== v9: dock melayang (pill) + tombol Chat menonjol ===== */
+:root{--dh:88px}
+.dock{left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(calc(100% - 28px),440px);gap:2px;padding:6px 10px;border:2px solid var(--bd);border-radius:999px;box-shadow:4px 4px 0 var(--bd);background:var(--card)}
+.dock a,.dock button{flex:1;min-width:0;min-height:52px;padding:6px 4px;border-radius:999px;font-size:11px;font-weight:700;color:var(--ink);gap:2px;position:relative}
+.dock a span,.dock button span{white-space:nowrap}
+.dock a+a,.dock a+button,.dock button+a,.dock button+button{border-left:0}
+.dock a:hover,.dock button:hover{background:var(--light)}
+.dock [aria-current=page]{color:var(--ink);background:var(--light)}
+.dock [aria-current=page]::before{display:none}
+.dock .mid{flex:none;width:62px;height:62px;min-height:62px;margin:0 4px;padding:0;border-radius:50%;background:var(--accent);color:var(--on);border:2px solid var(--bd);box-shadow:3px 3px 0 var(--bd);transform:translateY(-12px);transition:transform .12s,box-shadow .12s}
+.dock .mid span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.dock .mid svg{width:27px;height:27px}
+.dock .mid:hover{background:var(--accent)}
+.dock .mid:active{transform:translateY(-10px) translateX(2px);box-shadow:1px 1px 0 var(--bd)}
+.dock .mid[aria-current=page]{background:var(--accent);box-shadow:3px 3px 0 var(--bd),0 0 0 4px var(--light)}
+.dock .soon i{position:absolute;top:-9px;right:-2px;font-style:normal;font-size:8.5px;font-weight:800;line-height:14px;padding:0 5px;border-radius:999px;border:1.5px solid var(--bd);background:var(--accent);color:var(--on)}
 </style>
 </head>
 <body>
@@ -599,7 +615,8 @@ body.chatmode #view{height:calc(100vh - 56px - var(--dh) - 12px);height:calc(100
 </div>
 <nav class="dock" aria-label="Menu cepat">
   <a href="#" data-t="home"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
-  <a href="#chat" data-t="chat"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg><span>Chat</span></a>
+  <a href="#chat" data-t="chat" class="mid" aria-label="Chat"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg><span>Chat</span></a>
+  <button id="dkann" class="soon" type="button" aria-label="Pengumuman, segera hadir"><svg class="i" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/></svg><span>Pengumuman</span><i aria-hidden="true">Segera</i></button>
   <button id="dkacc" type="button" data-t="profil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg><span>Masuk</span></button>
 </nav>
 <div id="toast" role="status"></div>
@@ -816,6 +833,7 @@ function kepo(){const u=XA().user,r=GEO.cc||regionOf(),nm=u?(u.displayName||(u.i
 const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
 document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut();if(k==="geo")geoStart()});
 $("#dkacc").onclick=()=>XA().user?(location.hash="#profil"):openAuth();
+$("#dkann").onclick=()=>toast("Pengumuman segera hadir");
 
 /* ===== Menu layer (pojok kanan) =====
    Isi "u" dengan link tujuan. Kosong = tampil "Segera hadir". Boleh "#hash" atau URL penuh. */
