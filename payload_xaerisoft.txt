@@ -539,35 +539,43 @@ body.chatmode #view{height:calc(100vh - 56px - var(--dh) - 12px);height:calc(100
 .dock .mid svg{width:27px;height:27px}
 .dock .mid span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .dock .soon i{position:absolute;top:-6px;left:50%;margin-left:5px;font-style:normal;font-size:8.5px;font-weight:800;line-height:14px;padding:0 5px;border-radius:999px;border:1.5px solid var(--bd);background:var(--accent);color:var(--on)}
-/* ===== FIX: satu dock kapsul seperti referensi ===== */
-:root{--dh:90px}
+
+/* ===== FIX NAV: tipis, selaras komponen Xaerisoft, aktif merah ===== */
+:root{--dh:78px}
 body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 20px)}
 .dock{
-  position:fixed;left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));
-  transform:translateX(-50%);width:min(calc(100% - 28px),460px);
+  left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);width:min(calc(100% - 28px),420px);
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;
-  gap:0;padding:7px 9px;border:2px solid var(--bd);border-radius:999px;
-  box-shadow:4px 4px 0 var(--bd);background:var(--card);z-index:30;
+  gap:0;padding:5px 8px;border:2px solid var(--bd);border-radius:999px;
+  box-shadow:3px 3px 0 var(--bd);background:var(--card);z-index:30;
 }
 .dock a,.dock button{
   position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;min-width:0;min-height:58px;padding:4px 2px;border:0;border-radius:18px;
-  background:transparent;color:var(--ink);font-size:11px;font-weight:800;line-height:1.1;
-  text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  gap:3px;min-width:0;min-height:52px;padding:3px 2px;border:0;border-radius:16px;
+  background:transparent;color:var(--ink);font-size:11px;font-weight:700;line-height:1.1;
+  text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 .dock a+a,.dock a+button,.dock button+a,.dock button+button{border-left:0}
 .dock a:hover,.dock button:hover,.dock [aria-current=page]{background:transparent}
 .dock [aria-current=page]::before{display:none}
-.dock .ib{display:grid;place-items:center;width:42px;height:42px;border:2px solid transparent;border-radius:50%}
-.dock .ib svg{width:24px;height:24px}
+.dock .ib{display:grid;place-items:center;width:38px;height:38px;border:2px solid transparent;border-radius:50%;transition:background .15s,color .15s,transform .12s}
+.dock .ib svg{width:22px;height:22px}
 .dock [aria-current=page]:not(.mid) .ib{background:var(--accent);color:var(--on);border-color:var(--bd);box-shadow:2px 2px 0 var(--bd)}
-.dock .mid{align-self:center;justify-self:center;width:70px;height:70px;min-height:70px;padding:0;margin:-18px 0 0;border:2px solid var(--bd);border-radius:50%;background:var(--accent);color:var(--on);box-shadow:3px 3px 0 var(--bd);transform:none}
-.dock .mid:hover{background:var(--accent)}
+.dock a:not(.mid):active .ib,.dock button:active .ib{background:var(--accent);color:var(--on);transform:scale(.94)}
+.dock .mid{
+  align-self:center;justify-self:center;width:58px;height:58px;min-height:58px;padding:0;margin:-10px 0 0;
+  border-radius:50%;background:transparent;color:var(--ink);border:2px solid transparent;box-shadow:none;
+  transform:none;transition:background .15s,color .15s,transform .12s,box-shadow .12s;
+}
+.dock .mid:hover{background:transparent}
+.dock .mid:active,.dock .mid[aria-current=page]{background:var(--accent);color:var(--on);border-color:var(--bd);box-shadow:2px 2px 0 var(--bd)}
 .dock .mid:active{transform:scale(.96)}
-.dock .mid svg{width:30px;height:30px}
+.dock .mid svg{width:27px;height:27px}
 .dock .mid span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.dock .soon i{position:absolute;top:-7px;left:50%;margin-left:3px;font-style:normal;font-size:9px;font-weight:900;line-height:16px;padding:0 7px;border:1.5px solid var(--bd);border-radius:999px;background:var(--accent);color:var(--on)}
-@media(max-width:360px){.dock{width:calc(100% - 16px);padding:6px 5px}.dock a,.dock button{font-size:10px}.dock .ib{width:38px;height:38px}}
+.dock .soon:active{color:var(--accent)}
+.dock .soon i{position:absolute;top:-5px;left:50%;margin-left:4px;font-style:normal;font-size:8px;font-weight:800;line-height:13px;padding:0 5px;border:1.5px solid var(--bd);border-radius:999px;background:var(--accent);color:var(--on)}
+@media(max-width:360px){.dock{width:calc(100% - 16px);padding:5px}.dock a,.dock button{font-size:10px}.dock .ib{width:35px;height:35px}.dock .mid{width:54px;height:54px;min-height:54px}}
 </style>
 </head>
 <body>
@@ -1176,10 +1184,6 @@ if(FIREBASE_CONFIG.apiKey){try{
  Au.onAuthStateChanged(auth,u=>{XA.user=u;XA.ar=true;if(u)XA.photo(u.uid);fire()});
 }catch(e){console.error(e);XA.error=e.message}}
 XA.loaded=true;fire();
-</script>
-<script>
-/* Safety net: render exactly one bottom navigation dock. */
-(function(){var docks=document.querySelectorAll('nav.dock');for(var i=1;i<docks.length;i++)docks[i].remove();})();
 </script>
 </body>
 </html>
