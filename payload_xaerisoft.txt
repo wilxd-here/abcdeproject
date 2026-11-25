@@ -569,6 +569,15 @@ body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 20px)}
 .dock .soon:active{color:var(--accent)}
 .dock .soon i{position:absolute;top:-5px;left:50%;margin-left:4px;font-style:normal;font-size:8px;font-weight:800;line-height:13px;padding:0 5px;border:1.5px solid var(--bd);border-radius:999px;background:var(--accent);color:var(--on)}
 @media(max-width:360px){.dock{width:calc(100% - 16px);padding:5px}.dock a,.dock button{font-size:10px}.dock .ib{width:35px;height:35px}.dock .mid{width:54px;height:54px;min-height:54px}}
+.ann-card{background:var(--card);border:2px solid var(--bd);border-radius:18px;padding:14px;box-shadow:4px 4px 0 var(--blue)}
+/* Chat Global menampilkan label penuh seperti item navbar lain */
+.dock .mid{margin:0;width:auto;height:auto;min-height:52px;padding:3px 2px;border:0;border-radius:16px;background:transparent;color:var(--ink);box-shadow:none;transform:none;display:flex;flex-direction:column;gap:3px}
+.dock .mid:hover{background:transparent}
+.dock .mid span{position:static;width:auto;height:auto;overflow:visible;clip:auto;white-space:nowrap;font-size:11px;line-height:1.1}
+.dock .mid .ib{width:38px;height:38px;border:2px solid transparent;background:transparent;color:var(--ink);box-shadow:none}
+.dock .mid[aria-current=page]{background:transparent;color:var(--ink);box-shadow:none}
+.dock .mid[aria-current=page] .ib{background:var(--accent);color:var(--on);border-color:var(--bd);box-shadow:2px 2px 0 var(--bd)}
+@media(max-width:360px){.dock .mid span{font-size:10px}}
 
 /* ===== v10: penajaman detail (hasil audit layar, kontras, dan target sentuh) ===== */
 /* 1. Teks panjang tanpa spasi (URL, pesan error) tidak boleh melebarkan kartu */
@@ -664,7 +673,7 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
     <div id="gmain" class="gview">
      <div class="gseg" role="group" aria-label="Mode"><button type="button" data-gm="in" aria-pressed="true">Masuk</button><button type="button" data-gm="up" aria-pressed="false">Daftar</button></div>
      <form id="gef" novalidate>
-      <label class="gf hide" id="gnf"><span>Nama</span><input id="gn" type="text" placeholder="Nama tampilan" autocomplete="name" maxlength="40"></label>
+      <label class="gf hide" id="gnf"><span>Nama</span><input id="gn" type="text" placeholder="Nama tampilan" autocomplete="name" ></label>
       <label class="gf"><span>Email</span><input id="ge" type="email" placeholder="nama@email.com" required autocomplete="email" autocapitalize="none" spellcheck="false" inputmode="email"></label>
       <label class="gf"><span>Sandi</span><span class="gpw"><input id="gp" type="password" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="current-password"><button type="button" id="gpt" aria-pressed="false" aria-label="Tampilkan sandi"><svg class="i eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="i eyex" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0112 6c6.4 0 10 6 10 6a17 17 0 01-3.2 3.9M6.6 6.7A17 17 0 002 12s3.6 7 10 7a9.6 9.6 0 004.1-.9M9.9 9.9a3 3 0 004.2 4.2"/></svg></button></span></label>
       <button class="gbtn pri" id="gs" type="submit">Masuk</button>
@@ -677,8 +686,7 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
      <button class="gback" id="ggb" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Kembali</button>
      <h2>Masuk sebagai tamu</h2>
      <p class="gsub">Pilih nama yang tampil di chat.</p>
-     <label class="gf"><span>Nama tampilan</span><input id="gnm" type="text" maxlength="24" placeholder="Nama kamu" autocomplete="nickname"></label>
-     <div class="gcount" id="gcnt" aria-hidden="true">0/24</div>
+     <label class="gf"><span>Nama tampilan</span><input id="gnm" type="text" placeholder="Nama kamu" autocomplete="nickname"></label>
      <div class="gnote"><b>Penting.</b> Akun tamu tersimpan di browser ini. Kalau data situs dihapus, akun tamu ikut hilang.</div>
      <button class="gbtn pri" id="gok" type="submit">Lanjutkan</button>
     </form>
@@ -696,10 +704,10 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
 <main class="wrap">
   <div id="home">
     <section id="tentang" aria-label="Xaerisoft">
-      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><h1>Xaerisoft</h1><p></p></div></div>
+      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><h1>Xaerisoft</h1><p>Kumpulan tools HTML buatan dan berisi media hiburan.</p></div></div>
       <div class="kepo" id="kepo"></div>
     </section>
-    <section id="berita" aria-label="Berita politik">
+    <section id="berita" aria-label="Berita">
       <div class="nh"><h2>News</h2><div class="nav2" id="nav2"><button data-d="-1" aria-label="Geser ke kiri">&#8249;</button><button data-d="1" aria-label="Geser ke kanan">&#8250;</button></div></div>
       <div class="news" id="news"></div>
     </section>
@@ -746,8 +754,8 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
 </div>
 <nav class="dock" aria-label="Menu cepat">
   <a href="#" data-t="home"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg></b><span>Beranda</span></a>
-  <a href="#chat" data-t="chat" class="mid" aria-label="Chat"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg><span>Chat</span></a>
-  <button id="dkann" class="soon" type="button" aria-label="Anouncemment, coming soon"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/></svg></b><span>Annountcemen</span><i aria-hidden="true">Segera</i></button>
+  <a href="#chat" data-t="chat" class="mid" aria-label="Chat Global"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></b><span>Chat Global</span></a>
+  <a href="#announcement" data-t="announcement" aria-label="Announcement"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/></svg></b><span>Announcement</span></a>
   <button id="dkacc" type="button" data-t="profil"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg></b><span>Masuk</span></button>
 </nav>
 <div id="toast" role="status"></div>
@@ -809,7 +817,7 @@ function open(t){
  if(!b){b=document.createElement("div");try{t.render(b)}catch(e){b.innerHTML='<div class="err">Tools gagal dimuat.</div>';console.error(e)}bodies.set(t.id,b)}
  host.appendChild(b);b.start&&b.start();document.title=t.name+" — Xaerisoft";scrollTo(0,0);$("#back").focus({preventScroll:true});
 }
-function dockSet(){const h=location.hash,k=h==="#chat"?"chat":/^#(profil|pengaturan|cs)$/.test(h)?"profil":"home";document.querySelectorAll(".dock [data-t]").forEach(b=>b.dataset.t===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"))}
+function dockSet(){const h=location.hash,k=h==="#chat"?"chat":h==="#announcement"?"announcement":/^#(profil|pengaturan|cs|admin)$/.test(h)?"profil":"home";document.querySelectorAll(".dock [data-t]").forEach(b=>b.dataset.t===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"))}
 function route(){
  dockSet();
  const m=location.hash.match(/^#tool-([\w-]+)$/),t=PAGES[location.hash]||(m&&byId(m[1]));
@@ -820,7 +828,7 @@ document.addEventListener("click",e=>{
  const c=e.target.closest("[data-id]");if(c){location.hash="tool-"+c.dataset.id;return}
  const ch=e.target.closest("[data-c]");if(ch){state.cat=ch.dataset.c;chips();list();}
 });
-$("#back").onclick=()=>{const h=location.hash;location.hash=(h==="#pengaturan"||h==="#cs")?"profil":"tools"};
+$("#back").onclick=()=>{const h=location.hash;location.hash=(h==="#pengaturan"||h==="#cs"||h==="#admin")?"profil":h==="#announcement"?"tools":"tools"};
 $("#q").addEventListener("input",e=>{state.q=e.target.value;list()});
 $("#reset").onclick=()=>{state.q="";state.cat="Semua";$("#q").value="";chips();list()};
 addEventListener("hashchange",route);
@@ -893,7 +901,6 @@ function kepo(){const u=XA().user,r=GEO.cc||regionOf(),nm=u?(u.displayName||(u.i
 const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
 document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut();if(k==="geo")geoStart()});
 $("#dkacc").onclick=()=>XA().user?(location.hash="#profil"):openAuth();
-$("#dkann").onclick=()=>toast("Pengumuman segera hadir");
 
 /* ===== Menu layer (pojok kanan) =====
    Isi "u" dengan link tujuan. Kosong = tampil "Segera hadir". Boleh "#hash" atau URL penuh. */
@@ -965,8 +972,7 @@ gate.addEventListener("click",e=>{
  if(e.target.closest("#gpt")){const i=$("#gp"),s=i.type==="password",b=$("#gpt");i.type=s?"text":"password";b.setAttribute("aria-pressed",s);b.setAttribute("aria-label",s?"Sembunyikan sandi":"Tampilkan sandi");return}
  if(e.target.closest("#gx"))gate.classList.add("off")});
 $("#gef").addEventListener("submit",e=>{e.preventDefault();const x=XA(),em=$("#ge").value.trim(),pw=$("#gp").value;grun(gm==="in"?x.signin(em,pw):x.signup($("#gn").value.trim()||em.split("@")[0],em,pw))});
-$("#ggf").addEventListener("submit",e=>{e.preventDefault();const n=$("#gnm").value.trim();if(n.length<2){$("#gnm").focus();gmsg("Isi nama dulu (min. 2 huruf).");return}grun(XA().guest(n))});
-$("#gnm").addEventListener("input",e=>{$("#gcnt").textContent=e.target.value.length+"/24"});
+$("#ggf").addEventListener("submit",e=>{e.preventDefault();const n=$("#gnm").value.trim();if(!n){$("#gnm").focus();gmsg("Nama tidak boleh kosong.");return}grun(XA().guest(n))});
 addEventListener("xa",()=>{kepo();gateSync();if(XA().user&&dlg.open)dlg.close();if(XA().user&&!geoDone){geoDone=1;geoStart()}});
 
 /* Chat Global (Firestore, hanya saat tampil) */
@@ -1114,9 +1120,8 @@ render(el){
   if(!u)top='<div class="panel"><p>Kamu belum masuk.</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button></div></div>';
   else{const nm=u.displayName||"Tamu",has=okP(XA().photo(u.uid));
    const head=`<div class="row" style="align-items:center;flex-wrap:nowrap;gap:16px"><div class="pav"><div class="kav big">${avaInner(u,nm)}</div><button class="pedit" type="button" id="pe" aria-label="Ganti foto profil">${ico(IC.cam)}</button><input id="pfi" class="hide" type="file" accept="image/*"></div><div style="min-width:0"><b class="pbn">${nameHTML(nm,u.uid)}</b><br><span style="color:var(--mute);font-size:14px;word-break:break-all">${u.isAnonymous?"Akun tamu":esc(u.email||"")}</span>${has?'<br><button class="plink" type="button" id="prm">Hapus foto</button>':""}</div></div>`;
-   top=u.isAnonymous?`<div class="panel">${head}<p>Login dulu untuk mengatur profil dan mengganti username</p><div class="row"><button class="btn" data-k="in">Masuk atau daftar</button><button class="btn alt" data-k="out">Keluar</button></div></div>`
-   :`<div class="panel">${head}<form class="f" id="pf"><label for="pn">Username</label><input id="pn" type="text" minlength="2" maxlength="24" required value="${esc(nm)}"><p id="pm" class="err hide" role="alert" style="margin-top:8px"></p></form><div class="row"><button class="btn" form="pf" type="submit">Simpan</button><button class="btn alt" data-k="out">Keluar</button></div></div>`}
-  el.innerHTML=`<div class="stack">${top}${rows()}${SOC()}</div>`;
+   top=`<div class="panel">${head}<form class="f" id="pf"><label for="pn">Username</label><input id="pn" type="text" required value="${esc(nm)}"><small class="hint">Nama bebas: huruf, angka, simbol, atau emoji. Nama harus unik.</small><p id="pm" class="err hide" role="alert" style="margin-top:8px"></p></form><div class="row"><button class="btn" form="pf" type="submit">Simpan</button>${u.isAnonymous?'<button class="btn alt" data-k="in">Hubungkan akun</button>':""}<button class="btn alt" data-k="out">Keluar</button></div></div>`}
+  el.innerHTML=`<div class="stack">${top}${x.isAdmin&&x.isAdmin(u&&u.uid)?'<div class="panel"><b>Administrasi</b><p class="hint">Kelola pengumuman Xaerisoft.</p><a class="btn" href="#admin">Buka halaman Admin</a></div>':""}${rows()}${SOC()}</div>`;
   if(!u)return;
   const pe=$("#pe",el),fi=$("#pfi",el);
   pe.onclick=()=>fi.click();
@@ -1124,7 +1129,7 @@ render(el){
    try{await x.setPhoto(await cropPhoto(f));toast("Foto profil diganti")}catch(er){toast("Gagal menyimpan foto: "+(er.code||er.message))}};
   const rm=$("#prm",el);if(rm)rm.onclick=async()=>{try{await x.setPhoto("");toast("Foto dihapus")}catch{toast("Gagal menghapus foto")}};
   const pf=$("#pf",el);if(pf)pf.onsubmit=async e=>{e.preventDefault();const v=$("#pn",el).value.trim(),pm=$("#pm",el);
-   if(v.length<2){pm.textContent="Username minimal 2 karakter.";pm.classList.remove("hide");return}
+   if(!v){pm.textContent="Nama tidak boleh kosong.";pm.classList.remove("hide");return}
    try{await x.rename(v);toast("Username disimpan")}catch(er){pm.textContent="Gagal menyimpan: "+er.message;pm.classList.remove("hide")}}};
  el.start=draw;addEventListener("xa",draw);draw()}};
 
@@ -1155,7 +1160,24 @@ render(el){
  el.addEventListener("click",e=>{const c=e.target.closest("[data-tp]");if(!c)return;el.querySelectorAll("[data-tp]").forEach(b=>b.setAttribute("aria-pressed",b===c&&b.getAttribute("aria-pressed")!=="true"))});
  $("#csf",el).onsubmit=e=>{e.preventDefault();toast("Customer service belum aktif. Sementara hubungi developer lewat Profil.")}}};
 
-const PAGES={"#chat":CHAT,"#profil":PROFIL,"#pengaturan":SETTINGS,"#cs":CS};
+
+/* ===== Announcement publik: update perkembangan website/tools ===== */
+const ANNOUNCEMENT={id:"announcement",name:"Announcement",desc:"Informasi dan perkembangan Xaerisoft.",cat:"",icon:'<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/>',
+render(el){let stop=null,items=[];const draw=()=>{const x=XA(),u=x.user;el.innerHTML=`<div class="stack"><div class="panel"><div class="row" style="align-items:center;justify-content:space-between"><div><b>Update Xaerisoft</b><p class="hint">Perkembangan website, fitur, dan tools terbaru.</p></div><button class="btn alt" id="pushOn" type="button">Aktifkan notifikasi</button></div><p id="pushState" class="hint" style="margin-top:8px">${"Notification" in window?(Notification.permission==="granted"?"Notifikasi browser diizinkan.":Notification.permission==="denied"?"Izin notifikasi ditolak di browser.":"Notifikasi belum diaktifkan."):"Browser ini tidak mendukung notifikasi."}</p></div><div id="annList" class="stack">${items.length?items.map(a=>`<article class="panel"><img src="${esc(a.imageUrl||"")}" alt="" class="nimg" style="display:${a.imageUrl?"block":"none"};border:2px solid var(--bd);border-radius:12px;aspect-ratio:16/9" onerror="this.style.display='none'"><h2 style="margin:10px 0 4px;color:var(--ink)">${esc(a.title||"Update")}</h2><p style="white-space:pre-wrap">${esc(a.body||"")}</p><small class="hint">${a.at&&a.at.toDate?a.at.toDate().toLocaleString("id-ID"):"Pengumuman Xaerisoft"}</small></article>`).join(""):'<div class="empty"><b>Belum ada pengumuman</b>Update perkembangan website akan tampil di sini.</div>'}</div></div>`;
+ const b=$("#pushOn",el);if(b)b.onclick=async()=>{try{await x.enablePush();$("#pushState",el).textContent="Notifikasi berhasil diaktifkan di perangkat ini.";toast("Notifikasi diaktifkan")}catch(e){$("#pushState",el).textContent=e.message||"Notifikasi belum bisa diaktifkan.";toast("Gagal mengaktifkan notifikasi")}}};
+ const subscribe=()=>{if(stop)stop();const x=XA();if(x.ready&&x.listenAnnouncements)stop=x.listenAnnouncements(a=>{const first=items.length?items[items.length-1]?.id:null;items=a;draw();if(first&&a.length&&a[0].id!==first&&Notification.permission==="granted")new Notification(a[0].title||"Update Xaerisoft",{body:a[0].body||"Ada pengumuman baru."})},e=>{console.error(e);el.innerHTML='<div class="panel err">Gagal memuat pengumuman. Periksa koneksi dan aturan Firestore.</div>'});else draw()};
+ el.start=subscribe;el.stop=()=>{stop&&stop();stop=null};addEventListener("xa",()=>{if(location.hash==="#announcement")subscribe()});subscribe()}};
+
+/* ===== Admin: hanya UID di ROLE_CONFIG yang dapat membuka dan mengelola announcement ===== */
+const ADMIN={id:"admin",name:"Admin",desc:"Kelola pengumuman Xaerisoft.",cat:"",icon:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>',
+render(el){let items=[],stop=null;const draw=()=>{const x=XA(),u=x.user;if(!u||!x.isAdmin||!x.isAdmin(u.uid)){el.innerHTML='<div class="panel err">Akses ditolak. Akun ini tidak terdaftar sebagai Admin.</div>';return}
+ el.innerHTML=`<div class="stack"><div class="panel"><h2 style="margin:0 0 8px">Buat pengumuman</h2><form class="f" id="annForm"><label for="annTitle">Judul</label><input id="annTitle" type="text" maxlength="90" required placeholder="Contoh: Update tools terbaru"><label for="annBody">Informasi</label><textarea id="annBody" maxlength="1800" required placeholder="Jelaskan perkembangan website atau tools…" style="min-height:110px"></textarea><label for="annImage">URL gambar (opsional)</label><input id="annImage" type="url" placeholder="https://.../gambar.jpg"><div class="row" style="margin-top:12px"><button class="btn" type="submit">Terbitkan</button></div><p id="annErr" class="err hide" role="alert" style="margin-top:8px"></p></form></div><div class="panel"><h2 style="margin:0 0 10px">Pengumuman terbit</h2><div id="adminAnnList" class="stack"></div></div></div>`;
+ const f=$("#annForm",el);f.onsubmit=async e=>{e.preventDefault();const title=$("#annTitle",el).value.trim(),body=$("#annBody",el).value.trim(),imageUrl=$("#annImage",el).value.trim(),err=$("#annErr",el);if(imageUrl&&!/^https:\/\//i.test(imageUrl)){err.textContent="URL gambar harus menggunakan HTTPS.";err.classList.remove("hide");return}try{await x.saveAnnouncement({title,body,imageUrl});f.reset();toast("Pengumuman diterbitkan")}catch(er){err.textContent="Gagal menerbitkan: "+(er.message||er.code);err.classList.remove("hide")}};
+ const list=$("#adminAnnList",el);list.innerHTML=items.length?items.map(a=>`<div class="row" style="align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:8px 0"><span style="min-width:0;flex:1"><b>${esc(a.title||"Tanpa judul")}</b><small class="hint" style="display:block">${esc((a.body||"").slice(0,90))}</small></span><button class="btn alt" type="button" data-del-ann="${esc(a.id)}">Hapus</button></div>`).join(""):'<p class="hint">Belum ada pengumuman.</p>';
+ list.onclick=async e=>{const b=e.target.closest("[data-del-ann]");if(!b)return;if(!confirm("Hapus pengumuman ini?"))return;try{await x.deleteAnnouncement(b.dataset.delAnn);toast("Pengumuman dihapus")}catch(er){toast("Gagal menghapus: "+(er.message||er.code))}}};
+ const load=()=>{const x=XA();if(stop){stop();stop=null}if(!x.user||!x.isAdmin||!x.isAdmin(x.user.uid)){draw();return}if(x.listenAnnouncements)stop=x.listenAnnouncements(a=>{items=a;draw()},e=>{console.error(e);toast("Gagal memuat data admin")});else draw()};el.start=load;el.stop=()=>{if(stop)stop();stop=null};load();addEventListener("xa",()=>{if(location.hash==="#admin")load()})}};
+
+const PAGES={"#chat":CHAT,"#profil":PROFIL,"#pengaturan":SETTINGS,"#cs":CS,"#announcement":ANNOUNCEMENT,"#admin":ADMIN};
 
 kepo();gateSync();setInterval(tick,1000);setInterval(()=>{GEO.s==="ok"&&geoStart()},9e5);addEventListener("online",tick);addEventListener("offline",tick);
 navigator.getBattery&&navigator.getBattery().then(b=>{batt=b;b.addEventListener("levelchange",tick);tick()}).catch(()=>{});
@@ -1166,17 +1188,18 @@ chips();list();route();
 /* ===== Firebase =====
    Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
    Biarkan kosong untuk mematikan fitur akun dan chat. */
-const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject.my.id",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850"};
+const FIREBASE_CONFIG={apiKey:"AIzaSyC_23hMeYXQOIBuWcg99AKTIjUEHlmvhio",authDomain:"wilproject.my.id",projectId:"wilproject-563df",appId:"1:868109716977:web:84f4d4084e89f8a95e0850",messagingSenderId:"868109716977"};
 /* ===== Role & badge: satu-satunya tempat konfigurasi =====
    ownerUid = UID akun Google pemilik (Firebase Console > Authentication > Users > "User UID").
    Dipakai hanya untuk TAMPILAN. Siapa yang boleh menulis role dijaga Firestore Rules, bukan kode ini. */
-const ROLE_CONFIG={ownerUid:"WSotJB5ThCfUfk3cPqGda8B3FtQ2"};
+const ROLE_CONFIG={ownerUid:"WSotJB5ThCfUfk3cPqGda8B3FtQ2",adminUids:[]};
+const FCM_VAPID_KEY="ISI_VAPID_PUBLIC_KEY_DARI_FIREBASE_CONSOLE";
 const toMs=v=>{if(!v)return 0;if(typeof v.toMillis==="function")return v.toMillis();if(typeof v==="number")return v;if(typeof v==="string"){const t=Date.parse(v);return isNaN(t)?0:t}return 0};
 /* Dihitung ulang setiap render: VIP yang lewat masa berlaku langsung tidak tampil. Data tidak valid = tanpa badge. */
 const roleOf=(uid,d)=>{
  if(uid&&uid===ROLE_CONFIG.ownerUid)return{role:"owner",verified:true};
+ if(uid&&ROLE_CONFIG.adminUids.includes(uid))return{role:"admin",verified:false};
  const r=d&&d.role;
- if(r==="admin")return{role:"admin",verified:false};
  if(r==="vip"){const e=toMs(d.vipExpiresAt);if(e>Date.now())return{role:"vip",verified:false,until:e}}
  return{role:"user",verified:false}};
 const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>"",role:()=>({role:"user",verified:false})};
@@ -1184,9 +1207,12 @@ const fire=()=>dispatchEvent(new Event("xa"));
 if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
  const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
- const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i);
+ const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i),annCol=Fs.collection(db,"announcements"),tokenCol=Fs.collection(db,"pushTokens");
+ const usernameKey=async n=>{const normalized=String(n??"").normalize("NFKC").trim().toLowerCase();if(!normalized)throw new Error("Nama tidak boleh kosong.");const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(normalized));return "v2_"+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")};
+ const claimUsername=async(uid,name)=>{const display=String(name??"").trim();if(!display)throw new Error("Nama tidak boleh kosong.");const key=await usernameKey(display),newRef=Fs.doc(db,"usernames",key),userRef=ud(uid);await Fs.runTransaction(db,async tx=>{const us=await tx.get(userRef),oldKey=us.exists()?(us.data().usernameKey||""):"";const ns=await tx.get(newRef);let oldSnap=null,oldRef=null;if(oldKey&&oldKey!==key){oldRef=Fs.doc(db,"usernames",oldKey);oldSnap=await tx.get(oldRef)}if(ns.exists()&&ns.data().uid!==uid)throw new Error("Nama sudah dipakai akun lain. Coba nama berbeda.");tx.set(newRef,{uid,name:display,normalizedName:display.normalize("NFKC").toLowerCase(),updatedAt:Fs.serverTimestamp()},{merge:true});if(oldRef&&oldSnap&&oldSnap.exists()&&oldSnap.data().uid===uid)tx.delete(oldRef);tx.set(userRef,{name:display,nameLower:display.normalize("NFKC").toLowerCase(),usernameKey:key,usernameKeyVersion:2,updatedAt:Fs.serverTimestamp()},{merge:true})});return key;};
+ const adminUid=uid=>!!uid&&(uid===ROLE_CONFIG.ownerUid||ROLE_CONFIG.adminUids.includes(uid));
  Au.getRedirectResult(auth).catch(e=>{console.error("Auth redirect error:",e)});
- Object.assign(XA,{ready:true,
+ Object.assign(XA,{ready:true,isAdmin:adminUid,
   social:async p=>{
    const pr=p==="github"?new Au.GithubAuthProvider():new Au.GoogleAuthProvider();
    const cu=auth.currentUser;
@@ -1194,10 +1220,10 @@ if(FIREBASE_CONFIG.apiKey){try{
    return Au.signInWithRedirect(auth,pr);
   },
   signin:(e,p)=>Au.signInWithEmailAndPassword(auth,e,p),
-  signup:async(n,e,p)=>{const cu=auth.currentUser;let c;if(cu&&cu.isAnonymous)c=await Au.linkWithCredential(cu,Au.EmailAuthProvider.credential(e,p));else c=await Au.createUserWithEmailAndPassword(auth,e,p);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
+  signup:async(n,e,p)=>{const cu=auth.currentUser;let c;if(cu&&cu.isAnonymous){c=await Au.linkWithCredential(cu,Au.EmailAuthProvider.credential(e,p));try{await claimUsername(c.user.uid,n);await Au.updateProfile(c.user,{displayName:n})}catch(er){throw er}}else{c=await Au.createUserWithEmailAndPassword(auth,e,p);try{await claimUsername(c.user.uid,n);await Au.updateProfile(c.user,{displayName:n})}catch(er){try{await Au.deleteUser(c.user)}catch{}throw er}}XA.user=auth.currentUser;fire()},
   out:()=>Au.signOut(auth),
-  rename:async n=>{await Au.updateProfile(auth.currentUser,{displayName:n});try{await Fs.setDoc(ud(auth.currentUser.uid),{name:n},{merge:true})}catch{}XA.user=auth.currentUser;fire()},
-  guest:async n=>{const c=await Au.signInAnonymously(auth);await Au.updateProfile(c.user,{displayName:n});XA.user=auth.currentUser;fire()},
+  rename:async n=>{const cu=auth.currentUser;if(!cu)throw new Error("Masuk dulu.");await claimUsername(cu.uid,n);await Au.updateProfile(cu,{displayName:String(n).trim()});XA.user=auth.currentUser;fire()},
+  guest:async n=>{const c=await Au.signInAnonymously(auth);try{await claimUsername(c.user.uid,n);await Au.updateProfile(c.user,{displayName:String(n).trim()})}catch(er){try{await Au.deleteUser(c.user)}catch{}throw er}XA.user=auth.currentUser;fire()},
   setPhoto:async d=>{const cu=auth.currentUser;await Fs.setDoc(ud(cu.uid),{photo:d,name:cu.displayName||"",at:Fs.serverTimestamp()},{merge:true});P[cu.uid]={...P[cu.uid],photo:d};fire()},
   photo:id=>{const p=P[id];if(p===undefined&&!Q.has(id)){Q.add(id);Fs.getDoc(ud(id)).then(x=>{P[id]=x.exists()?x.data():{}}).catch(()=>{P[id]={}}).then(()=>fire())}return p&&p.photo||""},
   send:(t,o)=>{const u=auth.currentUser,d={text:t,uid:u.uid,name:u.displayName||(u.isAnonymous?"Tamu":"Pengguna"),photo:u.photoURL||"",at:Fs.serverTimestamp()},r=o&&o.replyTo,f=o&&o.fwd;
@@ -1208,9 +1234,13 @@ if(FIREBASE_CONFIG.apiKey){try{
   unreact:id=>Fs.updateDoc(Fs.doc(db,"messages",id),{["reactions."+auth.currentUser.uid]:Fs.deleteField()}),
   del:id=>Fs.deleteDoc(Fs.doc(db,"messages",id)),
   report:(m,why)=>{const u=auth.currentUser;return Fs.setDoc(Fs.doc(db,"reports",m.id+"_"+u.uid),{msgId:m.id,msgUid:String(m.uid||""),msgText:String(m.text||"").slice(0,200),reason:why,reporterUid:u.uid,at:Fs.serverTimestamp()})},
+  saveAnnouncement:a=>{const u=auth.currentUser;if(!u||!adminUid(u.uid))return Promise.reject(new Error("Akses Admin ditolak."));return Fs.addDoc(annCol,{title:String(a.title||"").slice(0,90),body:String(a.body||"").slice(0,1800),imageUrl:String(a.imageUrl||""),uid:u.uid,at:Fs.serverTimestamp()})},
+  deleteAnnouncement:id=>{const u=auth.currentUser;if(!u||!adminUid(u.uid))return Promise.reject(new Error("Akses Admin ditolak."));return Fs.deleteDoc(Fs.doc(db,"announcements",id))},
+  listenAnnouncements:(cb,er)=>Fs.onSnapshot(Fs.query(annCol,Fs.orderBy("at","desc"),Fs.limit(50)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),er),
+  enablePush:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk mengaktifkan notifikasi.");if(!("Notification" in window)||!("serviceWorker" in navigator))throw new Error("Browser tidak mendukung notifikasi.");if(!/^[-A-Za-z0-9_]{20,}$/.test(FCM_VAPID_KEY))throw new Error("Isi FCM_VAPID_KEY dari Firebase Console terlebih dahulu.");const perm=await Notification.requestPermission();if(perm!=="granted")throw new Error("Izin notifikasi tidak diberikan.");const [Msg]=await Promise.all([import(B+"firebase-messaging.js")]);const messaging=Msg.getMessaging(app);Msg.onMessage(messaging,p=>{const n=p.notification||{};if(Notification.permission==="granted")new Notification(n.title||"Update Xaerisoft",{body:n.body||"Ada pengumuman baru.",icon:n.icon||"/favicon.ico",image:n.image})});const reg=await navigator.serviceWorker.register("/firebase-messaging-sw.js");const token=await Msg.getToken(messaging,{vapidKey:FCM_VAPID_KEY,serviceWorkerRegistration:reg});if(!token)throw new Error("Token notifikasi tidak tersedia.");await Fs.setDoc(Fs.doc(tokenCol,u.uid),{uid:u.uid,token,updatedAt:Fs.serverTimestamp()},{merge:true});return token},
   role:id=>{if(!id)return roleOf();XA.photo(id);return roleOf(id,P[id])},
   listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er)});
- Au.onAuthStateChanged(auth,u=>{XA.user=u;XA.ar=true;if(u)XA.photo(u.uid);fire()});
+ Au.onAuthStateChanged(auth,async u=>{XA.user=u;XA.ar=true;if(u){XA.photo(u.uid);try{const us=await Fs.getDoc(ud(u.uid));if(!us.exists()||us.data().usernameKeyVersion!==2){let candidate=(u.displayName||((u.email||"").split("@")[0])||("Tamu"+u.uid.slice(0,5))).trim();try{await claimUsername(u.uid,candidate)}catch(er){if(/sudah dipakai/i.test(er.message)){candidate=candidate+"-"+u.uid;await claimUsername(u.uid,candidate);await Au.updateProfile(u,{displayName:candidate});XA.usernameNotice="Username lama bentrok, jadi disesuaikan menjadi "+candidate} else throw er}}}catch(er){console.warn("Username registry needs review:",er.message)}}fire()});
 }catch(e){console.error(e);XA.error=e.message}}
 XA.loaded=true;fire();
 </script>
