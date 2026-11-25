@@ -740,15 +740,15 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
 .ann-title{font:700 clamp(21px,5vw,27px)/1.15 var(--fd);letter-spacing:-.025em;margin:8px 0 10px}
 .ann-copy{font-size:15.5px;line-height:1.7;overflow-wrap:anywhere}
 .ann-media{display:block;width:100%;max-height:360px;object-fit:cover;border:1.5px solid var(--line);border-radius:16px;margin:14px 0}
-.ann-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
-.ann-date{font-size:12px;color:var(--mute)}
-.ann-react-area{display:flex;align-items:center;gap:7px;position:relative;flex-wrap:wrap}
+.ann-foot{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.ann-date{font-size:12px;color:var(--mute);order:0}
+.ann-react-area{display:flex;align-items:center;justify-content:flex-start;gap:7px;position:relative;flex-wrap:wrap;width:100%;order:1}
 .ann-react-area .rx{min-height:34px;padding:4px 10px;font-size:14px;border:1px solid var(--line);background:var(--bg)}
 .ann-react-area .rx[aria-pressed=true]{border-color:var(--accent);background:var(--light);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}
 .ann-emoji-trigger{width:36px;height:36px;min-height:36px;padding:0;border-radius:50%;border:1.5px solid var(--bd);background:var(--card);display:grid;place-items:center;font-size:19px}
 .ann-emoji-trigger:hover{background:var(--light)}
-.ann-emoji-picker{position:absolute;z-index:8;left:0;bottom:44px;width:min(290px,82vw);padding:10px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;border:1.5px solid var(--bd);border-radius:16px;background:var(--card);box-shadow:0 12px 30px rgba(20,15,35,.2)}
-.ann-emoji-picker button{min-width:0;min-height:36px;border:0;border-radius:9px;background:transparent;font-size:20px}
+.ann-emoji-picker{position:absolute;z-index:30;left:0;right:auto;bottom:44px;width:min(260px,calc(100vw - 56px));max-height:224px;overflow-y:auto;overscroll-behavior:contain;padding:9px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;border:1.5px solid var(--bd);border-radius:16px;background:var(--card);box-shadow:0 12px 30px rgba(20,15,35,.2)}
+.ann-emoji-picker button{min-width:0;min-height:34px;border:0;border-radius:9px;background:transparent;font-size:20px}
 .ann-emoji-picker button:hover{background:var(--light)}
 .ann-emoji-picker[hidden]{display:none}
 .admin-tabs{display:flex;gap:7px;overflow:auto;padding:2px 2px 10px;scrollbar-width:none}
@@ -1296,7 +1296,21 @@ render(el){
   const b=$("#pushOn",el);if(b)b.onclick=async()=>{try{await x.enablePush();$("#pushState",el).textContent="Notifikasi berhasil diaktifkan di perangkat ini.";toast("Notifikasi diaktifkan")}catch(e){$("#pushState",el).textContent=e.message||"Notifikasi belum bisa diaktifkan.";toast("Gagal mengaktifkan notifikasi")}}
  };
  const subscribe=()=>{if(stop)stop();const x=XA();if(x.ready&&x.listenAnnouncements)stop=x.listenAnnouncements(a=>{const first=items.length?items[items.length-1]?.id:null;items=a;draw();if(first&&a.length&&a[0].id!==first&&"Notification" in window&&Notification.permission==="granted")new Notification(a[0].title||"Update Xaerisoft",{body:a[0].body||"Ada pengumuman baru."})},e=>{console.error(e);el.innerHTML='<div class="panel err">Gagal memuat pengumuman. Periksa koneksi dan aturan Firestore.</div>'});else draw()};
- el.start=subscribe;el.stop=()=>{stop&&stop();stop=null};addEventListener("xa",()=>{if(location.hash==="#announcement")subscribe()});subscribe()
+ el.start=subscribe;el.stop=()=>{stop&&stop();stop=null};
+ addEventListener("xa",()=>{
+  if(location.hash!=="#announcement")return;
+  el.querySelectorAll("[data-ann-card]").forEach(card=>{
+   const a=items.find(v=>v.id===card.dataset.annCard);if(!a||!a.uid)return;
+   const box=card.querySelector(".ann-avatar");if(!box)return;
+   const photo=XA().photo(a.uid);
+   if(photo){
+    let im=box.querySelector("img");
+    if(!im){im=document.createElement("img");im.alt="Foto profil "+(a.name||"Pengirim");box.replaceChildren(im)}
+    if(im.src!==photo)im.src=photo;
+   }
+  });
+ });
+ subscribe()
 }};
 /* ===== Admin: hanya UID di ROLE_CONFIG yang dapat membuka dan mengelola announcement ===== */
 const ADMIN={id:"admin",name:"Developer Center",desc:"Administrasi pengumuman, laporan pesan, dan customer service.",cat:"",icon:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>',
@@ -1363,8 +1377,9 @@ if(FIREBASE_CONFIG.apiKey){try{
   rename:async n=>{const cu=auth.currentUser;if(!cu)throw new Error("Masuk dulu.");await claimUsername(cu.uid,n);await Au.updateProfile(cu,{displayName:String(n).trim()});XA.user=auth.currentUser;fire()},
   guest:async n=>{const c=await Au.signInAnonymously(auth);try{await claimUsername(c.user.uid,n);await Au.updateProfile(c.user,{displayName:String(n).trim()})}catch(er){try{await Au.deleteUser(c.user)}catch{}throw er}XA.user=auth.currentUser;fire()},
   setPhoto:async d=>{const cu=auth.currentUser;await Fs.setDoc(ud(cu.uid),{photo:d,name:cu.displayName||"",at:Fs.serverTimestamp()},{merge:true});P[cu.uid]={...P[cu.uid],photo:d};fire()},
-  photo:id=>{const p=P[id];if(p===undefined&&!Q.has(id)){Q.add(id);Fs.getDoc(ud(id)).then(x=>{const d=x.exists()?x.data():{};P[id]=d;try{if(typeof d.photo==="string"&&d.photo&&d.photo.length<=100000)localStorage.setItem("xa-pp:"+id,d.photo);else localStorage.removeItem("xa-pp:"+id)}catch(e){}}).catch(()=>{setTimeout(()=>Q.delete(id),8000)}).then(()=>fire())}
-   if(p&&p.photo)return p.photo;if(p===undefined){try{return localStorage.getItem("xa-pp:"+id)||""}catch(e){}}return ""},
+  photo:id=>{const p=P[id];if(p===undefined&&!Q.has(id)){Q.add(id);Fs.getDoc(ud(id)).then(x=>{const d=x.exists()?x.data():{};P[id]=d;try{if(typeof d.photo==="string"&&d.photo&&d.photo.length<=100000)localStorage.setItem("xa-pp:"+id,d.photo);else if(!d.photo)localStorage.removeItem("xa-pp:"+id)}catch(e){}}).catch(()=>{setTimeout(()=>Q.delete(id),8000)}).then(()=>fire())}
+   if(p&&typeof p.photo==="string"&&p.photo)return p.photo;
+   try{return localStorage.getItem("xa-pp:"+id)||""}catch(e){return ""}},
   pReady:id=>P[id]!==undefined,
   send:(t,o)=>{const u=auth.currentUser,d={text:t,uid:u.uid,name:u.displayName||(u.isAnonymous?"Tamu":"Pengguna"),photo:u.photoURL||"",at:Fs.serverTimestamp()},r=o&&o.replyTo,f=o&&o.fwd;
    if(r&&typeof r.id==="string"&&r.id)d.replyTo={id:r.id,uid:String(r.uid||""),name:String(r.name||"").slice(0,40),text:String(r.text||"").slice(0,120)};
