@@ -758,7 +758,7 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
      <h2>Masuk sebagai tamu</h2>
      <p class="gsub">Pilih nama yang tampil di chat.</p>
      <label class="gf"><span>Nama tampilan</span><input id="gnm" type="text" placeholder="Nama kamu" autocomplete="nickname"></label>
-     <div class="gnote"><b>Penting.</b> Akun tamu tersimpan di browser ini. Kalau data situs dihapus, akun tamu ikut hilang.</div>
+     <div class="gnote"><b>Penting.</b> Akun tamu tersimpan di browser ini. Kalau data situs dihapus, akun lu ilang </div>
      <button class="gbtn pri" id="gok" type="submit">Lanjutkan</button>
     </form>
    </div>
@@ -775,7 +775,7 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
 <main class="wrap">
   <div id="home">
     <section id="tentang" aria-label="Xaerisoft">
-      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><span class="hero-k">Wilverse</span><h1>Xaerisoft</h1><p></p></div></div>
+      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><span class="hero-k">Wilverse</span><h1>Xaerisoft</h1><p>kumpulan tools html buatan dan berisi media hiburan </p></div></div>
       <div class="kepo" id="kepo"></div>
     </section>
     <section id="berita" aria-label="Berita">
