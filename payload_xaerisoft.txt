@@ -898,9 +898,9 @@ render(el){let un=null,uid=null,on=false,force=false;
  const cm=document.createElement("div");cm.className="xcm";document.body.appendChild(cm);
  const dg=document.createElement("dialog");dg.className="xcd";dg.setAttribute("aria-labelledby","xcdt");document.body.appendChild(dg);
  const closeM=()=>{if(!cm.classList.contains("on"))return;cm.classList.remove("on");cm.innerHTML="";const f=S.lf;S.lf=null;f&&f.isConnected&&f.focus({preventScroll:true})};
- const ask=(title,body,ok,fn,danger)=>{dg._f=fn;dg._r=null;dg._s=null;dg.innerHTML=`<h2 id="xcdt">${title}</h2><div class="xcb">${body}</div><div class="row xr"><button class="btn alt" type="button" data-c>Batal</button><button class="btn${danger?" dg":""}" type="button" data-o>${ok}</button></div>`;dg.showModal()};
+ const ask=(title,body,ok,fn,danger)=>{dg._f=fn;dg._r=null;dg._s=null;dg.innerHTML=`<h2 id="xcdt">${title}</h2><div class="xcb">${body}</div><div class="row xr"><button class="btn alt" type="button" data-cx>Batal</button><button class="btn${danger?" dg":""}" type="button" data-o>${ok}</button></div>`;dg.showModal()};
  dg.addEventListener("click",e=>{const t=e.target;
-  if(t.closest("[data-c]"))return dg.close();
+  if(t.closest("[data-cx]"))return dg.close();
   if(t.closest("[data-sh]")){dg._s&&dg._s();return}
   const rs=t.closest("[data-rs]");if(rs){dg.querySelectorAll("[data-rs]").forEach(c=>c.setAttribute("aria-pressed",c===rs));dg._r=rs.dataset.rs;return}
   if(t.closest("[data-o]")){const f=dg._f;if(f&&f()===false)return;dg.close()}});
@@ -920,16 +920,16 @@ render(el){let un=null,uid=null,on=false,force=false;
  const openM=(id,px,py,src)=>{const m=S.map.get(id);if(!m||!uid)return;const me=m.uid===uid,mr=(m.reactions||{})[uid];
   S.lf=src||null;S.ot=Date.now();
   const A=(a,ic,t,c)=>`<button class="ac${c?" "+c:""}" type="button" data-a="${a}">${ico(ic)}<span>${t}</span></button>`;
-  cm.innerHTML=`<div class="bk" data-x></div><div class="sh" role="dialog" aria-label="Opsi pesan" data-id="${cE(id)}"><div class="rr" role="group" aria-label="Beri reaksi">${Object.keys(CRX).map(k=>`<button type="button" data-a="r" data-k="${k}" aria-pressed="${mr===k}" aria-label="Reaksi ${CRX[k]}">${CRX[k]}</button>`).join("")}</div>${A("reply",CIC.reply,"Balas")}${m.text?A("copy",CIC.copy,"Salin teks"):""}${A("fwd",CIC.fwd,"Teruskan")}${me?A("del",CIC.del,"Hapus pesan","dg"):A("rep",CIC.flag,"Laporkan","dg")}</div>`;
+  cm.innerHTML=`<div class="bk" data-x></div><div class="sh" role="dialog" aria-label="Opsi pesan" data-mid="${cE(id)}"><div class="rr" role="group" aria-label="Beri reaksi">${Object.keys(CRX).map(k=>`<button type="button" data-a="r" data-k="${k}" aria-pressed="${mr===k}" aria-label="Reaksi ${CRX[k]}">${CRX[k]}</button>`).join("")}</div>${A("reply",CIC.reply,"Balas")}${m.text?A("copy",CIC.copy,"Salin teks"):""}${A("fwd",CIC.fwd,"Teruskan")}${me?A("del",CIC.del,"Hapus pesan","dg"):A("rep",CIC.flag,"Laporkan","dg")}</div>`;
   cm.classList.add("on");const sh=cm.querySelector(".sh");
   if(innerWidth>=640){const w=sh.offsetWidth,h=sh.offsetHeight;sh.style.left=Math.max(8,Math.min(px,innerWidth-w-8))+"px";sh.style.top=Math.max(8,Math.min(py,innerHeight-h-8))+"px"}
   if(src){const f=sh.querySelector(".ac");f&&f.focus({preventScroll:true})}};
  cm.addEventListener("click",e=>{
   if(e.target.closest("[data-x]")){if(Date.now()-S.ot>350)closeM();return}
   const b=e.target.closest("[data-a]");if(!b)return;
-  const a=b.dataset.a,k=b.dataset.k,m=S.map.get(cm.querySelector(".sh").dataset.id);closeM();m&&act(a,m,k)});
+  const a=b.dataset.a,k=b.dataset.k,m=S.map.get(cm.querySelector(".sh").dataset.mid);closeM();m&&act(a,m,k)});
  addEventListener("keydown",e=>{if(e.key==="Escape"&&cm.classList.contains("on"))closeM()});
- addEventListener("resize",()=>closeM());
+ addEventListener("resize",()=>closeM());addEventListener("hashchange",()=>closeM());
  const showRep=()=>{const r=S.rep,rb=$("#rb",el);if(!rb)return;rb.classList.toggle("hide",!r);if(r){rb.querySelector("b").textContent="Membalas "+r.name;rb.querySelector("span").textContent=r.text;$("#ci",el).focus()}};
  const clrRep=()=>{S.rep=null;showRep()};
  const draw=()=>{if(!on)return;const x=XA(),u=x.user;
@@ -948,20 +948,20 @@ render(el){let un=null,uid=null,on=false,force=false;
    if(d<80&&(S.unread||S.fu)){S.unread=0;S.fu=null;const n=ms.querySelector(".nd");n&&n.remove();nb()}
    jb.classList.toggle("hide",d<120&&!S.unread)},{passive:true});
   jb.onclick=()=>ms.scrollTo({top:ms.scrollHeight,behavior:"smooth"});
-  const goTo=id=>{const n=id&&ms.querySelector('.m[data-id="'+CSS.escape(id)+'"]');if(!n){toast("Pesan asli sudah dihapus atau di luar riwayat yang dimuat");return}
+  const goTo=id=>{const n=id&&ms.querySelector('.m[data-mid="'+CSS.escape(id)+'"]');if(!n){toast("Pesan asli sudah dihapus atau di luar riwayat yang dimuat");return}
    n.scrollIntoView({behavior:"smooth",block:"center"});n.classList.remove("fl");void n.offsetWidth;n.classList.add("fl");setTimeout(()=>n.classList.remove("fl"),1400)};
   /* tekan lama (sentuh/pen), klik kanan, dan tombol ⋯ */
   let lt=null,sx=0,sy=0;const cancelLP=()=>{clearTimeout(lt);lt=null};
   ms.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse")return;const b=e.target.closest(".mb");if(!b||e.target.closest("button,a"))return;
-   sx=e.clientX;sy=e.clientY;const id=b.parentNode.dataset.id;
+   sx=e.clientX;sy=e.clientY;const id=b.parentNode.dataset.mid;
    lt=setTimeout(()=>{lt=null;navigator.vibrate&&navigator.vibrate(12);openM(id,sx,sy)},430)});
   ["pointerup","pointercancel","pointerleave"].forEach(n=>ms.addEventListener(n,cancelLP));
   ms.addEventListener("pointermove",e=>{if(lt&&Math.hypot(e.clientX-sx,e.clientY-sy)>9)cancelLP()});
-  ms.addEventListener("contextmenu",e=>{const b=e.target.closest(".mb");if(!b)return;e.preventDefault();openM(b.parentNode.dataset.id,e.clientX,e.clientY)});
+  ms.addEventListener("contextmenu",e=>{const b=e.target.closest(".mb");if(!b)return;e.preventDefault();openM(b.parentNode.dataset.mid,e.clientX,e.clientY)});
   ms.addEventListener("click",e=>{
-   const mo=e.target.closest(".mo");if(mo){const r=mo.getBoundingClientRect();openM(mo.closest(".m").dataset.id,r.left,r.bottom+6,mo);return}
+   const mo=e.target.closest(".mo");if(mo){const r=mo.getBoundingClientRect();openM(mo.closest(".m").dataset.mid,r.left,r.bottom+6,mo);return}
    const g=e.target.closest(".rq");if(g){goTo(g.dataset.go);return}
-   const rx=e.target.closest(".rx");if(rx){const m=S.map.get(rx.closest(".m").dataset.id);m&&act("r",m,rx.dataset.k)}});
+   const rx=e.target.closest(".rx");if(rx){const m=S.map.get(rx.closest(".m").dataset.mid);m&&act("r",m,rx.dataset.k)}});
   un=x.listen(a=>{const st=ms.scrollTop,stick=first||force||dist()<80;
    S.arr=a;S.map=new Map(a.map(m=>[m.id,m]));
    const add=S.known?a.filter(m=>!S.known.has(m.id)&&m.uid!==uid):[];S.known=new Set(a.map(m=>m.id));
@@ -975,7 +975,7 @@ render(el){let un=null,uid=null,on=false,force=false;
     const rm=m.reactions&&typeof m.reactions==="object"?m.reactions:{},cn={};Object.keys(rm).forEach(k=>{const v=rm[k];if(CRX[v])cn[v]=(cn[v]||0)+1});
     const rxh=Object.keys(CRX).filter(k=>cn[k]).map(k=>`<button class="rx" type="button" data-k="${k}" aria-pressed="${rm[uid]===k}" aria-label="${CRX[k]} ${cn[k]}">${CRX[k]}<span>${cn[k]}</span></button>`).join("");
     const iso=new Date(t).toISOString(),full=new Date(t).toLocaleString("id-ID",{dateStyle:"full",timeStyle:"short"});
-    h+=`<div class="m${me?" me":""}${g?" g":""}" data-id="${cE(m.id)}">${av}<div class="mb">${me||g?"":`<small>${nameHTML(nm,m.uid)}</small>`}${fw?`<div class="fw">${ico(CIC.fwd)}Diteruskan${fw.name?" dari "+cE(fw.name):""}</div>`:""}${rq?`<button class="rq" type="button"${rq.id?` data-go="${cE(rq.id)}"`:""} aria-label="Lihat pesan asli dari ${cE(rq.name||"Pengguna")}"><b>${cE(rq.name||"Pengguna")}</b><span>${cE(rq.text)}</span></button>`:""}<p>${cE(m.text)}</p>${rxh?`<div class="rxs">${rxh}</div>`:""}<time datetime="${iso}" title="${esc(full)}">${hm(t)}</time></div><button class="mo" type="button" aria-label="Opsi pesan" aria-haspopup="dialog">${ico(CIC.more)}</button></div>`;
+    h+=`<div class="m${me?" me":""}${g?" g":""}" data-mid="${cE(m.id)}">${av}<div class="mb">${me||g?"":`<small>${nameHTML(nm,m.uid)}</small>`}${fw?`<div class="fw">${ico(CIC.fwd)}Diteruskan${fw.name?" dari "+cE(fw.name):""}</div>`:""}${rq?`<button class="rq" type="button"${rq.id?` data-go="${cE(rq.id)}"`:""} aria-label="Lihat pesan asli dari ${cE(rq.name||"Pengguna")}"><b>${cE(rq.name||"Pengguna")}</b><span>${cE(rq.text)}</span></button>`:""}<p>${cE(m.text)}</p>${rxh?`<div class="rxs">${rxh}</div>`:""}<time datetime="${iso}" title="${esc(full)}">${hm(t)}</time></div><button class="mo" type="button" aria-label="Opsi pesan" aria-haspopup="dialog">${ico(CIC.more)}</button></div>`;
     pt=t;pu=m.uid;pd=dk});
    ms.innerHTML=h||'<div class="ec"><b>Belum ada pesan</b>Jadi yang pertama menyapa.</div>';
    $("#cc",el).textContent=a.length?a.length+" pesan":"";
