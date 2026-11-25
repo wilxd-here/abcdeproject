@@ -727,6 +727,41 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
 .nc small{font-size:13px}
 #home .nsk{border-radius:24px;border:1.5px dashed var(--line)}
 .nav2 button{border:1.5px solid var(--bd);border-radius:999px}
+
+/* ===== Xaerisoft Studio Upgrade: announcement, support & administration ===== */
+.ann-card,.panel{transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s}
+.ann-card{padding:clamp(16px,3vw,24px);border-radius:24px;box-shadow:0 14px 34px -25px var(--ink),4px 4px 0 var(--blue)}
+.ann-head{display:flex;align-items:center;gap:11px;min-width:0;margin-bottom:14px}
+.ann-avatar{width:44px;height:44px;flex:none;overflow:hidden;border-radius:15px;border:1.5px solid var(--bd);background:var(--light);display:grid;place-items:center;font-weight:800;color:var(--ic)}
+.ann-avatar img{width:100%;height:100%;object-fit:cover}
+.ann-author{min-width:0;flex:1}
+.ann-author .xn{font-size:14px;font-weight:800}
+.ann-author small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.ann-title{font:700 clamp(21px,5vw,27px)/1.15 var(--fd);letter-spacing:-.025em;margin:8px 0 10px}
+.ann-copy{font-size:15.5px;line-height:1.7;overflow-wrap:anywhere}
+.ann-media{display:block;width:100%;max-height:360px;object-fit:cover;border:1.5px solid var(--line);border-radius:16px;margin:14px 0}
+.ann-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.ann-date{font-size:12px;color:var(--mute)}
+.ann-react-area{display:flex;align-items:center;gap:7px;position:relative;flex-wrap:wrap}
+.ann-react-area .rx{min-height:34px;padding:4px 10px;font-size:14px;border:1px solid var(--line);background:var(--bg)}
+.ann-react-area .rx[aria-pressed=true]{border-color:var(--accent);background:var(--light);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}
+.ann-emoji-trigger{width:36px;height:36px;min-height:36px;padding:0;border-radius:50%;border:1.5px solid var(--bd);background:var(--card);display:grid;place-items:center;font-size:19px}
+.ann-emoji-trigger:hover{background:var(--light)}
+.ann-emoji-picker{position:absolute;z-index:8;left:0;bottom:44px;width:min(290px,82vw);padding:10px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;border:1.5px solid var(--bd);border-radius:16px;background:var(--card);box-shadow:0 12px 30px rgba(20,15,35,.2)}
+.ann-emoji-picker button{min-width:0;min-height:36px;border:0;border-radius:9px;background:transparent;font-size:20px}
+.ann-emoji-picker button:hover{background:var(--light)}
+.ann-emoji-picker[hidden]{display:none}
+.admin-tabs{display:flex;gap:7px;overflow:auto;padding:2px 2px 10px;scrollbar-width:none}
+.admin-tabs button{white-space:nowrap}
+.admin-item{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--bg);display:grid;gap:8px}
+.admin-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.admin-item p{overflow-wrap:anywhere;white-space:pre-wrap}
+.admin-state{font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 9px;border-radius:999px;background:var(--c3);color:var(--ink)}
+.admin-state.done{background:var(--blue)}
+.admin-empty{padding:22px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:16px}
+.support-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--mute);font-size:12px}
+@media(min-width:700px){.ann-card{padding:24px}.ann-head{gap:14px}.ann-avatar{width:50px;height:50px}}
+
 </style>
 </head>
 <body>
@@ -1223,32 +1258,63 @@ render(el){
  el.addEventListener("change",e=>{if(e.target.id==="acp")draw()});
  el.start=draw;draw()}};
 
-const CS={id:"cs",name:"Customer service",desc:"Bantuan untuk pengguna Xaerisoft.",cat:"",icon:IC.head,
+const CS={id:"cs",name:"Customer service",desc:"Pusat bantuan dan laporan kendala Xaerisoft.",cat:"",icon:IC.head,
 render(el){
- const faq=[["Cara ganti username?","Buka Profil, ubah kolom Username, lalu tekan Simpan."],["Cara ganti foto profil?","Di Profil, tekan ikon kamera pada foto. Foto bisa dilihat pengguna lain, misalnya di Chat Global."],["Cara ganti tema?","Buka Profil, pilih Pengaturan, lalu Ubah tema."],["Kenapa diminta izin lokasi?","Untuk menampilkan nama kota dan cuaca di Beranda. Koordinat dikirim ke layanan cuaca dan peta, tidak disimpan oleh Xaerisoft. Kalau ditolak, lokasi tampil Unknown."]];
- el.innerHTML=`<div class="stack"><div class="panel"><div class="csh"><span class="ic">${ico(IC.head)}</span><div><b>Ada kendala?</b><p class="hint">Pilih topik, lalu ceritakan masalahmu</p></div></div><div class="cs-status"><i></i>Layanan belum aktif. Segera hadir.</div><div class="topics" role="group" aria-label="Topik">${["Akun dan login","Chat Global","Upgrade VIP","API endpoint","Lainnya"].map(t=>`<button class="chip" type="button" data-tp aria-pressed="false">${t}</button>`).join("")}</div><form class="f" id="csf"><label for="csm">Pesan</label><textarea id="csm" maxlength="500" placeholder="Tulis kendalamu…" style="min-height:110px;font-family:inherit"></textarea><div class="row" style="margin-top:12px"><button class="btn" type="submit">Kirim</button></div></form></div>
+ const faq=[["Cara ganti username?","Buka Profil, ubah kolom Username, lalu tekan Simpan."],["Cara ganti foto profil?","Di Profil, tekan tombol edit pada foto."],["Cara ganti tema?","Buka Profil, pilih Pengaturan, lalu Ubah tema."],["Bagaimana laporan diproses?","Laporan akan masuk ke pusat administrasi dan dapat ditinjau oleh tim Xaerisoft."]];
+ const topics=["Akun dan login","Chat Global","Announcement","Upgrade VIP","API endpoint","Lainnya"];
+ el.innerHTML=`<div class="stack"><div class="panel"><div class="csh"><span class="ic">${ico(IC.head)}</span><div><b>Pusat bantuan Xaerisoft</b><p class="hint">Jelaskan kendala dengan detail agar tim dapat menindaklanjuti.</p></div></div><div class="cs-status"><i style="background:var(--ok)"></i>Formulir laporan aktif</div><form class="f" id="csf"><label for="cstopic">Kategori laporan</label><select id="cstopic" required>${topics.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("")}</select><label for="cstitle">Judul laporan</label><input id="cstitle" type="text" maxlength="100" required placeholder="Ringkasan kendala"><label for="csm">Detail kendala</label><textarea id="csm" maxlength="1500" required placeholder="Ceritakan apa yang terjadi, langkah sebelum kendala muncul, dan informasi lain yang relevan…" style="min-height:140px;font-family:inherit"></textarea><div class="row" style="margin-top:12px"><button class="btn" id="csSend" type="submit">Kirim laporan</button></div><p id="csErr" class="hint" role="status"></p></form></div>
  <div class="panel"><h2 style="margin:0">Pertanyaan umum</h2>${faq.map(f=>`<details class="faq"><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join("")}</div></div>`;
- el.addEventListener("click",e=>{const c=e.target.closest("[data-tp]");if(!c)return;el.querySelectorAll("[data-tp]").forEach(b=>b.setAttribute("aria-pressed",b===c&&b.getAttribute("aria-pressed")!=="true"))});
- $("#csf",el).onsubmit=e=>{e.preventDefault();toast("Customer service belum aktif. Sementara hubungi developer lewat Profil.")}}};
+ $("#csf",el).onsubmit=async e=>{e.preventDefault();const x=XA(),u=x.user,btn=$("#csSend",el),err=$("#csErr",el);if(!u){err.textContent="Masuk ke akun terlebih dahulu untuk mengirim laporan.";return}const topic=$("#cstopic",el).value,title=$("#cstitle",el).value.trim(),body=$("#csm",el).value.trim();if(!title||!body){err.textContent="Judul dan detail laporan wajib diisi.";return}btn.disabled=true;err.textContent="Mengirim laporan…";try{await x.submitSupport({topic,title,body});e.target.reset();err.textContent="Laporan berhasil dikirim. Tim Xaerisoft dapat meninjaunya melalui halaman administrasi.";toast("Laporan terkirim")}catch(er){err.textContent="Laporan gagal dikirim: "+(er.message||er.code||"Periksa koneksi dan Firestore Rules.")}finally{btn.disabled=false}}}};
 
 
 /* ===== Announcement publik: update perkembangan website/tools ===== */
 const ANNOUNCEMENT={id:"announcement",name:"Announcement",desc:"Informasi dan perkembangan Xaerisoft.",cat:"",icon:'<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/>',
-render(el){let stop=null,items=[];const annReact=a=>{const x=XA(),me=x.user&&x.user.uid,rm=a.reactions&&typeof a.reactions==="object"?a.reactions:{},cn={};Object.keys(rm).forEach(k=>{const v=rm[k];if(CRX[v])cn[v]=(cn[v]||0)+1});return`<div class="rxs" data-aid="${esc(a.id)}" style="margin-top:8px">${Object.keys(CRX).map(k=>`<button class="rx" type="button" data-ak="${k}" aria-pressed="${!!me&&rm[me]===k}" aria-label="Reaksi ${CRX[k]}">${CRX[k]}${cn[k]?`<span>${cn[k]}</span>`:""}</button>`).join("")}</div>`};const draw=()=>{const x=XA(),u=x.user;el.innerHTML=`<div class="stack"><div class="panel"><div class="row" style="align-items:center;justify-content:space-between"><div><b>Update Xaerisoft</b><p class="hint">Perkembangan website, fitur, dan tools terbaru.</p></div><button class="btn alt" id="pushOn" type="button">Aktifkan notifikasi</button></div><p id="pushState" class="hint" style="margin-top:8px">${"Notification" in window?(Notification.permission==="granted"?"Notifikasi browser diizinkan.":Notification.permission==="denied"?"Izin notifikasi ditolak di browser.":"Notifikasi belum diaktifkan."):"Browser ini tidak mendukung notifikasi."}</p></div><div id="annList" class="stack">${items.length?items.map(a=>`<article class="panel"><img src="${esc(a.imageUrl||"")}" alt="" class="nimg" style="display:${a.imageUrl?"block":"none"};border:2px solid var(--bd);border-radius:12px;aspect-ratio:16/9" onerror="this.style.display='none'">${a.uid?`<div class="row" style="align-items:center;gap:6px;margin-top:10px;font-weight:800">${nameHTML(a.name||"Developer",a.uid)}</div>`:""}<h2 style="margin:6px 0 4px;color:var(--ink)">${esc(a.title||"Update")}</h2><p style="white-space:pre-wrap">${esc(a.body||"")}</p><small class="hint">${a.at&&a.at.toDate?a.at.toDate().toLocaleString("id-ID"):"Pengumuman Xaerisoft"}</small>${annReact(a)}</article>`).join(""):'<div class="empty"><b>Belum ada pengumuman</b>Update perkembangan website akan tampil di sini.</div>'}</div></div>`;
- el.querySelectorAll("[data-ak]").forEach(btn=>btn.onclick=()=>{const x2=XA(),u2=x2.user;if(!u2){toast("Masuk dulu untuk memberi reaksi");return}const id=btn.closest("[data-aid]").dataset.aid,k=btn.dataset.ak,a=items.find(i=>i.id===id),cur=a&&a.reactions&&a.reactions[u2.uid];(cur===k?x2.unreactAnn(id):x2.reactAnn(id,k)).catch(er=>toast("Reaksi gagal: "+(er.code||er.message)))});
- const b=$("#pushOn",el);if(b)b.onclick=async()=>{try{await x.enablePush();$("#pushState",el).textContent="Notifikasi berhasil diaktifkan di perangkat ini.";toast("Notifikasi diaktifkan")}catch(e){$("#pushState",el).textContent=e.message||"Notifikasi belum bisa diaktifkan.";toast("Gagal mengaktifkan notifikasi")}}};
- const subscribe=()=>{if(stop)stop();const x=XA();if(x.ready&&x.listenAnnouncements)stop=x.listenAnnouncements(a=>{const first=items.length?items[items.length-1]?.id:null;items=a;draw();if(first&&a.length&&a[0].id!==first&&Notification.permission==="granted")new Notification(a[0].title||"Update Xaerisoft",{body:a[0].body||"Ada pengumuman baru."})},e=>{console.error(e);el.innerHTML='<div class="panel err">Gagal memuat pengumuman. Periksa koneksi dan aturan Firestore.</div>'});else draw()};
- el.start=subscribe;el.stop=()=>{stop&&stop();stop=null};addEventListener("xa",()=>{if(location.hash==="#announcement")subscribe()});subscribe()}};
-
+render(el){
+ let stop=null,items=[];
+ const ANN_EMO=["👍","❤️","😂","😮","😢","🙏","🔥","🎉","😍","🥰","👏","🙌","💯","✨","⭐","🤝","🤔","😎","😭","🤣","😊","😡","👀","💡","🚀","✅","💙","💚","💜","🧡","💛","🤩","😅","🥳","💪","🌟","📌","🎯","🫶","☕","🌈","⚡"];
+ const annReact=a=>{
+  const x=XA(),me=x.user&&x.user.uid,rm=a.reactions&&typeof a.reactions==="object"?a.reactions:{},counts={};
+  const legacy={like:"👍",love:"❤️",haha:"😂",wow:"😮",sad:"😢",pray:"🙏"};
+  Object.values(rm).forEach(raw=>{const v=legacy[raw]||raw;if(typeof v==="string"&&ANN_EMO.includes(v))counts[v]=(counts[v]||0)+1});
+  const used=Object.keys(counts).sort((u,v)=>counts[v]-counts[u]);
+  const mine=me?(legacy[rm[me]]||rm[me]):"";
+  return `<div class="ann-react-area" data-aid="${esc(a.id)}"><button class="ann-emoji-trigger" type="button" data-emoji-toggle aria-label="Pilih reaksi">＋</button><div class="ann-emoji-picker" data-emoji-picker hidden>${ANN_EMO.map(v=>`<button type="button" data-ann-emoji="${v}" aria-label="Reaksi ${v}">${v}</button>`).join("")}</div>${used.map(v=>`<button class="rx" type="button" data-ak="${v}" aria-pressed="${!!me&&mine===v}">${v}<span>${counts[v]}</span></button>`).join("")}</div>`
+ };
+ const author=a=>{
+  const x=XA(),photo=a.uid&&x.photo?x.photo(a.uid):"",nm=a.name||"Developer";
+  return `<div class="ann-head"><div class="ann-avatar">${photo?`<img src="${esc(photo)}" alt="Foto profil ${esc(nm)}">`:esc(nm.trim().slice(0,1).toUpperCase()||"D")}</div><div class="ann-author">${nameHTML(nm,a.uid)}<small>${a.uid&&x.role&&x.role(a.uid).role==="owner"?"Developer Xaerisoft":a.uid&&x.role&&x.role(a.uid).role==="admin"?"Administrator Xaerisoft":"Pengirim pengumuman"}</small></div></div>`
+ };
+ const draw=()=>{
+  const x=XA();
+  el.innerHTML=`<div class="stack"><div class="panel"><div class="row" style="align-items:center;justify-content:space-between;gap:14px"><div><b>Update Xaerisoft</b><p class="hint">Informasi resmi, catatan pembaruan, dan perkembangan terbaru.</p></div><button class="btn alt" id="pushOn" type="button">Aktifkan notifikasi</button></div><p id="pushState" class="hint" style="margin-top:8px">${"Notification" in window?(Notification.permission==="granted"?"Notifikasi browser diizinkan.":Notification.permission==="denied"?"Izin notifikasi ditolak di browser.":"Notifikasi belum diaktifkan."):"Browser ini tidak mendukung notifikasi."}</p></div><div id="annList" class="stack">${items.length?items.map(a=>`<article class="ann-card" data-ann-card="${esc(a.id)}">${author(a)}${a.imageUrl?`<img src="${esc(a.imageUrl)}" alt="Media pengumuman" class="ann-media" loading="lazy" onerror="this.remove()">`:""}<h2 class="ann-title">${esc(a.title||"Update")}</h2><p class="ann-copy">${esc(a.body||"")}</p><div class="ann-foot"><small class="ann-date">${a.at&&a.at.toDate?a.at.toDate().toLocaleString("id-ID"):"Pengumuman Xaerisoft"}</small>${annReact(a)}</div></article>`).join(""):'<div class="empty"><b>Belum ada pengumuman</b>Update perkembangan website akan tampil di sini.</div>'}</div></div>`;
+  el.querySelectorAll("[data-emoji-toggle]").forEach(b=>b.onclick=()=>{const p=b.parentElement.querySelector("[data-emoji-picker]");p.hidden=!p.hidden});
+  el.querySelectorAll("[data-ann-emoji],[data-ak]").forEach(btn=>btn.onclick=async()=>{
+   const x2=XA(),u2=x2.user;if(!u2){toast("Masuk dulu untuk memberi reaksi");return}
+   const area=btn.closest("[data-aid]"),id=area.dataset.aid,k=btn.dataset.annEmoji||btn.dataset.ak,a=items.find(i=>i.id===id),cur=a&&a.reactions&&a.reactions[u2.uid];
+   try{await(cur===k?x2.unreactAnn(id):x2.reactAnn(id,k));}catch(er){toast("Reaksi gagal: "+(er.code||er.message))}
+  });
+  const b=$("#pushOn",el);if(b)b.onclick=async()=>{try{await x.enablePush();$("#pushState",el).textContent="Notifikasi berhasil diaktifkan di perangkat ini.";toast("Notifikasi diaktifkan")}catch(e){$("#pushState",el).textContent=e.message||"Notifikasi belum bisa diaktifkan.";toast("Gagal mengaktifkan notifikasi")}}
+ };
+ const subscribe=()=>{if(stop)stop();const x=XA();if(x.ready&&x.listenAnnouncements)stop=x.listenAnnouncements(a=>{const first=items.length?items[items.length-1]?.id:null;items=a;draw();if(first&&a.length&&a[0].id!==first&&"Notification" in window&&Notification.permission==="granted")new Notification(a[0].title||"Update Xaerisoft",{body:a[0].body||"Ada pengumuman baru."})},e=>{console.error(e);el.innerHTML='<div class="panel err">Gagal memuat pengumuman. Periksa koneksi dan aturan Firestore.</div>'});else draw()};
+ el.start=subscribe;el.stop=()=>{stop&&stop();stop=null};addEventListener("xa",()=>{if(location.hash==="#announcement")subscribe()});subscribe()
+}};
 /* ===== Admin: hanya UID di ROLE_CONFIG yang dapat membuka dan mengelola announcement ===== */
-const ADMIN={id:"admin",name:"Admin",desc:"Kelola pengumuman Xaerisoft.",cat:"",icon:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>',
-render(el){let items=[],stop=null;const draw=()=>{const x=XA(),u=x.user;if(!u||!x.isAdmin||!x.isAdmin(u.uid)){el.innerHTML='<div class="panel err">Akses ditolak. Akun ini tidak terdaftar sebagai Admin.</div>';return}
- el.innerHTML=`<div class="stack"><div class="panel"><h2 style="margin:0 0 8px">Buat pengumuman</h2><form class="f" id="annForm"><label for="annTitle">Judul</label><input id="annTitle" type="text" maxlength="90" required placeholder="Contoh: Update tools terbaru"><label for="annBody">Informasi</label><textarea id="annBody" maxlength="1800" required placeholder="Jelaskan perkembangan website atau tools…" style="min-height:110px"></textarea><label for="annImage">URL gambar (opsional)</label><input id="annImage" type="url" placeholder="https://.../gambar.jpg"><div class="row" style="margin-top:12px"><button class="btn" type="submit">Terbitkan</button></div><p id="annErr" class="err hide" role="alert" style="margin-top:8px"></p></form></div><div class="panel"><h2 style="margin:0 0 10px">Pengumuman terbit</h2><div id="adminAnnList" class="stack"></div></div></div>`;
- const f=$("#annForm",el);f.onsubmit=async e=>{e.preventDefault();const title=$("#annTitle",el).value.trim(),body=$("#annBody",el).value.trim(),imageUrl=$("#annImage",el).value.trim(),err=$("#annErr",el);if(imageUrl&&!/^https:\/\//i.test(imageUrl)){err.textContent="URL gambar harus menggunakan HTTPS.";err.classList.remove("hide");return}try{await x.saveAnnouncement({title,body,imageUrl});f.reset();toast("Pengumuman diterbitkan")}catch(er){err.textContent="Gagal menerbitkan: "+(er.message||er.code);err.classList.remove("hide")}};
- const list=$("#adminAnnList",el);list.innerHTML=items.length?items.map(a=>`<div class="row" style="align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:8px 0"><span style="min-width:0;flex:1"><b>${esc(a.title||"Tanpa judul")}</b><small class="hint" style="display:block">${esc((a.body||"").slice(0,90))}</small></span><button class="btn alt" type="button" data-del-ann="${esc(a.id)}">Hapus</button></div>`).join(""):'<p class="hint">Belum ada pengumuman.</p>';
- list.onclick=async e=>{const b=e.target.closest("[data-del-ann]");if(!b)return;if(!confirm("Hapus pengumuman ini?"))return;try{await x.deleteAnnouncement(b.dataset.delAnn);toast("Pengumuman dihapus")}catch(er){toast("Gagal menghapus: "+(er.message||er.code))}}};
- const load=()=>{const x=XA();if(stop){stop();stop=null}if(!x.user||!x.isAdmin||!x.isAdmin(x.user.uid)){draw();return}if(x.listenAnnouncements)stop=x.listenAnnouncements(a=>{items=a;draw()},e=>{console.error(e);toast("Gagal memuat data admin")});else draw()};el.start=load;el.stop=()=>{if(stop)stop();stop=null};load();addEventListener("xa",()=>{if(location.hash==="#admin")load()})}};
-
+const ADMIN={id:"admin",name:"Developer Center",desc:"Administrasi pengumuman, laporan pesan, dan customer service.",cat:"",icon:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>',
+render(el){
+ let announcements=[],reports=[],stopAnn=null,stopRep=null,tab="ann";
+ const draw=()=>{
+  const x=XA(),u=x.user;if(!u||!x.isAdmin||!x.isAdmin(u.uid)){el.innerHTML='<div class="panel err">Akses ditolak. Akun ini tidak terdaftar sebagai Developer/Admin.</div>';return}
+  const annRows=announcements.length?announcements.map(a=>`<div class="admin-item"><div class="admin-item-head"><b>${esc(a.title||"Tanpa judul")}</b><button class="btn alt" type="button" data-del-ann="${esc(a.id)}">Hapus</button></div><p class="hint">${esc((a.body||"").slice(0,180))}</p><small class="hint">${esc(a.name||"Pengirim")} · ${a.at&&a.at.toDate?a.at.toDate().toLocaleString("id-ID"):"Baru"}</small></div>`).join(""):'<div class="admin-empty">Belum ada pengumuman.</div>';
+  const repRows=reports.length?reports.map(r=>{const support=r.type==="support",done=r.status==="resolved";return `<div class="admin-item"><div class="admin-item-head"><b>${esc(support?r.title||"Laporan Customer Service":"Laporan pesan Chat Global")}</b><span class="admin-state ${done?"done":""}">${done?"Selesai":"Perlu ditinjau"}</span></div><div class="support-meta"><span>${support?esc(r.topic||"Customer Service"):esc(r.reason||"Laporan pesan")}</span><span>·</span><span>${r.at&&r.at.toDate?r.at.toDate().toLocaleString("id-ID"):"Waktu tidak tersedia"}</span></div>${r.msgText?`<p>${esc(r.msgText)}</p>`:""}${r.body?`<p>${esc(r.body)}</p>`:""}<small class="hint">Pelapor UID: ${esc(r.reporterUid||"—")}${r.msgUid?" · Pemilik pesan UID: "+esc(r.msgUid):""}</small><div class="row"><button class="btn ${done?"alt":""}" type="button" data-report-state="${esc(r.id)}" data-next="${done?"open":"resolved"}">${done?"Tandai belum selesai":"Tandai selesai"}</button></div></div>`}).join(""):'<div class="admin-empty">Belum ada laporan masuk.</div>';
+  el.innerHTML=`<div class="stack"><div class="panel"><div><b>Developer Center</b><p class="hint">Pusat pengelolaan konten dan tindak lanjut pengguna.</p></div><div class="admin-tabs"><button class="chip" type="button" data-admin-tab="ann" aria-pressed="${tab==="ann"}">Pengumuman (${announcements.length})</button><button class="chip" type="button" data-admin-tab="reports" aria-pressed="${tab==="reports"}">Laporan (${reports.filter(r=>r.status!=="resolved").length})</button></div></div>${tab==="ann"?`<div class="panel"><h2 style="margin:0 0 8px">Buat pengumuman</h2><form class="f" id="annForm"><label for="annTitle">Judul</label><input id="annTitle" type="text" maxlength="90" required placeholder="Contoh: Pembaruan Xaerisoft"><label for="annBody">Informasi</label><textarea id="annBody" maxlength="1800" required placeholder="Tulis informasi pengumuman…" style="min-height:130px"></textarea><label for="annImage">URL gambar (opsional)</label><input id="annImage" type="url" placeholder="https://.../gambar.jpg"><div class="row" style="margin-top:12px"><button class="btn" type="submit">Terbitkan pengumuman</button></div><p id="annErr" class="err hide" role="alert"></p></form></div><div class="panel"><h2 style="margin:0 0 10px">Pengumuman terbit</h2><div class="stack">${annRows}</div></div>`:`<div class="panel"><h2 style="margin:0 0 8px">Pusat laporan pengguna</h2><p class="hint">Laporan pesan dan formulir Customer Service ditampilkan di sini.</p><div class="stack">${repRows}</div></div>`}</div>`;
+  el.querySelectorAll("[data-admin-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.adminTab;draw()});
+  const f=$("#annForm",el);if(f)f.onsubmit=async e=>{e.preventDefault();const title=$("#annTitle",el).value.trim(),body=$("#annBody",el).value.trim(),imageUrl=$("#annImage",el).value.trim(),err=$("#annErr",el);if(imageUrl&&!/^https:\/\//i.test(imageUrl)){err.textContent="URL gambar harus menggunakan HTTPS.";err.classList.remove("hide");return}try{await x.saveAnnouncement({title,body,imageUrl});f.reset();toast("Pengumuman diterbitkan")}catch(er){err.textContent="Gagal menerbitkan: "+(er.message||er.code);err.classList.remove("hide")}};
+  el.querySelectorAll("[data-del-ann]").forEach(b=>b.onclick=async()=>{if(!confirm("Hapus pengumuman ini?"))return;try{await x.deleteAnnouncement(b.dataset.delAnn);toast("Pengumuman dihapus")}catch(er){toast("Gagal menghapus: "+(er.message||er.code))}});
+  el.querySelectorAll("[data-report-state]").forEach(b=>b.onclick=async()=>{try{await x.updateReport(b.dataset.reportState,b.dataset.next);toast("Status laporan diperbarui")}catch(er){toast("Gagal memperbarui laporan: "+(er.message||er.code))}})
+ };
+ const load=()=>{const x=XA();if(stopAnn){stopAnn();stopAnn=null}if(stopRep){stopRep();stopRep=null}if(!x.user||!x.isAdmin||!x.isAdmin(x.user.uid)){draw();return}if(x.listenAnnouncements)stopAnn=x.listenAnnouncements(a=>{announcements=a;draw()},e=>console.error(e));if(x.listenReports)stopRep=x.listenReports(r=>{reports=r;draw()},e=>{console.error(e);toast("Gagal memuat laporan")});draw()};
+ el.start=load;el.stop=()=>{if(stopAnn)stopAnn();if(stopRep)stopRep();stopAnn=stopRep=null};load();addEventListener("xa",()=>{if(location.hash==="#admin")load()})
+}};
 const PAGES={"#chat":CHAT,"#profil":PROFIL,"#pengaturan":SETTINGS,"#cs":CS,"#announcement":ANNOUNCEMENT,"#admin":ADMIN};
 
 kepo();gateSync();setInterval(tick,1000);setInterval(()=>{GEO.s==="ok"&&geoStart()},9e5);addEventListener("online",tick);addEventListener("offline",tick);
@@ -1307,7 +1373,10 @@ if(FIREBASE_CONFIG.apiKey){try{
   react:(id,k)=>Fs.updateDoc(Fs.doc(db,"messages",id),{["reactions."+auth.currentUser.uid]:k}),
   unreact:id=>Fs.updateDoc(Fs.doc(db,"messages",id),{["reactions."+auth.currentUser.uid]:Fs.deleteField()}),
   del:id=>Fs.deleteDoc(Fs.doc(db,"messages",id)),
-  report:(m,why)=>{const u=auth.currentUser;return Fs.setDoc(Fs.doc(db,"reports",m.id+"_"+u.uid),{msgId:m.id,msgUid:String(m.uid||""),msgText:String(m.text||"").slice(0,200),reason:why,reporterUid:u.uid,at:Fs.serverTimestamp()})},
+  report:(m,why)=>{const u=auth.currentUser;return Fs.setDoc(Fs.doc(db,"reports",m.id+"_"+u.uid),{type:"message",msgId:m.id,msgUid:String(m.uid||""),msgText:String(m.text||"").slice(0,200),reason:why,reporterUid:u.uid,at:Fs.serverTimestamp(),status:"open"})},
+  submitSupport:a=>{const u=auth.currentUser;if(!u)return Promise.reject(new Error("Masuk dulu untuk mengirim laporan."));return Fs.addDoc(Fs.collection(db,"reports"),{type:"support",topic:String(a.topic||"Lainnya").slice(0,40),title:String(a.title||"").slice(0,100),body:String(a.body||"").slice(0,1500),reporterUid:u.uid,reporterName:String(u.displayName||"Pengguna").slice(0,60),reporterEmail:String(u.email||"").slice(0,120),at:Fs.serverTimestamp(),status:"open"})},
+  listenReports:(cb,er)=>Fs.onSnapshot(Fs.query(Fs.collection(db,"reports"),Fs.orderBy("at","desc"),Fs.limit(100)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),er),
+  updateReport:(id,status)=>{const u=auth.currentUser;if(!u||!adminUid(u.uid))return Promise.reject(new Error("Akses Admin ditolak."));return Fs.updateDoc(Fs.doc(db,"reports",id),{status:status==="resolved"?"resolved":"open",reviewedBy:u.uid,reviewedAt:Fs.serverTimestamp()})},
   saveAnnouncement:a=>{const u=auth.currentUser;if(!u||!adminUid(u.uid))return Promise.reject(new Error("Akses Admin ditolak."));return Fs.addDoc(annCol,{title:String(a.title||"").slice(0,90),body:String(a.body||"").slice(0,1800),imageUrl:String(a.imageUrl||""),uid:u.uid,name:String(u.displayName||"Developer").slice(0,60),at:Fs.serverTimestamp()})},
   reactAnn:(id,k)=>Fs.updateDoc(Fs.doc(db,"announcements",id),{["reactions."+auth.currentUser.uid]:k}),
   unreactAnn:id=>Fs.updateDoc(Fs.doc(db,"announcements",id),{["reactions."+auth.currentUser.uid]:Fs.deleteField()}),
