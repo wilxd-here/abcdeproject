@@ -576,21 +576,6 @@ body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 20px)}
 .dock .soon:active{color:var(--accent)}
 .dock .soon i{position:absolute;top:-5px;left:50%;margin-left:4px;font-style:normal;font-size:8px;font-weight:800;line-height:13px;padding:0 5px;border:1.5px solid var(--bd);border-radius:999px;background:var(--accent);color:var(--on)}
 @media(max-width:360px){.dock{width:calc(100% - 16px);padding:5px}.dock a,.dock button{font-size:10px}.dock .ib{width:35px;height:35px}.dock .mid{width:54px;height:54px;min-height:54px}}
-
-/* ===== v10: stiker miring, marquee, kartu bergoyang halus (tanpa emoji) ===== */
-.stk{position:absolute;z-index:3;padding:6px 12px;border:2px solid var(--bd);border-radius:10px;background:var(--c3);color:var(--ink);font-size:12px;font-weight:800;letter-spacing:.03em;line-height:1;box-shadow:2px 2px 0 var(--bd);white-space:nowrap;pointer-events:none;animation:stkin .5s var(--ease) both}
-.stk.s1{top:14px;right:14px;rotate:4deg}
-.stk.s2{top:16px;left:14px;rotate:-3deg;background:var(--blue);animation-delay:.1s}
-@keyframes stkin{from{scale:.5;opacity:0}}
-.mq{display:flex;overflow:hidden;margin:0 0 16px;padding:9px 0;border:2px solid var(--bd);border-radius:999px;box-shadow:3px 3px 0 var(--bd);background:var(--accent);color:var(--on)}
-.mq-g{flex:none;display:flex;align-items:center;gap:18px;padding-right:18px;animation:mq 34s linear infinite}
-.mq-g span{white-space:nowrap;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-.mq-g i{flex:none;width:12px;height:12px;background:currentColor;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
-@keyframes mq{to{transform:translateX(-100%)}}
-.tile{transition:transform .15s var(--ease),box-shadow .15s,rotate .15s var(--ease)}
-.tile:nth-child(odd){rotate:-.9deg}
-.tile:nth-child(even){rotate:.9deg}
-.tile:hover,.tile:active,.tile:focus-visible{rotate:0deg}
 </style>
 </head>
 <body>
@@ -622,8 +607,7 @@ body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 20px)}
 <main class="wrap">
   <div id="home">
     <section id="tentang" aria-label="Xaerisoft">
-      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><span class="stk s2" aria-hidden="true">Jalan di browser</span><span class="stk s1" aria-hidden="true">Buatan Wilverse</span><div class="hero-t"><h1>Xaerisoft</h1><p>Tools kecil buatan Wilverse, langsung jalan di browser.</p></div></div>
-            <div class="mq" aria-hidden="true"><div class="mq-g"><span>Tools kecil</span><i></i><span>Langsung jalan di browser</span><i></i><span>Buatan Wilverse</span><i></i><span>Cari, pilih, pakai</span><i></i><span>Tools kecil</span><i></i><span>Langsung jalan di browser</span><i></i><span>Buatan Wilverse</span><i></i><span>Cari, pilih, pakai</span><i></i></div><div class="mq-g"><span>Tools kecil</span><i></i><span>Langsung jalan di browser</span><i></i><span>Buatan Wilverse</span><i></i><span>Cari, pilih, pakai</span><i></i><span>Tools kecil</span><i></i><span>Langsung jalan di browser</span><i></i><span>Buatan Wilverse</span><i></i><span>Cari, pilih, pakai</span><i></i></div></div>
+      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><h1>Xaerisoft</h1><p>Tools kecil buatan Wilverse, langsung jalan di browser.</p></div></div>
       <div class="kepo" id="kepo"></div>
     </section>
     <section id="berita" aria-label="Berita politik">
