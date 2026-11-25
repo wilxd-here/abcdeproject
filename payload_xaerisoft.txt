@@ -6,6 +6,8 @@
 <title>XaerisoftV2 </title>
 <meta name="description" content="Welcome">
 <meta name="theme-color" content="#F6F3EA">
+<link rel="preload" as="font" type="font/woff" href="fonts/BricolageGrotesque-Bold.woff" crossorigin>
+<link rel="preload" as="font" type="font/woff" href="fonts/DMSans-Variable.woff" crossorigin>
 <script>
 /* Tema dimuat paling awal supaya halaman tidak berkedip */
 (function(){
@@ -656,6 +658,75 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
  .gbody{padding:44px 40px;align-content:center}
 }
 @media(prefers-reduced-motion:reduce){.gbox,.gview{animation:none}}
+
+/* ===== v9: beranda baru (hero, kartu profil, berita) + font ===== */
+:root{--fd:"Bricolage Grotesque","DM Sans",ui-rounded,"Avenir Next","Segoe UI",system-ui,sans-serif;--ft:"DM Sans",ui-rounded,"Avenir Next","Segoe UI",system-ui,sans-serif;--soft:0 22px 40px -26px rgba(24,16,48,.5)}
+body{font-family:var(--ft);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
+@keyframes krise{from{opacity:0;transform:translateY(14px)}}
+@keyframes kzoom{from{transform:scale(1.07)}}
+@keyframes kping{0%{transform:scale(.8);opacity:.5}80%,100%{transform:scale(2.1);opacity:0}}
+
+/* judul bagian */
+#home h2{font-size:24px;letter-spacing:-.02em;margin:30px 0 14px;color:var(--ink)}
+#home h2::before{content:"";display:inline-block;width:8px;height:22px;border-radius:4px;background:var(--accent);margin-right:10px;vertical-align:-3px}
+
+/* hero */
+#home .hero{margin:14px 0;border:1.5px solid var(--bd);border-radius:30px;box-shadow:var(--soft);aspect-ratio:5/4;max-height:460px;isolation:isolate;animation:krise .6s var(--ease) both}
+#home .hero::after{background:linear-gradient(180deg,rgba(12,9,22,.2),transparent 30%,transparent 38%,rgba(12,9,22,.88))}
+#home .hero::before{content:"";position:absolute;inset:9px;border-radius:22px;border:1px solid rgba(255,255,255,.24);z-index:1;pointer-events:none}
+.hero .ava img,.hero .ava video{animation:kzoom 1.6s var(--ease) both}
+.hero-t{left:24px;right:24px;bottom:24px}
+.hero-k{display:inline-block;margin-bottom:12px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font:600 12px/1 var(--ft);letter-spacing:.14em;text-transform:uppercase}
+.hero-t h1{font-size:clamp(42px,13vw,70px);line-height:.98;letter-spacing:-.035em;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.hero-t p{margin-top:10px;max-width:30em;font-size:clamp(15px,4vw,17px);font-weight:500;line-height:1.5;opacity:1;color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(0,0,0,.45)}
+@media(min-width:960px){#home .hero{aspect-ratio:21/9}}
+
+/* kartu profil */
+#home .kepo{border:1.5px solid var(--bd);border-radius:28px;box-shadow:var(--soft);animation:krise .6s .08s var(--ease) both}
+.kh{gap:16px;padding:20px 18px 18px;background:linear-gradient(125deg,var(--light),transparent 62%)}
+.kavw .kav{width:72px;height:72px;font-size:30px;border:0;box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--accent)}
+.kdot{right:0;bottom:0}
+.kdot::after{content:"";position:absolute;inset:-3px;border-radius:50%;background:inherit;opacity:.5;animation:kping 2.4s ease-out infinite;pointer-events:none}
+.ktop{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px}
+.kinfo small{font-size:13.5px;font-weight:600;letter-spacing:.01em}
+.kinfo>b{margin-top:2px;font-size:26px;line-height:1.08;letter-spacing:-.02em;overflow:visible;white-space:normal;text-overflow:clip}
+.kinfo>b .xn{flex-direction:column;align-items:flex-start;row-gap:6px}
+.kinfo>b .xt{white-space:normal;overflow:visible;text-overflow:clip}
+.kmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:10px;font-size:13.5px;font-weight:500;color:var(--mute)}
+.kcc{font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:8px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.ksep{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.55}
+.kbtn{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:36px;padding:0 16px;border-radius:999px;border:1.5px solid var(--bd);background:var(--card);color:var(--ink);font-size:13.5px;font-weight:700;text-decoration:none;transition:background .15s,color .15s,border-color .15s,transform .12s}
+.kbtn:hover,.kbtn.pri{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.kbtn:active{transform:scale(.96)}
+
+/* cuaca */
+.kw{margin:0 16px 14px;padding:14px 16px;gap:12px;border:1px solid var(--line);border-radius:20px;background:var(--light);background:color-mix(in srgb,var(--blue) 34%,var(--card))}
+.wl>svg:first-child{display:none}
+.wl b{font-size:15px;font-weight:700}
+.wr{width:34px;height:34px;border:1.5px solid var(--line);background:var(--card)}
+.wt{font-size:52px;letter-spacing:-.04em}
+.wd b{font-size:16px}
+.wf{border-top:1px solid var(--line)}
+.wn{font-size:14px;line-height:1.5;color:var(--mute)}
+#home .wb{box-shadow:none;border:1.5px solid var(--bd);border-radius:999px;min-height:36px;padding:6px 16px}
+
+/* info perangkat */
+.kt{grid-template-columns:1fr 1fr;gap:1px;padding:0;margin:0 16px 16px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.kt>div{background:var(--card);padding:11px 14px;gap:2px}
+.kt span{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.kt b{font-size:17px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+
+/* berita */
+#home .news{padding-bottom:30px;margin-bottom:-10px}
+#home .nc{border:1.5px solid var(--bd);border-radius:24px;box-shadow:var(--soft)}
+#home .nc:hover{transform:translateY(-3px);box-shadow:0 26px 44px -26px rgba(24,16,48,.6)}
+.nimg{border-bottom:1px solid var(--line)}
+.nc .b{padding:14px 16px 16px;gap:8px}
+.nc .b b{font-size:16px;font-weight:700}
+.nc small{font-size:13px}
+#home .nsk{border-radius:24px;border:1.5px dashed var(--line)}
+.nav2 button{border:1.5px solid var(--bd);border-radius:999px}
 </style>
 </head>
 <body>
@@ -704,7 +775,7 @@ body.chatmode #toast.on{transform:translate(-50%,0)}
 <main class="wrap">
   <div id="home">
     <section id="tentang" aria-label="Xaerisoft">
-      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><h1>Xaerisoft</h1><p>Kumpulan tools HTML buatan dan berisi media hiburan.</p></div></div>
+      <div class="hero"><div class="ava" id="ava" aria-hidden="true">X</div><div class="hero-t"><span class="hero-k">Wilverse</span><h1>Xaerisoft</h1><p></p></div></div>
       <div class="kepo" id="kepo"></div>
     </section>
     <section id="berita" aria-label="Berita">
@@ -872,7 +943,7 @@ function wxHTML(){const g=GEO,w=g.w;
  if(g.s==="ok"&&w){const x=WX[w.c]||["Cuaca","cloud"],k=!w.day&&(x[1]==="sun"||x[1]==="psun")?"moon":x[1];
   return`<div class="wl">${ico(WI.pin)}<b>${esc(g.place||"Lokasi terdeteksi")}</b><button class="wr" type="button" data-k="geo" aria-label="Perbarui cuaca">${ico(WI.ref)}</button></div><div class="wm"><span class="wi">${ico(WI[k])}</span><div class="wt">${Math.round(w.t)}°</div><div class="wd"><b>${x[0]}</b><span>${Math.round(w.lo)}° / ${Math.round(w.hi)}°</span></div></div><div class="wf"><span>Terasa<b>${Math.round(w.f)}°</b></span><span>Lembap<b>${w.h}%</b></span><span>Angin<b>${Math.round(w.wd)} km/j</b></span></div>`}
  if(g.s==="ask")return`<div class="wl">${ico(WI.pin)}<b>Mencari lokasi…</b></div><p class="wn">Izinkan akses lokasi di jendela yang muncul untuk melihat cuaca.</p>`;
- return`<div class="wl">${ico(WI.pin)}<b>Unknown</b></div><p class="wn">${g.s==="denied"?"Izin lokasi ditolak, jadi cuaca belum bisa tampil. Aktifkan lagi lewat pengaturan situs di browser.":"Lokasi belum bisa dibaca."}</p>${g.s==="denied"?"":'<button class="btn alt wb" type="button" data-k="geo">Coba lagi</button>'}`}
+ return`<div class="wl">${ico(WI.pin)}<b>Cuaca belum tersedia</b></div><p class="wn">${g.s==="denied"?"Izin lokasi ditolak, jadi cuaca belum bisa tampil. Aktifkan lagi lewat pengaturan situs di browser.":"Lokasi belum bisa dibaca."}</p>${g.s==="denied"?"":'<button class="btn alt wb" type="button" data-k="geo">Coba lagi</button>'}`}
 async function getWx(la,lo){const j=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto`)).json(),c=j.current;if(!c)throw 0;
  return{t:c.temperature_2m,f:c.apparent_temperature,h:c.relative_humidity_2m,c:c.weather_code,wd:c.wind_speed_10m,day:c.is_day,hi:j.daily.temperature_2m_max[0],lo:j.daily.temperature_2m_min[0]}}
 async function getPlace(la,lo){const u=(v,i,a)=>v&&a.indexOf(v)===i;
@@ -894,9 +965,9 @@ async function geoStart(){
 function tick(){const t=$("#kt");if(!t)return;
  t.textContent=new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"}).replace(/\./g,":");
  const on=navigator.onLine;$("#ko").innerHTML=`<span class="${on?"up":"down"}">${on?"Online":"Offline"}</span>`;$("#kd").style.background=on?"":"var(--no)";
- $("#kb").textContent=batt?Math.round(batt.level*100)+"%"+(batt.charging?" ⚡":""):"—"}
+ $("#kb").textContent=batt?Math.round(batt.level*100)+"%"+(batt.charging?" (mengisi)":""):"—"}
 function kepo(){const u=XA().user,r=GEO.cc||regionOf(),nm=u?(u.displayName||(u.isAnonymous?"Tamu":(u.email||"Pengguna").split("@")[0])):"Tamu";
- $("#kepo").innerHTML=`<div class="kh"><div class="kavw"><div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><i class="kdot" id="kd"></i></div><div class="kinfo"><small>${greet()}</small><b>${nameHTML(nm,u&&u.uid)}</b><span class="kmeta">${r?flag(r)+" "+esc(cname(r)):"Negara tidak diketahui"}, ${DEV}</span></div>${u?'<a class="btn alt kbtn" href="#profil">Profil</a>':'<button class="btn kbtn" type="button" data-k="in">Masuk</button>'}</div><div class="kw" aria-live="polite">${wxHTML()}</div><div class="kt"><div><span>Jam</span><b id="kt"></b></div><div><span>Browser</span><b>${BRW}</b></div><div><span>Baterai</span><b id="kb">—</b></div><div><span>Status</span><b id="ko"></b></div></div>`;
+ $("#kepo").innerHTML=`<div class="kh"><div class="kavw"><div class="kav">${u?avaInner(u,nm):esc(nm[0].toUpperCase())}</div><i class="kdot" id="kd"></i></div><div class="kinfo"><div class="ktop"><small>${greet()}</small>${u?'<a class="kbtn" href="#profil">Profil</a>':'<button class="kbtn pri" type="button" data-k="in">Masuk</button>'}</div><b>${nameHTML(nm,u&&u.uid)}</b><span class="kmeta">${r?`<i class="kcc">${esc(r)}</i><span>${esc(cname(r))}</span>`:"<span>Negara tidak diketahui</span>"}<i class="ksep"></i><span>${DEV}</span></span></div></div><div class="kw" aria-live="polite">${wxHTML()}</div><div class="kt"><div><span>Jam</span><b id="kt"></b></div><div><span>Browser</span><b>${BRW}</b></div><div><span>Baterai</span><b id="kb">—</b></div><div><span>Status</span><b id="ko"></b></div></div>`;
  $("#dkacc span").textContent=u?"Profil":"Masuk";tick()}
 const signOut=()=>{const x=XA();x.out&&x.out().then(()=>location.reload())};
 document.addEventListener("click",e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k==="in")openAuth();if(k==="out")signOut();if(k==="geo")geoStart()});
