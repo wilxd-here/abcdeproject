@@ -888,6 +888,261 @@ icon:'<path d="M4 6h16M4 12h10M4 18h14"/>',
 render(el){el.innerHTML=`<div class="panel">Isi tools di sini</div>`}});
 Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast(), copy(), rand(), fmtB(), esc(), ico(). */
 
+/* ============ Audio Downloader ============
+   Mengunduh audio dari URL file langsung yang diizinkan pemiliknya.
+   Tidak mengekstrak lagu dari Spotify atau layanan streaming. */
+/* Spotify: pemutar embed resmi langsung di browser. */
+TOOLS.push({
+ id:"spotify-player",name:"Spotify Player",desc:"Putar track, album, playlist, atau episode Spotify langsung via embed resmi.",cat:"downloader",featured:false,
+ icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
+ render(el){
+  el.innerHTML=`<div class="panel" id="sp-panel">
+   <div class="f"><label for="sp-url">Tautan, URI, atau ID Spotify</label><input id="sp-url" type="text" placeholder="https://open.spotify.com/track/... atau spotify:playlist:..." autocomplete="off" spellcheck="false"></div>
+   <div class="row">
+    <button class="btn" id="sp-embed" type="button">Putar / Tampilkan embed</button>
+    <button class="btn alt" id="sp-clear" type="button">Bersihkan</button>
+   </div>
+   <p class="hint">Mendukung tautan, URI, atau ID 22 karakter untuk track, album, playlist, dan episode.</p>
+   <div id="sp-msg" role="status" aria-live="polite" class="hint">Masukkan tautan atau ID Spotify lalu tekan tombol putar.</div>
+   <div id="sp-player" style="margin-top:10px"></div>
+  </div>`;
+
+  const input=el.querySelector("#sp-url");
+  const embedBtn=el.querySelector("#sp-embed");
+  const clearBtn=el.querySelector("#sp-clear");
+  const msg=el.querySelector("#sp-msg");
+  const playerEl=el.querySelector("#sp-player");
+
+  const parseSpotify=raw=>{
+   const s=String(raw||"").trim().replace(/^["']|["']$/g,"");
+   if(!s)return null;
+   const mUrl=s.match(/(?:https?:\/\/)?(?:www\.|open\.|embed\.)?open\.spotify\.com\/(?:intl-[a-z-]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]{22})/i);
+   if(mUrl)return{type:mUrl[1].toLowerCase(),id:mUrl[2]};
+   const mUri=s.match(/^spotify:(track|album|playlist|episode):([A-Za-z0-9]{22})$/i);
+   if(mUri)return{type:mUri[1].toLowerCase(),id:mUri[2]};
+   const mId=s.match(/^([A-Za-z0-9]{22})$/);
+   if(mId)return{type:"track",id:mId[1]};
+   return null;
+  };
+
+  const renderEmbed=()=>{
+   playerEl.replaceChildren();
+   const item=parseSpotify(input.value);
+   if(!item){
+    msg.textContent="Format belum valid. Gunakan tautan, URI, atau ID 22 karakter dari track, album, playlist, atau episode Spotify.";
+    return;
+   }
+   const isCompact=item.type==="track"||item.type==="episode";
+   const frame=document.createElement("iframe");
+   frame.title="Pemutar Spotify resmi";
+   frame.loading="lazy";
+   frame.allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+   frame.referrerPolicy="strict-origin-when-cross-origin";
+   frame.style.cssText=`width:100%;height:${isCompact?"152px":"352px"};border:0;border-radius:14px;display:block`;
+   frame.src=`https://open.spotify.com/embed/${item.type}/${item.id}?utm_source=generator`;
+   playerEl.appendChild(frame);
+   msg.textContent=`Menampilkan embed resmi untuk ${item.type} (${item.id}).`;
+  };
+
+  const clearEmbed=()=>{
+   input.value="";
+   playerEl.replaceChildren();
+   msg.textContent="Pemutar dibersihkan.";
+  };
+
+  embedBtn.addEventListener("click",renderEmbed);
+  clearBtn.addEventListener("click",clearEmbed);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")renderEmbed()});
+ }
+});
+
+/* ============ NASA Name Generator ============
+   Mengubah nama menjadi huruf dari citra satelit Landsat (sumber data: nasanamegenerator.com).
+   Logika scraper (scrape-NasaNameGenerator.js) sudah dipindah inline: halaman sumber diambil dan
+   gambar gabungan disusun langsung di browser (canvas). Itu hanya jalan bila situs sumber mengizinkan
+   permintaan lintas-origin (CORS). Bila diblokir, tool otomatis beralih ke backend Node.js (folder backend/)
+   jika NASA_API_BASE diisi, contoh: "https://nasa-name-xxxxx.a.run.app" (tanpa garis miring di akhir). */
+const NASA_API_BASE="";
+const NN_BASE="https://nasanamegenerator.com";
+let nnEngineCache=null,nnEngineAt=0;
+const nnFetch=(u,o,ms)=>{let t;return Promise.race([fetch(u,o),new Promise((_,no)=>{t=setTimeout(()=>no(Object.assign(new Error("waktu habis"),{name:"AbortError"})),ms)})]).finally(()=>clearTimeout(t))};
+const nnParse=html=>{
+ const s=html.match(/const letterDataSerialized = "((?:[^"\\]|\\.)*)";/);
+ if(!s)throw new Error("data huruf tidak ditemukan di halaman sumber");
+ const data=JSON.parse(JSON.parse('"'+s[1]+'"'));
+ const rawBase=(html.match(/const imagesBasePath = "([^"]+)"/)||[])[1]||"/images/letters";
+ const base=rawBase.startsWith("http")?rawBase.replace(/\/$/,""):NN_BASE+(rawBase.startsWith("/")?"":"/")+rawBase.replace(/\/$/,"");
+ let raw={};
+ const pb=html.match(/function createLetterArrays\(\)\s*\{\s*return\s*\{([\s\S]*?)\};\s*\}/);
+ if(pb){try{raw=JSON.parse("{"+pb[1].replace(/([A-Z])\s*:/g,'"$1":')+"}")}catch{raw={}}}
+ const pools={};
+ for(const l of Object.keys(data)){const d=raw[l.toUpperCase()];pools[l]=Array.isArray(d)?d.filter(i=>Number.isInteger(i)&&data[l][i]):data[l].map((_,i)=>i)}
+ return{data,pools,base};
+};
+const nnLoad=async()=>{
+ if(nnEngineCache&&Date.now()-nnEngineAt<36e5)return nnEngineCache;
+ const r=await nnFetch(NN_BASE+"/",undefined,20000);
+ if(!r.ok)throw new Error("HTTP "+r.status);
+ nnEngineCache=nnParse(await r.text());nnEngineAt=Date.now();return nnEngineCache;
+};
+const nnCleanLink=u=>!u||u==="https://none.com"?null:u;
+const nnMaps=m=>m.maps&&m.maps!=="https://maps.google.com"?m.maps:m.coordinates?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(m.coordinates):null;
+const nnFrame=async(tiles,blobs)=>{
+ const imgs=[];for(const t of tiles)imgs.push(await createImageBitmap(blobs.get(t.tile)));
+ const gaps=[];let prev=0;for(const t of tiles){gaps.push(Math.max(0,t.position-prev-1));prev=t.position}
+ const W=imgs.reduce((s,i)=>s+i.width,0)+25*(imgs.length-1)+gaps.slice(1).reduce((s,c)=>s+c*60,0);
+ const H=Math.max(...imgs.map(i=>i.height));
+ if(W*H>3e7)throw new Error("gambar terlalu besar");
+ const c=document.createElement("canvas");c.width=W;c.height=H;
+ const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,W,H);
+ let ox=0;imgs.forEach((im,i)=>{if(i>0)ox+=25+gaps[i]*60;x.drawImage(im,ox,0);ox+=im.width;if(im.close)im.close()});
+ let url=c.toDataURL("image/webp",.9);if(!/^data:image\/webp/.test(url))url=c.toDataURL("image/png");
+ return{width:W,height:H,image:url};
+};
+const nnInline=async name=>{
+ const eng=await nnLoad(),used=new Set(),tiles=[];let pos=0;
+ for(const ch of name){
+  pos+=1;if(ch===" ")continue;
+  const l=ch.toLowerCase(),pool=eng.pools[l]||[];if(!pool.length)continue;
+  let cand=pool.filter(i=>!used.has(l+"_"+i));if(!cand.length)cand=pool;
+  const idx=cand[rand(cand.length)];used.add(l+"_"+idx);
+  const m=(eng.data[l]&&eng.data[l][idx])||{};
+  tiles.push({position:pos,char:ch.toUpperCase(),tile:l+"_"+idx,location:m.location||null,coordinates:m.coordinates||null,link:nnCleanLink(m.link),maps:nnMaps(m),url:eng.base+"/letter_"+l+"_"+idx+".webp",image:null});
+ }
+ if(!tiles.length)throw Object.assign(new Error("Tidak ada ubin Landsat untuk nama ini."),{shown:true});
+ const blobs=new Map(),failed=[];
+ await Promise.all(tiles.map(async t=>{
+  t.image=t.url;
+  try{if(!/^https:\/\//.test(t.url))throw 0;const r=await nnFetch(t.url,undefined,20000);if(!r.ok)throw 0;blobs.set(t.tile,await r.blob())}catch{failed.push(t.tile)}
+ }));
+ let frame=null,frameError=null;
+ if(failed.length)frameError="beberapa gambar ubin tidak bisa diunduh dari browser";
+ else try{frame=await nnFrame(tiles,blobs)}catch(e){frameError=e&&e.message||"gagal menyusun gambar"}
+ const seq=tiles.map(t=>t.tile.split("_")[1]).join("");
+ return{meta:{status:200,response:"OK",name,totalTiles:tiles.length,shareUrl:NN_BASE+"/"+encodeURIComponent(name)+"?v="+seq,...(failed.length?{failedImages:failed}:{}),...(frameError?{frameError}:{})},data:tiles,frame};
+};
+TOOLS.push({
+ id:"nasa-name",name:"NASA Name Generator",desc:"Ubah namamu jadi huruf dari citra satelit Landsat NASA.",cat:"Fun Tools",featured:false,
+ icon:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18"/><path d="M12 3c-3 3-3 15 0 18"/>',
+ render(el){
+  el.innerHTML=`<style>
+.nn-out{display:grid;gap:14px}
+.nn-frame{overflow-x:auto;border:2px solid var(--bd);border-radius:14px;background:#fff;padding:8px}
+.nn-frame img{display:block;height:auto;width:max(100%,calc(var(--n,1)*72px))}
+.nn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.nn-card{display:grid;gap:6px;align-content:start;border:1.5px solid var(--line);border-radius:14px;background:var(--card);padding:8px;min-width:0}
+.nn-card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--light)}
+.nn-card b{font-size:15px}
+.nn-card p{font-size:12.5px;line-height:1.35;color:var(--mute);overflow-wrap:anywhere}
+.nn-links{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700}
+.nn-links a{color:var(--ink);text-decoration:underline}
+</style>
+<div class="panel">
+ <div class="f"><label for="nn-name">Nama kamu (huruf A–Z dan spasi, maks. 18 karakter)</label>
+  <input id="nn-name" type="text" maxlength="18" placeholder="Contoh: Wildev" autocomplete="off" spellcheck="false"></div>
+ <div class="row">
+  <button class="btn" id="nn-go" type="button">Buat</button>
+  <button class="btn alt hide" id="nn-again" type="button">Acak ulang</button>
+ </div>
+ <div id="nn-msg" class="hint" role="status" aria-live="polite">Masukkan nama lalu tekan Buat.</div>
+ <div id="nn-out" class="nn-out"></div>
+</div>`;
+
+  const input=el.querySelector("#nn-name"),go=el.querySelector("#nn-go"),again=el.querySelector("#nn-again"),
+   msg=el.querySelector("#nn-msg"),out=el.querySelector("#nn-out");
+  let busy=false,lastName="";
+
+  const say=(t,bad)=>{msg.textContent=t;msg.className=bad?"err":"hint"};
+  const setBusy=v=>{busy=v;go.disabled=v;again.disabled=v;go.textContent=v?"Memproses…":"Buat"};
+  const safeUrl=(u,re)=>typeof u==="string"&&re.test(u)?u:"";
+  const mk=(tag,attrs,kids)=>{
+   const n=document.createElement(tag);
+   for(const k in attrs||{})n.setAttribute(k,attrs[k]);
+   for(const c of [].concat(kids||[]))n.append(c);
+   return n;
+  };
+  const link=(href,label)=>mk("a",{href,target:"_blank",rel:"noopener noreferrer"},label);
+
+  const errText=(status,j)=>{
+   const m=j&&j.meta&&j.meta.error?String(j.meta.error).replace(/^ERROR \d+ [^:]*:\s*/,""):"";
+   if(status===429)return "Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.";
+   if(status===400)return m||"Nama tidak valid. Gunakan huruf A–Z dan spasi, maksimal 18 karakter.";
+   if(status===404)return m||"Tidak ada ubin Landsat untuk nama ini.";
+   if(status===503)return "Server sedang sibuk. Coba lagi sebentar lagi.";
+   return m||"Gagal membuat gambar (kode "+status+"). Situs sumber mungkin sedang bermasalah.";
+  };
+
+  const show=(j)=>{
+   out.replaceChildren();
+   const meta=j.meta,tiles=Array.isArray(j.data)?j.data:[];
+   const frameImg=j.frame&&safeUrl(j.frame.image,/^data:image\/(?:webp|png);base64,[A-Za-z0-9+/=]+$/),ext=/^data:image\/png/.test(frameImg||"")?"png":"webp";
+   if(frameImg){
+    const img=mk("img",{src:frameImg,alt:"Nama "+meta.name+" dalam huruf citra satelit Landsat",width:j.frame.width||"",height:j.frame.height||""});
+    const box=mk("div",{class:"nn-frame"},img);
+    box.style.setProperty("--n",String(tiles.length||1));
+    out.append(box);
+    const row=mk("div",{class:"row"});
+    const dl=mk("a",{class:"btn",href:frameImg,download:"nasa-name-"+meta.name.replace(/\s+/g,"-").toLowerCase()+"."+ext},"Unduh gambar ("+ext.toUpperCase()+")");
+    row.append(dl);
+    const share=safeUrl(meta.shareUrl,/^https:\/\//);
+    if(share)row.append(Object.assign(link(share,"Buka di situs sumber"),{className:"btn alt"}));
+    out.append(row);
+   }else if(meta.frameError){
+    out.append(mk("p",{class:"hint"},"Gambar gabungan tidak tersedia: "+meta.frameError));
+   }
+   if(meta.failedImages&&meta.failedImages.length)out.append(mk("p",{class:"hint"},meta.failedImages.length+" gambar ubin gagal diunduh server; ubin tetap dimuat langsung dari sumber."));
+   const grid=mk("div",{class:"nn-grid"});
+   for(const t of tiles){
+    const card=mk("div",{class:"nn-card"});
+    const src=safeUrl(t.image||t.url,/^https:\/\//);
+    if(src)card.append(mk("img",{src,alt:"Huruf "+t.char,loading:"lazy",referrerpolicy:"no-referrer"}));
+    card.append(mk("b",{},"Huruf "+t.char));
+    card.append(mk("p",{},[t.location||"Lokasi tidak diketahui",t.coordinates?" · "+t.coordinates:""].join("")));
+    const links=mk("div",{class:"nn-links"});
+    const maps=safeUrl(t.maps,/^https?:\/\//),info=safeUrl(t.link,/^https?:\/\//);
+    if(maps)links.append(link(maps,"Peta"));
+    if(info)links.append(link(info,"Info"));
+    if(links.childNodes.length)card.append(links);
+    grid.append(card);
+   }
+   out.append(grid);
+  };
+
+  const run=async()=>{
+   if(busy)return;
+   const name=input.value.trim();
+   if(!name){say("Nama masih kosong.",true);return}
+   if(name.length>18){say("Nama maksimal 18 karakter.",true);return}
+   if(!/^[A-Za-z ]+$/.test(name)||!/[A-Za-z]/.test(name)){say("Gunakan hanya huruf A–Z dan spasi.",true);return}
+   setBusy(true);say("Mengambil ubin Landsat langsung dari browser…");
+   let j=null,via="",why="";
+   try{j=await nnInline(name);via="langsung dari browser"}
+   catch(e){if(e&&e.shown){out.replaceChildren();say(e.message,true);setBusy(false);return}why=e&&e.name==="AbortError"?"waktu habis":(e&&e.message)||"gagal";console.warn("NASA inline gagal:",e)}
+   try{
+    if(!j){
+     if(!NASA_API_BASE)throw Object.assign(new Error("Browser tidak bisa mengambil data dari nasanamegenerator.com ("+why+"). Penyebab umum: diblokir CORS, atau halaman dibuka di pratinjau yang membatasi jaringan. Isi NASA_API_BASE dengan URL backend (lihat backend/README.md) agar tool ini bisa jalan."),{shown:true});
+     say("Browser tidak bisa mengakses sumber, mencoba lewat backend…");
+     const r=await nnFetch(NASA_API_BASE.replace(/\/+$/,"")+"/api/nasa-name?name="+encodeURIComponent(name),{headers:{accept:"application/json"}},60000);
+     let jj=null;try{jj=await r.json()}catch{}
+     if(!r.ok||!jj||!jj.meta||jj.meta.status!==200)throw Object.assign(new Error(errText(r.status,jj)),{shown:true});
+     j=jj;via="lewat backend";
+    }
+    say("Menyusun tampilan…");
+    show(j);lastName=name;again.classList.remove("hide");
+    say("Selesai ("+via+"): "+j.meta.totalTiles+" ubin untuk \""+j.meta.name+"\".");
+   }catch(e){
+    out.replaceChildren();
+    say(e&&e.shown?e.message:e&&e.name==="AbortError"?"Server terlalu lama merespons (lebih dari 60 detik). Coba lagi.":"Tidak bisa menghubungi server backend. Periksa URL backend, koneksi internet, dan pengaturan CORS (ALLOWED_ORIGINS).",true);
+   }finally{setBusy(false)}
+  };
+
+  go.addEventListener("click",run);
+  again.addEventListener("click",()=>{if(lastName)input.value=lastName;run()});
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")run()});
+ }
+});
+
+
 /* ============ Aplikasi ============ */
 const state={cat:"Semua",q:"",scroll:0};
 const bodies=new Map();            // cache DOM tools agar state tidak hilang
