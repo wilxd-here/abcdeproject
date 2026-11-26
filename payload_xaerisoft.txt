@@ -893,36 +893,26 @@ Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast()
    Tidak mengekstrak lagu dari Spotify atau layanan streaming. */
 /* Spotify: pemutar embed resmi langsung di browser. */
 /* Spotify: pemutar embed resmi + alur ambil MP3 via proxy CORS. */
+/* Spotify: pemutar embed resmi + ambil MP3 langsung via Worker. */
 TOOLS.push({
- id:"spotify-player",name:"Spotify Player & Downloader",desc:"Putar konten Spotify dan ambil tautan MP3 via proxy CORS.",cat:"downloader",featured:false,
+ id:"spotify-player",name:"Spotify Player & Downloader",desc:"Putar konten Spotify dan unduh MP3.",cat:"downloader",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
  render(el){
-  const DEFAULT_PROXY="https://corsproxy.io/?url=";
-  const PROXY_KEY="xa-spotidown-proxy";
+  const WORKER_PROXY="https://spotify.ujicobakun299.workers.dev/?url=";
   el.innerHTML=`<div class="panel" id="sp-panel">
    <div class="f"><label for="sp-url">Tautan, URI, ID, atau kata kunci Spotify</label><input id="sp-url" type="text" placeholder="https://open.spotify.com/track/... atau spotify:track:..." autocomplete="off" spellcheck="false"></div>
-   <div class="f"><label for="sp-proxy">Endpoint proxy CORS</label><input id="sp-proxy" type="text" placeholder="https://corsproxy.io/?url=" autocomplete="off" spellcheck="false"></div>
    <div class="row">
     <button class="btn" id="sp-fetch" type="button">Proses &amp; cari MP3</button>
     <button class="btn alt" id="sp-embed" type="button">Embed resmi</button>
-    <button class="btn alt" id="sp-reset" type="button">Reset proxy</button>
    </div>
-   <p class="hint">Pastikan kolom atas berisi link/ID/URI Spotify lengkap dan kolom bawah berisi URL proxy CORS. Link MP3 umumnya berlaku sekitar 1 jam.</p>
-   <div id="sp-msg" role="status" aria-live="polite" class="hint">Siap memproses tautan Spotify.</div>
+   <div id="sp-msg" role="status" aria-live="polite" class="hint">Masukkan tautan Spotify lalu tekan Proses &amp; cari MP3.</div>
    <div id="sp-results" style="display:grid;gap:10px"></div>
    <div id="sp-player"></div>
   </div>`;
 
-  const input=el.querySelector("#sp-url"),proxyInput=el.querySelector("#sp-proxy");
-  const fetchBtn=el.querySelector("#sp-fetch"),embedBtn=el.querySelector("#sp-embed"),resetBtn=el.querySelector("#sp-reset");
+  const input=el.querySelector("#sp-url");
+  const fetchBtn=el.querySelector("#sp-fetch"),embedBtn=el.querySelector("#sp-embed");
   const msg=el.querySelector("#sp-msg"),resultsEl=el.querySelector("#sp-results"),playerEl=el.querySelector("#sp-player");
-
-  let savedProxy="";
-  try{savedProxy=localStorage.getItem(PROXY_KEY)||""}catch(_){}
-  proxyInput.value=savedProxy||DEFAULT_PROXY;
-  proxyInput.addEventListener("change",()=>{
-   try{localStorage.setItem(PROXY_KEY,proxyInput.value.trim())}catch(_){}
-  });
 
   const normalizeSp=raw=>{
    const s=String(raw||"").trim().replace(/^["']|["']$/g,"");
@@ -944,10 +934,7 @@ TOOLS.push({
    return String(d||"");
   };
 
-  const resolveUrl=targetUrl=>{
-   const px=(proxyInput.value.trim()||DEFAULT_PROXY);
-   return px.includes("{url}")?px.replace("{url}",encodeURIComponent(targetUrl)):px+encodeURIComponent(targetUrl);
-  };
+  const px=targetUrl=>WORKER_PROXY+encodeURIComponent(targetUrl);
 
   const parseTracksFromHtml=html=>{
    const doc=new DOMParser().parseFromString(String(html||""),"text/html");
@@ -1002,9 +989,9 @@ TOOLS.push({
    resultsEl.replaceChildren();
    if(!t){msg.textContent="Masukkan tautan atau kata kunci Spotify terlebih dahulu.";return}
    fetchBtn.disabled=true;
-   msg.textContent="Menghubungi SpotiDown via proxy…";
+   msg.textContent="Menghubungi SpotiDown via Worker…";
    try{
-    const actRes=await fetch(resolveUrl("https://spotidown.app/action"),{
+    const actRes=await fetch(px("https://spotidown.app/action"),{
      method:"POST",
      headers:{"content-type":"application/x-www-form-urlencoded","x-requested-with":"XMLHttpRequest"},
      body:new URLSearchParams({url:t.value,"g-recaptcha-response":""}).toString()
@@ -1020,7 +1007,7 @@ TOOLS.push({
      const r=rows[i];
      const fd=new FormData();
      fd.append("data",r.data);fd.append("base",r.base);fd.append("token",r.token);
-     const trRes=await fetch(resolveUrl("https://spotidown.app/action/track"),{
+     const trRes=await fetch(px("https://spotidown.app/action/track"),{
       method:"POST",headers:{"x-requested-with":"XMLHttpRequest"},body:fd
      });
      const trJson=await trRes.json();
@@ -1041,7 +1028,7 @@ TOOLS.push({
      cp.onclick=()=>copy(mp3);
      row.append(dl,cp);card.appendChild(row);resultsEl.appendChild(card);
     }
-    msg.textContent=`Berhasil memuat ${maxItems} item. Unduh segera karena link MP3 SpotiDown memiliki masa aktif sekitar 1 jam.`;
+    msg.textContent=`Berhasil memuat ${maxItems} item. Unduh segera karena link MP3 berlaku sekitar 1 jam.`;
    }catch(err){
     msg.textContent="Gagal memproses: "+(err&&err.message?err.message:err)+".";
    }finally{
@@ -1049,11 +1036,6 @@ TOOLS.push({
    }
   };
 
-  resetBtn.addEventListener("click",()=>{
-   proxyInput.value=DEFAULT_PROXY;
-   try{localStorage.setItem(PROXY_KEY,DEFAULT_PROXY)}catch(_){}
-   msg.textContent="Endpoint proxy dikembalikan ke default.";
-  });
   fetchBtn.addEventListener("click",runScrape);
   embedBtn.addEventListener("click",renderEmbed);
   input.addEventListener("keydown",e=>{if(e.key==="Enter")runScrape()});
