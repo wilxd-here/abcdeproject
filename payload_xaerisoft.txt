@@ -888,157 +888,84 @@ icon:'<path d="M4 6h16M4 12h10M4 18h14"/>',
 render(el){el.innerHTML=`<div class="panel">Isi tools di sini</div>`}});
 Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast(), copy(), rand(), fmtB(), esc(), ico(). */
 
-/* ============ Audio Downloader ============
-   Mengunduh audio dari URL file langsung yang diizinkan pemiliknya.
-   Tidak mengekstrak lagu dari Spotify atau layanan streaming. */
-/* Spotify: pemutar embed resmi langsung di browser. */
-/* Spotify: pemutar embed resmi + alur ambil MP3 via proxy CORS. */
-/* Spotify: pemutar embed resmi + ambil MP3 langsung via Worker. */
+/* ============ Spotify Tools — NexaDev API ============
+   Menggunakan endpoint NexaDev untuk mengambil data Spotify.
+   Audio tetap diputar melalui Spotify Embed resmi. */
 TOOLS.push({
- id:"spotify-player",name:"Spotify Player & Downloader",desc:"Putar konten Spotify dan unduh MP3.",cat:"downloader",featured:false,
+ id:"spotify-player",name:"Spotify Tools",desc:"Ambil informasi lagu dari API NexaDev dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
  render(el){
-  const WORKER_PROXY="https://spotify.ujicobakun299.workers.dev/?url=";
   el.innerHTML=`<div class="panel" id="sp-panel">
-   <div class="f"><label for="sp-url">Tautan, URI, ID, atau kata kunci Spotify</label><input id="sp-url" type="text" placeholder="https://open.spotify.com/track/... atau spotify:track:..." autocomplete="off" spellcheck="false"></div>
-   <div class="row">
-    <button class="btn" id="sp-fetch" type="button">Proses &amp; cari MP3</button>
-    <button class="btn alt" id="sp-embed" type="button">Embed resmi</button>
+   <div class="f">
+    <label for="sp-url">Link Spotify</label>
+    <input id="sp-url" type="text" placeholder="https://open.spotify.com/track/..." autocomplete="off" spellcheck="false">
    </div>
-   <div id="sp-msg" role="status" aria-live="polite" class="hint">Masukkan tautan Spotify lalu tekan Proses &amp; cari MP3.</div>
-   <div id="sp-results" style="display:grid;gap:10px"></div>
+   <div class="row">
+    <button class="btn" id="sp-fetch" type="button">Ambil informasi</button>
+    <button class="btn alt" id="sp-open" type="button">Buka di Spotify</button>
+   </div>
+   <div id="sp-msg" role="status" aria-live="polite" class="hint">Tempel link track Spotify untuk mengambil informasinya.</div>
+   <div id="sp-result"></div>
    <div id="sp-player"></div>
   </div>`;
 
   const input=el.querySelector("#sp-url");
-  const fetchBtn=el.querySelector("#sp-fetch"),embedBtn=el.querySelector("#sp-embed");
-  const msg=el.querySelector("#sp-msg"),resultsEl=el.querySelector("#sp-results"),playerEl=el.querySelector("#sp-player");
+  const fetchBtn=el.querySelector("#sp-fetch");
+  const openBtn=el.querySelector("#sp-open");
+  const msg=el.querySelector("#sp-msg");
+  const result=el.querySelector("#sp-result");
+  const player=el.querySelector("#sp-player");
+  const API="https://spotify.ujicobakun299.workers.dev/?url=";
 
-  const normalizeSp=raw=>{
-   const s=String(raw||"").trim().replace(/^["']|["']$/g,"");
-   if(!s)return null;
-   const mUrl=s.match(/(?:https?:\/\/)?(?:www\.|open\.|embed\.)?open\.spotify\.com\/(?:intl-[a-z-]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]{22})/i);
-   if(mUrl){const k=mUrl[1].toLowerCase();return{type:k,value:`https://open.spotify.com/${k}/${mUrl[2]}`,id:mUrl[2]}}
-   const mUri=s.match(/^spotify:(track|album|playlist|episode):([A-Za-z0-9]{22})$/i);
-   if(mUri){const k=mUri[1].toLowerCase();return{type:k,value:`https://open.spotify.com/${k}/${mUri[2]}`,id:mUri[2]}}
-   const mId=s.match(/^([A-Za-z0-9]{22})$/);
-   if(mId)return{type:"track",value:`https://open.spotify.com/track/${mId[1]}`,id:mId[1]};
-   return{type:"query",value:s,id:""};
+  const parseSpotify=raw=>{
+   const value=String(raw||"").trim().replace(/^['"]|['"]$/g,"");
+   if(!value)return null;
+   const uri=value.match(/^spotify:(track|album|playlist|episode):([A-Za-z0-9]{22})$/i);
+   if(uri)return {type:uri[1].toLowerCase(),id:uri[2],url:`https://open.spotify.com/${uri[1].toLowerCase()}/${uri[2]}`};
+   let u;try{u=new URL(value.startsWith("spotify.com/")?"https://"+value:value)}catch{return null}
+   if(u.protocol!=="https:"||!/(^|\.)open\.spotify\.com$/i.test(u.hostname))return null;
+   const p=u.pathname.split("/").filter(Boolean);const offset=/^intl-[a-z]{2}(?:-[a-z]{2})?$/i.test(p[0]||"")?1:0;
+   const type=(p[offset]||"").toLowerCase(),id=p[offset+1]||"";
+   if(!["track","album","playlist","episode"].includes(type)||!/^[A-Za-z0-9]{22}$/.test(id))return null;
+   return {type,id,url:`https://open.spotify.com/${type}/${id}`};
   };
-
-  const fmtDur=d=>{
-   if(typeof d==="number"&&Number.isFinite(d)){
-    const m=Math.floor(d/60),sec=Math.floor(d%60);
-    return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
-   }
-   return String(d||"");
-  };
-
-  const px=targetUrl=>WORKER_PROXY+encodeURIComponent(targetUrl);
-
-  const parseTracksFromHtml=html=>{
-   const doc=new DOMParser().parseFromString(String(html||""),"text/html");
-   const rows=[];
-   doc.querySelectorAll('form[name="submitspurl"]').forEach(form=>{
-    const b64=form.querySelector('input[name="data"]')?.value||"";
-    if(!b64)return;
-    let info={};
-    try{info=JSON.parse(atob(b64))}catch(_){}
-    rows.push({
-     data:b64,
-     base:(form.querySelector('input[name="base"]')?.value||"").trim(),
-     token:(form.querySelector('input[name="token"]')?.value||"").trim(),
-     name:info.name||"",
-     artist:info.artist||"",
-     duration:fmtDur(info.duration||"")
-    });
-   });
-   return rows;
-  };
-
-  const extractMp3FromHtml=html=>{
-   const doc=new DOMParser().parseFromString(String(html||""),"text/html");
-   for(const a of doc.querySelectorAll("a[href]")){
-    const txt=(a.textContent||"").trim(),href=a.getAttribute("href")||"";
-    if(/download\s*mp3/i.test(txt)&&/token=/.test(href))return href;
-   }
-   for(const a of doc.querySelectorAll("a[href]")){
-    const href=a.getAttribute("href")||"";
-    if(/^(https:\/\/)?rapid\.spotidown\.app\/.*/i.test(href)||/token=/.test(href))return href;
-   }
-   return "";
-  };
-
-  const renderEmbed=()=>{
-   playerEl.replaceChildren();
-   const t=normalizeSp(input.value);
-   if(!t||t.type==="query"){msg.textContent="Masukkan tautan, URI, atau ID 22 karakter Spotify untuk menampilkan embed.";return}
-   const isCompact=t.type==="track"||t.type==="episode";
-   const frame=document.createElement("iframe");
-   frame.title="Pemutar Spotify resmi";frame.loading="lazy";
+  const pick=(obj,keys)=>{for(const k of keys){const v=obj&&obj[k];if(typeof v==="string"&&v.trim())return v;if(typeof v==="number")return String(v)}return ""};
+  const showEmbed=item=>{
+   player.replaceChildren();
+   const frame=document.createElement("iframe");frame.title="Pemutar resmi Spotify";frame.loading="lazy";
    frame.allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
    frame.referrerPolicy="strict-origin-when-cross-origin";
-   frame.style.cssText=`width:100%;height:${isCompact?"152px":"352px"};border:0;border-radius:14px;display:block`;
-   frame.src=`https://open.spotify.com/embed/${t.type}/${t.id}?utm_source=generator`;
-   playerEl.appendChild(frame);
-   msg.textContent="Pemutar embed resmi ditampilkan.";
+   frame.style.cssText=`width:100%;height:${item.type==="track"||item.type==="episode"?"152px":"352px"};border:0;border-radius:14px;display:block;margin-top:12px`;
+   frame.src=`https://open.spotify.com/embed/${item.type}/${item.id}?utm_source=generator`;
+   player.appendChild(frame);
   };
-
-  const runScrape=async()=>{
-   const t=normalizeSp(input.value);
-   resultsEl.replaceChildren();
-   if(!t){msg.textContent="Masukkan tautan atau kata kunci Spotify terlebih dahulu.";return}
-   fetchBtn.disabled=true;
-   msg.textContent="Menghubungi SpotiDown via Worker…";
+  const fetchInfo=async()=>{
+   const item=parseSpotify(input.value);result.replaceChildren();player.replaceChildren();
+   if(!item){msg.textContent="Link Spotify tidak valid. Masukkan URL track, album, playlist, atau episode.";return}
+   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API NexaDev...";
    try{
-    const actRes=await fetch(px("https://spotidown.app/action"),{
-     method:"POST",
-     headers:{"content-type":"application/x-www-form-urlencoded","x-requested-with":"XMLHttpRequest"},
-     body:new URLSearchParams({url:t.value,"g-recaptcha-response":""}).toString()
-    });
-    const actJson=await actRes.json();
-    if(!actJson||actJson.error!==false)throw new Error((actJson&&actJson.message)||"Gagal mengambil daftar track dari SpotiDown.");
-
-    const rows=parseTracksFromHtml(actJson.data||"");
-    if(!rows.length)throw new Error("Tidak ada track ditemukan pada respons.");
-
-    const maxItems=(t.type==="track"||t.type==="episode")?1:Math.min(10,rows.length);
-    for(let i=0;i<maxItems;i++){
-     const r=rows[i];
-     const fd=new FormData();
-     fd.append("data",r.data);fd.append("base",r.base);fd.append("token",r.token);
-     const trRes=await fetch(px("https://spotidown.app/action/track"),{
-      method:"POST",headers:{"x-requested-with":"XMLHttpRequest"},body:fd
-     });
-     const trJson=await trRes.json();
-     if(!trJson||trJson.error)throw new Error((trJson&&trJson.message)||"Endpoint /action/track menolak permintaan.");
-     const mp3=extractMp3FromHtml(trJson.data||"");
-     if(!mp3)throw new Error("Tautan MP3 tidak ditemukan.");
-
-     const card=document.createElement("div");
-     card.className="out";
-     card.style.cssText="display:grid;gap:8px;font-family:inherit";
-     card.innerHTML=`<div><b>${esc(r.name||"Tanpa judul")}</b><div class="hint">${esc(r.artist||"-")}${r.duration?" · "+esc(r.duration):""}</div></div>`;
-     const row=document.createElement("div");row.className="row";
-     const dl=document.createElement("a");
-     dl.href=mp3;dl.target="_blank";dl.rel="noopener noreferrer";dl.download="";
-     dl.className="btn";dl.textContent="Unduh MP3";
-     const cp=document.createElement("button");
-     cp.type="button";cp.className="btn alt";cp.textContent="Salin link MP3";
-     cp.onclick=()=>copy(mp3);
-     row.append(dl,cp);card.appendChild(row);resultsEl.appendChild(card);
-    }
-    msg.textContent=`Berhasil memuat ${maxItems} item. Unduh segera karena link MP3 berlaku sekitar 1 jam.`;
-   }catch(err){
-    msg.textContent="Gagal memproses: "+(err&&err.message?err.message:err)+".";
-   }finally{
-    fetchBtn.disabled=false;
-   }
+    const response=await fetch(API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
+    const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
+    if(!response.ok)throw new Error("API gagal dengan HTTP "+response.status);
+    if(data&&data.success===false)throw new Error(data.message||data.error||"API menolak permintaan.");
+    const obj=data&&typeof data.data==="object"?data.data:data;
+    const title=pick(obj,["title","name","track_name"])||"Informasi Spotify diterima";
+    const artist=pick(obj,["artist","artists","author","artist_name"]);
+    const cover=pick(obj,["thumbnail","cover","image","image_url","artwork"]);
+    const duration=pick(obj,["duration","duration_ms","length"]);
+    const card=document.createElement("div");card.className="panel";card.style.marginTop="12px";
+    if(cover&&/^https:\/\//i.test(cover)){const img=document.createElement("img");img.src=cover;img.alt="Cover lagu";img.loading="lazy";img.style.cssText="width:112px;height:112px;object-fit:cover;border-radius:12px;display:block;margin-bottom:10px";card.appendChild(img)}
+    const h=document.createElement("div");h.style.fontWeight="700";h.textContent=title;card.appendChild(h);
+    if(artist){const a=document.createElement("div");a.className="hint";a.textContent=artist;card.appendChild(a)}
+    if(duration){const d=document.createElement("div");d.className="hint";d.textContent="Durasi: "+duration;card.appendChild(d)}
+    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";note.textContent="Data berhasil diambil dari API NexaDev. Pemutaran tersedia melalui Spotify resmi.";card.appendChild(note);
+    result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API NexaDev.";
+   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Jika muncul error CORS, endpoint perlu mengizinkan akses dari domain Xaerisoft."}
+   finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
   };
-
-  fetchBtn.addEventListener("click",runScrape);
-  embedBtn.addEventListener("click",renderEmbed);
-  input.addEventListener("keydown",e=>{if(e.key==="Enter")runScrape()});
+  const openSpotify=()=>{const item=parseSpotify(input.value);if(!item){msg.textContent="Masukkan link Spotify yang valid terlebih dahulu.";return}window.open(item.url,"_blank","noopener,noreferrer")};
+  fetchBtn.addEventListener("click",fetchInfo);openBtn.addEventListener("click",openSpotify);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")fetchInfo()});
  }
 });
 
