@@ -1047,6 +1047,183 @@ TOOLS.push({
 
 
 
+/* ============ Baca & Dengarkan Al-Qur'an — NexaDev API ============ */
+TOOLS.push({
+ id:"quran-reader",name:"Baca & Dengarkan Al-Qur'an",desc:"Baca ayat Arab, latin, terjemahan, dan dengarkan murottal dengan pilihan qari.",cat:"Utilities",featured:false,
+ icon:'<path d="M4 5.5A2.5 2.5 0 016.5 3H20v17H6.5A2.5 2.5 0 014 17.5z"/><path d="M4 6h13M8 8.5h8M8 12h8M8 15.5h5"/>',
+ render(el){
+  const surahs=[
+   [1,"Al-Fatihah"],[2,"Al-Baqarah"],[3,"Ali 'Imran"],[4,"An-Nisa'"],[5,"Al-Ma'idah"],[6,"Al-An'am"],[7,"Al-A'raf"],[8,"Al-Anfal"],[9,"At-Taubah"],[10,"Yunus"],
+   [11,"Hud"],[12,"Yusuf"],[13,"Ar-Ra'd"],[14,"Ibrahim"],[15,"Al-Hijr"],[16,"An-Nahl"],[17,"Al-Isra'"],[18,"Al-Kahf"],[19,"Maryam"],[20,"Ta-Ha"],
+   [21,"Al-Anbiya'"],[22,"Al-Hajj"],[23,"Al-Mu'minun"],[24,"An-Nur"],[25,"Al-Furqan"],[26,"Asy-Syu'ara'"],[27,"An-Naml"],[28,"Al-Qasas"],[29,"Al-'Ankabut"],[30,"Ar-Rum"],
+   [31,"Luqman"],[32,"As-Sajdah"],[33,"Al-Ahzab"],[34,"Saba'"],[35,"Fatir"],[36,"Ya-Sin"],[37,"As-Saffat"],[38,"Sad"],[39,"Az-Zumar"],[40,"Ghafir"],
+   [41,"Fussilat"],[42,"Asy-Syura"],[43,"Az-Zukhruf"],[44,"Ad-Dukhan"],[45,"Al-Jasiyah"],[46,"Al-Ahqaf"],[47,"Muhammad"],[48,"Al-Fath"],[49,"Al-Hujurat"],[50,"Qaf"],
+   [51,"Az-Zariyat"],[52,"At-Tur"],[53,"An-Najm"],[54,"Al-Qamar"],[55,"Ar-Rahman"],[56,"Al-Waqi'ah"],[57,"Al-Hadid"],[58,"Al-Mujadilah"],[59,"Al-Hasyr"],[60,"Al-Mumtahanah"],
+   [61,"As-Saff"],[62,"Al-Jumu'ah"],[63,"Al-Munafiqun"],[64,"At-Tagabun"],[65,"At-Talaq"],[66,"At-Tahrim"],[67,"Al-Mulk"],[68,"Al-Qalam"],[69,"Al-Haqqah"],[70,"Al-Ma'arij"],
+   [71,"Nuh"],[72,"Al-Jinn"],[73,"Al-Muzzammil"],[74,"Al-Muddassir"],[75,"Al-Qiyamah"],[76,"Al-Insan"],[77,"Al-Mursalat"],[78,"An-Naba'"],[79,"An-Nazi'at"],[80,"Abasa"],
+   [81,"At-Takwir"],[82,"Al-Infitar"],[83,"Al-Mutaffifin"],[84,"Al-Insyiqaq"],[85,"Al-Buruj"],[86,"At-Tariq"],[87,"Al-A'la"],[88,"Al-Gasyiyah"],[89,"Al-Fajr"],[90,"Al-Balad"],
+   [91,"Asy-Syams"],[92,"Al-Lail"],[93,"Ad-Duha"],[94,"Asy-Syarh"],[95,"At-Tin"],[96,"Al-'Alaq"],[97,"Al-Qadr"],[98,"Al-Bayyinah"],[99,"Az-Zalzalah"],[100,"Al-Adiyat"],
+   [101,"Al-Qari'ah"],[102,"At-Takasur"],[103,"Al-Asr"],[104,"Al-Humazah"],[105,"Al-Fil"],[106,"Quraisy"],[107,"Al-Ma'un"],[108,"Al-Kausar"],[109,"Al-Kafirun"],[110,"An-Nasr"],
+   [111,"Al-Lahab"],[112,"Al-Ikhlas"],[113,"Al-Falaq"],[114,"An-Nas"]
+  ];
+  const defaultQaris=[
+   ["01","Abdullah Al-Juhany"],["02","Abdul Muhsin Al-Qasim"],["03","Abdurrahman As-Sudais"],
+   ["04","Ibrahim Al-Dossari"],["05","Misyari Rasyid Al-Afasi"],["06","Yasser Al-Dosari"]
+  ];
+  el.innerHTML=`
+   <style>
+    .qr-tools{display:grid;gap:14px}
+    .qr-fields{display:grid;gap:12px;grid-template-columns:1fr}
+    .qr-tools select,.qr-tools input[type=search]{width:100%;min-height:46px;border:2px solid var(--bd);border-radius:12px;padding:10px 12px;background:var(--card);color:var(--ink)}
+    .qr-summary{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px;border:2px solid var(--bd);border-radius:14px;background:var(--light)}
+    .qr-summary b{font-size:20px;display:block}
+    .qr-summary small{color:var(--mute)}
+    .qr-audio{width:100%;margin-top:10px}
+    .qr-player{border:2px solid var(--bd);border-radius:16px;padding:14px;background:var(--blue)}
+    .qr-player-top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .qr-status{font-size:13px;color:var(--mute);margin-top:8px}
+    .qr-list{display:grid;gap:10px}
+    .qr-ayah{border:1.5px solid var(--line);border-radius:14px;background:var(--card);padding:14px;display:grid;gap:9px}
+    .qr-ayah-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--mute);font-size:12px;font-weight:800}
+    .qr-ar{font-family:"Noto Naskh Arabic","Amiri","Traditional Arabic",serif;font-size:clamp(25px,6vw,34px);line-height:2.05;text-align:right;direction:rtl;overflow-wrap:anywhere}
+    .qr-latin{font-size:14px;color:var(--acc-t);line-height:1.7}
+    .qr-translation{font-size:15px;line-height:1.65}
+    .qr-note{font-size:13px;color:var(--mute);line-height:1.5}
+    .qr-empty{padding:18px;border:2px dashed var(--line);border-radius:14px;text-align:center;color:var(--mute)}
+    @media(min-width:640px){.qr-fields{grid-template-columns:1.25fr 1fr}}
+   </style>
+   <div class="qr-tools">
+    <div class="panel">
+     <div>
+      <b style="font-size:18px">Al-Qur'an</b>
+      <p class="hint">Pilih nama surah dan qari. Data ayat serta audio lengkap diambil dari API.</p>
+     </div>
+     <div class="qr-fields">
+      <div class="f">
+       <label for="qr-search">Cari surah</label>
+       <input id="qr-search" type="search" placeholder="Contoh: Al-Kahf" autocomplete="off">
+       <select id="qr-surah" aria-label="Pilih surah" style="margin-top:8px"></select>
+      </div>
+      <div class="f">
+       <label for="qr-qari">Pilih qari / pengisi suara</label>
+       <select id="qr-qari"></select>
+       <p class="qr-note" style="margin-top:7px">Pilihan qari mengikuti daftar audio yang dikirim API.</p>
+      </div>
+     </div>
+     <div class="row"><button class="btn" id="qr-load" type="button">Baca Surat & Putar</button><button class="btn alt" id="qr-clear" type="button">Bersihkan</button></div>
+     <div id="qr-message" class="hint" role="status" aria-live="polite">Pilih surah dan qari, lalu tekan “Baca Surat & Putar”.</div>
+    </div>
+    <div id="qr-result" class="hide">
+     <div id="qr-summary" class="qr-summary"></div>
+     <div class="qr-player">
+      <div class="qr-player-top"><b id="qr-player-title">Audio murottal</b><small id="qr-player-qari"></small></div>
+      <audio id="qr-audio" class="qr-audio" controls preload="none"></audio>
+      <p id="qr-audio-note" class="qr-status">Audio akan dicoba diputar otomatis setelah surat dimuat.</p>
+     </div>
+     <div>
+      <h2 style="margin:18px 0 10px">Bacaan ayat</h2>
+      <div id="qr-ayahs" class="qr-list"></div>
+     </div>
+    </div>
+   </div>`;
+
+  const q=id=>el.querySelector("#"+id);
+  const search=q("qr-search"),surahSel=q("qr-surah"),qariSel=q("qr-qari"),loadBtn=q("qr-load"),clearBtn=q("qr-clear");
+  const message=q("qr-message"),result=q("qr-result"),summary=q("qr-summary"),audio=q("qr-audio"),audioNote=q("qr-audio-note");
+  let current=null;
+  const defaultSurahOptions=()=>surahs.map(([n,name])=>`<option value="${n}">${n}. ${name}</option>`).join("");
+  surahSel.innerHTML=defaultSurahOptions();
+  qariSel.innerHTML=defaultQaris.map(([id,name])=>`<option value="${id}">${name}</option>`).join("");
+  qariSel.value="05";
+
+  const setMessage=(text,isError=false)=>{message.textContent=text;message.classList.toggle("err",!!isError)};
+  const safeAudioUrl=value=>{try{const u=new URL(value);return u.protocol==="https:"?u.href:""}catch{return ""}};
+  const normalizeAudioFull=raw=>{
+   if(Array.isArray(raw))return raw.map(x=>({qari_id:String(x.qari_id||x.id||""),qari:String(x.qari||x.name||"Qari"),url:String(x.url||"")})).filter(x=>x.qari_id&&x.url);
+   if(raw&&typeof raw==="object")return Object.entries(raw).map(([id,value])=>typeof value==="string"?({qari_id:String(id),qari:defaultQaris.find(x=>x[0]===String(id))?.[1]||("Qari "+id),url:value}):({qari_id:String(value.qari_id||id),qari:String(value.qari||value.name||("Qari "+id)),url:String(value.url||"")})).filter(x=>x.qari_id&&x.url);
+   return [];
+  };
+  const setQariOptions=items=>{
+   const before=qariSel.value;
+   qariSel.innerHTML=items.map(x=>`<option value="${esc(x.qari_id)}">${esc(x.qari)}</option>`).join("");
+   if(items.some(x=>x.qari_id===before))qariSel.value=before;
+   else if(items.some(x=>x.qari_id==="05"))qariSel.value="05";
+   else if(items.length)qariSel.value=items[0].qari_id;
+  };
+  const selectedAudio=()=>{
+   if(!current)return null;
+   const item=current.audioFull.find(x=>x.qari_id===qariSel.value);
+   if(!item)return null;
+   const url=safeAudioUrl(item.url);
+   return url?{...item,url}:null;
+  };
+  const playCurrent=async()=>{
+   const item=selectedAudio();
+   if(!item){audioNote.textContent="Audio untuk qari ini tidak tersedia.";return}
+   audio.pause();audio.src=item.url;audio.autoplay=true;audio.load();
+   q("qr-player-qari").textContent=item.qari;
+   audioNote.textContent="Memuat audio " + item.qari + "…";
+   try{await audio.play();audioNote.textContent="Sedang diputar: "+item.qari}
+   catch{audioNote.textContent="Surat sudah dimuat. Browser mungkin menahan autoplay; tekan tombol Play pada pemutar audio."}
+  };
+  const renderAyahs=items=>{
+   if(!Array.isArray(items)||!items.length){q("qr-ayahs").innerHTML='<div class="qr-empty">Teks ayat tidak tersedia dari respons API.</div>';return}
+   q("qr-ayahs").innerHTML=items.map(a=>`<article class="qr-ayah">
+    <div class="qr-ayah-head"><span>AYAT ${Number(a.nomorAyat)||"—"}</span><span>۞</span></div>
+    <div class="qr-ar" lang="ar" dir="rtl">${esc(String(a.teksArab||"Teks Arab tidak tersedia"))}</div>
+    ${a.teksLatin?`<div class="qr-latin">${esc(String(a.teksLatin))}</div>`:""}
+    ${a.teksIndonesia?`<div class="qr-translation">${esc(String(a.teksIndonesia))}</div>`:""}
+   </article>`).join("");
+  };
+  const loadSurah=async()=>{
+   const number=Number(surahSel.value);
+   if(!Number.isInteger(number)||number<1||number>114){setMessage("Nomor surah harus antara 1 sampai 114.",true);return}
+   loadBtn.disabled=true;loadBtn.textContent="Memuat surat…";audio.pause();audio.removeAttribute("src");audio.load();result.classList.add("hide");
+   setMessage("Mengambil data surah dan daftar qari dari API…");
+   try{
+    const endpoint="https://api.nexadev.my.id/api/quranaudio/?surah="+number+"&surat="+number+"&mode=full";
+    const response=await fetch(endpoint,{method:"GET",headers:{Accept:"application/json"}});
+    const raw=await response.text();let json;
+    try{json=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
+    if(!response.ok)throw new Error("API gagal dengan HTTP "+response.status+".");
+    if(json&&json.success===false)throw new Error(json.message||json.error||"API menolak permintaan.");
+    const data=json&&json.data&&typeof json.data==="object"?json.data:json;
+    if(!data||!Array.isArray(data.ayat))throw new Error("Data ayat tidak ditemukan dalam respons API.");
+    const audioFull=normalizeAudioFull(data.audioFull);
+    if(!audioFull.length)throw new Error("Daftar audio qari tidak tersedia untuk surah ini.");
+    current={data,audioFull};setQariOptions(audioFull);
+    const name=String(data.namaLatin||surahs.find(x=>x[0]===number)?.[1]||("Surah "+number));
+    const arabicName=String(data.nama||"");
+    summary.innerHTML=`<div><b>${esc(name)}</b><small>Surah ke-${Number(data.nomor)||number}${arabicName?" · "+esc(arabicName):""}</small></div><div><b>${Number(data.jumlahAyat)||data.ayat.length}</b><small>Jumlah ayat</small></div><div><b>${esc(String(data.tempatTurun||"—"))}</b><small>Tempat turun</small></div>${data.arti?`<div><b>${esc(String(data.arti))}</b><small>Arti nama</small></div>`:""}`;
+    renderAyahs(data.ayat);result.classList.remove("hide");
+    const option=selectedAudio();if(!option)throw new Error("URL audio qari yang dipilih tidak tersedia.");
+    q("qr-player-title").textContent="Murottal — "+name;
+    await playCurrent();
+    setMessage("Berhasil memuat "+name+". "+data.ayat.length+" ayat ditampilkan.");
+   }catch(error){
+    const isNetwork=error instanceof TypeError;
+    setMessage(isNetwork?"Gagal menghubungi API. Periksa koneksi atau izin CORS API untuk domain website ini.":(error&&error.message?error.message:"Terjadi kesalahan saat memuat surah."),true);
+   }finally{loadBtn.disabled=false;loadBtn.textContent="Baca Surat & Putar"}
+  };
+
+  search.addEventListener("input",()=>{
+   const term=search.value.trim().toLocaleLowerCase("id");
+   const filtered=surahs.filter(([n,name])=>String(n).includes(term)||name.toLocaleLowerCase("id").includes(term));
+   const currentValue=surahSel.value;
+   surahSel.innerHTML=filtered.length?filtered.map(([n,name])=>`<option value="${n}">${n}. ${name}</option>`).join(""):'<option value="">Surah tidak ditemukan</option>';
+   if(filtered.some(x=>String(x[0])===currentValue))surahSel.value=currentValue;
+  });
+  loadBtn.addEventListener("click",loadSurah);
+  qariSel.addEventListener("change",()=>{if(current)playCurrent()});
+  clearBtn.addEventListener("click",()=>{audio.pause();audio.removeAttribute("src");audio.load();current=null;result.classList.add("hide");search.value="";surahSel.innerHTML=defaultSurahOptions();surahSel.value="1";qariSel.innerHTML=defaultQaris.map(([id,name])=>`<option value="${id}">${name}</option>`).join("");qariSel.value="05";setMessage("Pilihan dibersihkan. Pilih surah untuk mulai lagi.")});
+  audio.addEventListener("play",()=>{audioNote.textContent="Sedang diputar: "+(selectedAudio()?.qari||"qari terpilih")});
+  audio.addEventListener("ended",()=>{audioNote.textContent="Murottal selesai diputar."});
+  audio.addEventListener("error",()=>{if(audio.currentSrc)audioNote.textContent="Audio gagal diputar. Coba pilih qari lain atau muat ulang surah."});
+  addEventListener("hashchange",()=>{if(location.hash!=="#tool-quran-reader")audio.pause()});
+ }
+});
+
+
 /* ============ Web to APK V2 — Izzxd API ============ */
 TOOLS.push({
  id:"web2apk-v2",name:"Web to APK V2",desc:"Ubah website menjadi aplikasi Android APK.",cat:"Utilities",featured:false,
@@ -1632,7 +1809,7 @@ const XA=()=>window.XA||{};
 /* Badge role. Sumber data: XA().role(uid) (users/{uid} di Firestore), bukan nama atau isi pesan. */
 const XB_CHECK='<svg class="xv" viewBox="0 0 24 24" role="img" aria-label="Terverifikasi"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.5l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const XB_STAR='<svg class="xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg>';
-const xbs=uid=>{const x=XA();if(!uid||!x.role)return"";const r=x.role(uid);
+const xbs=uid=>{if(uid==="wil-ai")return XB_CHECK+'<span class="xr" style="color:#168BEA">Wil AI</span>';const x=XA();if(!uid||!x.role)return"";const r=x.role(uid);
  if(r.role==="owner")return XB_CHECK+`<span class="xr xr-dev">${XB_STAR}<span class="xg">Developer</span></span>`;
  if(r.role==="admin")return'<span class="xr xr-adm">Admin</span>';
  if(r.role==="vip")return'<span class="xr xr-vip"><span class="xg">VIP</span></span>';
@@ -2016,6 +2193,84 @@ navigator.getBattery&&navigator.getBattery().then(b=>{batt=b;b.addEventListener(
 news();
 chips();list();route();
 </script>
+
+<style id="wil-ai-styles">
+#wil-ai-root{position:fixed;right:18px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:80;font-family:inherit;color:var(--ink)}
+#wil-ai-fab{width:58px;height:58px;border:0;border-radius:20px;background:linear-gradient(145deg,#8b5cf6,#5b21b6);color:#fff;box-shadow:0 10px 32px #5b21b655;display:grid;place-items:center;font-weight:900;font-size:23px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+#wil-ai-fab:hover{transform:translateY(-3px);box-shadow:0 14px 38px #5b21b777}
+#wil-ai-panel{position:fixed;right:18px;bottom:calc(152px + env(safe-area-inset-bottom));width:min(390px,calc(100vw - 28px));height:min(620px,calc(100dvh - 190px));background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 22px 70px #0003;display:none;overflow:hidden;flex-direction:column}
+#wil-ai-panel.open{display:flex;animation:wilAiIn .22s var(--ease)}
+@keyframes wilAiIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.wai-head{display:flex;align-items:center;gap:10px;padding:13px 14px;background:linear-gradient(115deg,#21133e,#432078);color:white}
+.wai-avatar{width:39px;height:39px;border-radius:14px;background:linear-gradient(145deg,#a78bfa,#6d28d9);display:grid;place-items:center;font-size:20px;flex:none}
+.wai-headcopy{min-width:0;flex:1}.wai-headcopy b{display:flex;align-items:center;gap:5px;font-size:15px}.wai-headcopy small{display:block;color:#ddd1ff;font-size:11px}
+.wai-check{width:15px;height:15px;border-radius:50%;background:#168bea;color:white;display:inline-grid;place-items:center;font-size:10px;font-weight:900}
+.wai-head button{border:0;background:#ffffff18;color:white;width:32px;height:32px;border-radius:10px;font-size:18px}
+.wai-toolbar{display:flex;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.wai-toolbar button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700}
+.wai-history{display:flex;gap:6px;overflow:auto;max-width:100%;padding:0 12px 8px}
+.wai-history button{flex:none;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--mute)}
+.wai-messages{flex:1;min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:11px;background:var(--bg)}
+.wai-welcome{padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--card);font-size:13px}
+.wai-bubble{max-width:90%;padding:10px 12px;border-radius:15px;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.wai-bubble.user{align-self:flex-end;background:#6d42c8;color:white;border-bottom-right-radius:5px}
+.wai-bubble.assistant{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}
+.wai-bubble small{display:block;font-size:10px;opacity:.65;margin-bottom:3px}
+.wai-status{font-size:11px;color:var(--mute);padding:0 14px 6px;min-height:18px}
+.wai-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--card)}
+.wai-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:var(--bg);font-size:13px;outline:none}
+.wai-form input:focus{border-color:#8b5cf6}
+.wai-form button{width:43px;border:0;border-radius:13px;background:#7042c8;color:white;font-size:18px;font-weight:900}
+.wai-form button:disabled{opacity:.45}
+.wai-empty{margin:auto;text-align:center;color:var(--mute);font-size:13px;padding:20px}
+@media(max-width:520px){
+ #wil-ai-root{right:12px;bottom:calc(76px + env(safe-area-inset-bottom))}
+ #wil-ai-fab{width:54px;height:54px;border-radius:18px}
+ #wil-ai-panel{right:8px;left:8px;bottom:calc(138px + env(safe-area-inset-bottom));width:auto;height:min(68dvh,590px);border-radius:20px}
+}
+@media(prefers-reduced-motion:reduce){#wil-ai-panel.open{animation:none}#wil-ai-fab{transition:none}}
+</style>
+<div id="wil-ai-root">
+ <section id="wil-ai-panel" aria-label="Percakapan Wil AI">
+  <header class="wai-head">
+   <div class="wai-avatar">✦</div>
+   <div class="wai-headcopy"><b>Wil AI <span class="wai-check" aria-label="Terverifikasi">✓</span></b><small>Asisten resmi Wilverse · Online</small></div>
+   <button type="button" id="wai-min" aria-label="Minimalkan">−</button>
+   <button type="button" id="wai-close" aria-label="Tutup">×</button>
+  </header>
+  <div class="wai-toolbar"><button type="button" id="wai-new">＋ Chat baru</button><button type="button" id="wai-history-toggle">Riwayat</button></div>
+  <div class="wai-history" id="wai-history" hidden></div>
+  <div class="wai-messages" id="wai-messages"><div class="wai-welcome"><b>Yo, Wil AI di sini 😹✌️</b><br>Ada yang mau lu tanyain tentang WilProject? Gas, kita bahas bareng 🙈</div></div>
+  <div class="wai-status" id="wai-status" aria-live="polite"></div>
+  <form class="wai-form" id="wai-form"><input id="wai-input" maxlength="1500" placeholder="Tanya sesuatu ke Wil AI…" autocomplete="off"><button id="wai-send" type="submit" aria-label="Kirim">➤</button></form>
+ </section>
+ <button id="wil-ai-fab" type="button" aria-label="Buka Wil AI">✦</button>
+</div>
+<script>
+(()=>{
+ const $=id=>document.getElementById(id),panel=$("wil-ai-panel"),fab=$("wil-ai-fab"),msgs=$("wai-messages"),input=$("wai-input"),send=$("wai-send"),status=$("wai-status"),hist=$("wai-history");
+ let conversationId=null,stopMessages=null,busy=false,historyOpen=false;
+ const escText=v=>String(v??"");
+ const show=()=>{panel.classList.add("open");fab.setAttribute("aria-expanded","true");if(!window.XA?.user){status.textContent="Masuk ke akun WilProject untuk menyimpan riwayat.";return}if(!conversationId)loadLatestOrNew()};
+ const hide=()=>{panel.classList.remove("open");fab.setAttribute("aria-expanded","false")};
+ const addBubble=m=>{const d=document.createElement("div");d.className="wai-bubble "+(m.role==="user"?"user":"assistant");const who=document.createElement("small");who.textContent=m.role==="user"?"Lu":"Wil AI ✓";const body=document.createElement("div");body.textContent=escText(m.text);d.append(who,body);msgs.append(d)};
+ const renderMessages=arr=>{msgs.replaceChildren();if(!arr.length){const w=document.createElement("div");w.className="wai-welcome";w.textContent="Yo, Wil AI di sini 😹✌️ Ada yang mau lu tanyain?";msgs.append(w);return}arr.forEach(addBubble);msgs.scrollTop=msgs.scrollHeight};
+ const watch=id=>{if(stopMessages)stopMessages();conversationId=id;stopMessages=window.XA.wilAIWatch(id,renderMessages,e=>{status.textContent="Gagal memuat riwayat. Periksa Firestore Rules.";console.error(e)});status.textContent=""};
+ const loadHistory=async()=>{const x=window.XA;if(!x?.user||!x.wilAIList)return;try{const list=await x.wilAIList();hist.replaceChildren();list.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c.title||"Percakapan";b.onclick=()=>{watch(c.id);hist.hidden=true;historyOpen=false};hist.append(b)});if(!list.length){const n=document.createElement("span");n.textContent="Belum ada riwayat";n.style.cssText="font-size:11px;color:var(--mute)";hist.append(n)}}catch(e){status.textContent=e.message||"Riwayat belum bisa dimuat."}};
+ const loadLatestOrNew=async()=>{const x=window.XA;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}try{const list=await x.wilAIList();if(list.length)watch(list[0].id);else await newChat();await loadHistory()}catch(e){status.textContent=e.message||"Gagal memuat Wil AI."}};
+ const newChat=async()=>{const x=window.XA;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}try{if(stopMessages)stopMessages();stopMessages=null;const id=await x.wilAINew();watch(id);await loadHistory()}catch(e){status.textContent=e.message||"Gagal membuat percakapan."}};
+ fab.addEventListener("click",()=>panel.classList.contains("open")?hide():show());
+ $("wai-close").onclick=hide;$("wai-min").onclick=hide;$("wai-new").onclick=newChat;
+ $("wai-history-toggle").onclick=async()=>{historyOpen=!historyOpen;hist.hidden=!historyOpen;if(historyOpen)await loadHistory()};
+ $("wai-form").addEventListener("submit",async e=>{e.preventDefault();const text=input.value.trim(),x=window.XA;if(!text||busy)return;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}busy=true;send.disabled=true;input.disabled=true;status.textContent="Wil AI lagi mikir…";try{if(!conversationId)await newChat();await x.wilAIAsk(conversationId,text);input.value="";status.textContent=""}catch(er){status.textContent=(er?.message||"Wil AI belum bisa menjawab.")+" 😿"}finally{busy=false;send.disabled=false;input.disabled=false;input.focus()}});
+ addEventListener("xa",()=>{if(panel.classList.contains("open")&&window.XA?.user&&!conversationId)loadLatestOrNew();if(!window.XA?.user){if(stopMessages)stopMessages();stopMessages=null;conversationId=null;msgs.replaceChildren();status.textContent="Masuk ke akun untuk memakai Wil AI."}});
+ // Lightweight @Wil AI suggestion in the existing Global Chat composer.
+ document.addEventListener("input",e=>{if(e.target?.id!=="ci")return;let box=document.getElementById("wai-mention-suggest");if(!box){box=document.createElement("button");box.id="wai-mention-suggest";box.type="button";box.textContent="✦  @Wil AI · Asisten resmi";box.style.cssText="position:fixed;z-index:90;left:16px;bottom:100px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card);color:var(--ink);box-shadow:0 8px 24px #0002;font-size:12px;display:none";document.body.append(box);box.onclick=()=>{const ci=document.getElementById("ci");if(ci){const v=ci.value,at=v.lastIndexOf("@");ci.value=(at>=0?v.slice(0,at):v)+"@Wil AI ";ci.dispatchEvent(new Event("input",{bubbles:true}));ci.focus()}box.style.display="none"}}
+ const v=e.target.value;box.style.display=/(^|\s)@wil(?:\s*ai?)?$/i.test(v)?"block":"none";
+ });
+})();
+</script>
+
 <script type="module">
 /* ===== Firebase =====
    Isi konfigurasi dari Firebase Console > Project settings > Your apps (Web).
@@ -2038,8 +2293,8 @@ const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>"",rol
 const fire=()=>dispatchEvent(new Event("xa"));
 if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
- const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
- const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i),annCol=Fs.collection(db,"announcements"),tokenCol=Fs.collection(db,"pushTokens");
+ const [A,Au,Fs,Fn]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js"),import(B+"firebase-functions.js")]);
+ const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i),annCol=Fs.collection(db,"announcements"),tokenCol=Fs.collection(db,"pushTokens"),functions=Fn.getFunctions(app),askWilAICall=Fn.httpsCallable(functions,"askWilAI"),wilRoot=uid=>Fs.collection(db,"users",uid,"wilAiConversations");
  const usernameKey=async n=>{const normalized=String(n??"").normalize("NFKC").trim().toLowerCase();if(!normalized)throw new Error("Nama tidak boleh kosong.");const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(normalized));return "v2_"+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")};
  const claimUsername=async(uid,name)=>{const display=String(name??"").trim();if(!display)throw new Error("Nama tidak boleh kosong.");const key=await usernameKey(display),newRef=Fs.doc(db,"usernames",key),userRef=ud(uid);await Fs.runTransaction(db,async tx=>{const us=await tx.get(userRef),oldKey=us.exists()?(us.data().usernameKey||""):"";const ns=await tx.get(newRef);let oldSnap=null,oldRef=null;if(oldKey&&oldKey!==key){oldRef=Fs.doc(db,"usernames",oldKey);oldSnap=await tx.get(oldRef)}if(ns.exists()&&ns.data().uid!==uid)throw new Error("Nama sudah dipakai akun lain. Coba nama berbeda.");tx.set(newRef,{uid,name:display,normalizedName:display.normalize("NFKC").toLowerCase(),updatedAt:Fs.serverTimestamp()},{merge:true});if(oldRef&&oldSnap&&oldSnap.exists()&&oldSnap.data().uid===uid)tx.delete(oldRef);tx.set(userRef,{name:display,nameLower:display.normalize("NFKC").toLowerCase(),usernameKey:key,usernameKeyVersion:2,updatedAt:Fs.serverTimestamp()},{merge:true})});return key;};
  const adminUid=uid=>!!uid&&(uid===ROLE_CONFIG.ownerUid||ROLE_CONFIG.adminUids.includes(uid));
@@ -2079,7 +2334,12 @@ if(FIREBASE_CONFIG.apiKey){try{
   listenAnnouncements:(cb,er)=>Fs.onSnapshot(Fs.query(annCol,Fs.orderBy("at","desc"),Fs.limit(50)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),er),
   enablePush:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk mengaktifkan notifikasi.");if(!("Notification" in window)||!("serviceWorker" in navigator))throw new Error("Browser tidak mendukung notifikasi.");if(/^ISI_/.test(FCM_VAPID_KEY)||!/^[-A-Za-z0-9_]{80,}$/.test(FCM_VAPID_KEY))throw new Error("Isi FCM_VAPID_KEY dari Firebase Console terlebih dahulu.");const perm=await Notification.requestPermission();if(perm!=="granted")throw new Error("Izin notifikasi tidak diberikan.");const [Msg]=await Promise.all([import(B+"firebase-messaging.js")]);const messaging=Msg.getMessaging(app);Msg.onMessage(messaging,p=>{const n=p.notification||{};if(Notification.permission==="granted")new Notification(n.title||"Update Xaerisoft",{body:n.body||"Ada pengumuman baru.",icon:n.icon||"/favicon.ico",image:n.image})});const reg=await navigator.serviceWorker.register("/firebase-messaging-sw.js");const token=await Msg.getToken(messaging,{vapidKey:FCM_VAPID_KEY,serviceWorkerRegistration:reg});if(!token)throw new Error("Token notifikasi tidak tersedia.");await Fs.setDoc(Fs.doc(tokenCol,u.uid),{uid:u.uid,token,updatedAt:Fs.serverTimestamp()},{merge:true});return token},
   role:id=>{if(!id)return roleOf();XA.photo(id);return roleOf(id,P[id])},
-  listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er)});
+  listen:(cb,er)=>Fs.onSnapshot(Fs.query(col,Fs.orderBy("at","desc"),Fs.limit(80)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()})).reverse()),er),
+  wilAINew:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk memakai Wil AI.");const r=await Fs.addDoc(wilRoot(u.uid),{title:"Percakapan baru",createdAt:Fs.serverTimestamp(),updatedAt:Fs.serverTimestamp()});return r.id},
+  wilAIList:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(wilRoot(u.uid),Fs.orderBy("updatedAt","desc"),Fs.limit(30));const z=await Fs.getDocs(q);return z.docs.map(d=>({id:d.id,...d.data()}))},
+  wilAIWatch:(id,cb,er)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(Fs.collection(wilRoot(u.uid),id,"messages"),Fs.orderBy("createdAt","asc"),Fs.limit(100));return Fs.onSnapshot(q,z=>cb(z.docs.map(d=>({id:d.id,...d.data()}))),er)},
+  wilAIAsk:async(id,text)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const r=await askWilAICall({conversationId:id,text});return r.data}
+});
  Au.onAuthStateChanged(auth,async u=>{XA.user=u;XA.ar=true;if(u){XA.photo(u.uid);try{const us=await Fs.getDoc(ud(u.uid));if(!us.exists()||us.data().usernameKeyVersion!==2){let candidate=(u.displayName||((u.email||"").split("@")[0])||("Tamu"+u.uid.slice(0,5))).trim();try{await claimUsername(u.uid,candidate)}catch(er){if(/sudah dipakai/i.test(er.message)){candidate=candidate+"-"+u.uid;await claimUsername(u.uid,candidate);await Au.updateProfile(u,{displayName:candidate});XA.usernameNotice="Username lama bentrok, jadi disesuaikan menjadi "+candidate} else throw er}}}catch(er){console.warn("Username registry needs review:",er.message)}}fire()});
 }catch(e){console.error(e);XA.error=e.message}}
 XA.loaded=true;fire();
