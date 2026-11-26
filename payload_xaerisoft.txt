@@ -915,7 +915,7 @@ TOOLS.push({
   const msg=el.querySelector("#sp-msg");
   const result=el.querySelector("#sp-result");
   const player=el.querySelector("#sp-player");
-  const API="https://api.nexadev.my.id/api/spotify?url=";
+  const API="https://spotify.ujicobakun299.workers.dev/spotify?url=";
 
   const parseSpotify=raw=>{
    const value=String(raw||"").trim().replace(/^['"]|['"]$/g,"");
@@ -942,7 +942,7 @@ TOOLS.push({
   const fetchInfo=async()=>{
    const item=parseSpotify(input.value);result.replaceChildren();player.replaceChildren();
    if(!item){msg.textContent="Link Spotify tidak valid. Masukkan URL track, album, playlist, atau episode.";return}
-   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi NexaDev API secara langsung...";
+   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API Wilverse";
    try{
     const response=await fetch(API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
     const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
@@ -970,7 +970,7 @@ TOOLS.push({
     }
     const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";note.textContent="Info diambil dari NexaDev. Preview hanya cuplikan audio; lagu lengkap tersedia melalui pemutar resmi Spotify.";card.appendChild(note);
     result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API NexaDev.";
-   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi NexaDev API.")+" Xaerisoft sudah memanggil endpoint NexaDev secara langsung; periksa koneksi atau respons server jika gagal."}
+   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Periksa koneksi dan status Spotify CORS Worker jika permintaan gagal."}
    finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
   };
   const openSpotify=()=>{const item=parseSpotify(input.value);if(!item){msg.textContent="Masukkan link Spotify yang valid terlebih dahulu.";return}window.open(item.url,"_blank","noopener,noreferrer")};
