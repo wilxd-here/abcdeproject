@@ -915,7 +915,7 @@ TOOLS.push({
   const msg=el.querySelector("#sp-msg");
   const result=el.querySelector("#sp-result");
   const player=el.querySelector("#sp-player");
-  const API="https://spotify.ujicobakun299.workers.dev/spotify?url=";
+  const API="https://api.nexadev.my.id/api/spotify?url=";
 
   const parseSpotify=raw=>{
    const value=String(raw||"").trim().replace(/^['"]|['"]$/g,"");
@@ -930,6 +930,43 @@ TOOLS.push({
    return {type,id,url:`https://open.spotify.com/${type}/${id}`};
   };
   const pick=(obj,keys)=>{for(const k of keys){const v=obj&&obj[k];if(typeof v==="string"&&v.trim())return v;if(typeof v==="number")return String(v)}return ""};
+  /* Unduhan lagu penuh: hanya memakai tautan audio yang benar-benar dikirim API (tanpa endpoint tambahan) */
+  const spWalk=(o,path,out,d)=>{
+   if(o==null||d>7)return;
+   if(typeof o==="string"){if(/^https?:\/\/[^\s]+$/i.test(o.trim()))out.push({path:path.join(".").toLowerCase(),url:o.trim()});return}
+   if(Array.isArray(o)){o.forEach((x,i)=>spWalk(x,path.concat(String(i)),out,d+1));return}
+   if(typeof o==="object")for(const k in o)spWalk(o[k],path.concat(k),out,d+1);
+  };
+  const spDownloads=data=>{
+   const all=[];spWalk(data,[],all,0);
+   const audioExt=/\.(mp3|m4a|aac|ogg|opus|flac|wav)(\?|#|$)/i,imgExt=/\.(jpe?g|png|webp|gif|svg)(\?|#|$)/i;
+   const seen=new Set(),res=[];
+   all.forEach(({path,url})=>{
+    if(seen.has(url))return;
+    let h="";try{h=new URL(url).hostname}catch{return}
+    if(h==="open.spotify.com"||h==="p.scdn.co"||/(^|\.)spotifycdn\.com$/.test(h)||/(^|\.)scdn\.co$/.test(h))return; // halaman/preview/cover Spotify
+    if(imgExt.test(url))return;
+    const isAudio=audioExt.test(url);
+    if(!isAudio&&/(cover|thumb|image|img|artwork|avatar|preview|icon|album|artist)/.test(path))return;
+    if(!isAudio&&!/(download|audio|mp3|dl|file|stream|link|url|src)/.test(path))return;
+    seen.add(url);
+    const m=url.match(audioExt),ext=m?m[1].toLowerCase():"mp3";
+    res.push({url,ext,label:/(^|[^a-z])hd([^a-z]|$)|high|flac/.test(path)?"Kualitas tinggi":"Lagu lengkap"});
+   });
+   const n={};res.forEach(r=>{n[r.label]=(n[r.label]||0)+1;if(n[r.label]>1)r.label+=" ("+n[r.label]+")"});
+   return res;
+  };
+  const safeName=t=>String(t||"spotify").replace(/[\\/:*?"<>|\x00-\x1f]+/g," ").replace(/\s+/g," ").trim().slice(0,90)||"spotify";
+  const saveTrack=async(opt,btn,name)=>{
+   const lab=btn.querySelector("span"),old=lab.textContent;btn.disabled=true;lab.textContent="Mengunduh…";
+   try{
+    const r=await fetch(opt.url);if(!r.ok)throw 0;
+    const b=await r.blob();if(!b.size)throw 0;
+    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name+"."+opt.ext;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Unduhan dimulai");
+   }catch{window.open(opt.url,"_blank","noopener,noreferrer");toast("Dibuka di tab baru. Gunakan menu pemutar untuk menyimpan.")}
+   finally{btn.disabled=false;lab.textContent=old}
+  };
   const showEmbed=item=>{
    player.replaceChildren();
    const frame=document.createElement("iframe");frame.title="Pemutar resmi Spotify";frame.loading="lazy";
@@ -968,9 +1005,32 @@ TOOLS.push({
       }
      }catch{}
     }
-    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";note.textContent="Info diambil dari NexaDev. Preview hanya cuplikan audio; lagu lengkap tersedia melalui pemutar resmi Spotify.";card.appendChild(note);
-    result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API NexaDev.";
-   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Periksa koneksi dan status Spotify CORS Worker jika permintaan gagal."}
+    const dls=spDownloads(data);
+    const fname=safeName((artist?artist+" - ":"")+title);
+    if(dls.length){
+     const dh=document.createElement("div");dh.className="hint";dh.style.cssText="margin-top:12px;font-weight:700";dh.textContent="Unduh lagu lengkap";card.appendChild(dh);
+     dls.forEach(o=>{
+      const row=document.createElement("div");row.style.cssText="display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:14px;padding:10px 10px 10px 14px;margin-top:8px";
+      const t=document.createElement("div");t.style.minWidth="0";
+      const b1=document.createElement("b");b1.style.cssText="display:block;font-size:15px";b1.textContent=o.label;
+      const s1=document.createElement("small");s1.style.cssText="color:var(--mute);font-size:12.5px";s1.textContent=o.ext.toUpperCase();t.append(b1,s1);
+      const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.style.cssText="gap:6px;padding:10px 14px;flex:none";
+      btn.innerHTML=ico('<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>')+"<span>Unduh</span>";
+      btn.setAttribute("aria-label","Unduh "+o.label);
+      btn.addEventListener("click",()=>saveTrack(o,btn,fname));
+      row.append(t,btn);card.appendChild(row);
+     });
+    }
+    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";
+    note.textContent=dls.length?"Info dan tautan unduhan diambil dari NexaDev. Preview di atas hanya cuplikan audio.":"Info diambil dari NexaDev. Respons API untuk link ini tidak berisi tautan unduhan lagu lengkap, jadi hanya preview dan pemutar resmi Spotify yang tersedia.";
+    card.appendChild(note);
+    const dbg=document.createElement("details");dbg.className="hint";dbg.style.marginTop="6px";
+    const sm=document.createElement("summary");sm.textContent="Lihat respons API";sm.style.cssText="cursor:pointer;min-height:32px;display:flex;align-items:center";
+    const pre=document.createElement("pre");pre.style.cssText="max-height:220px;overflow:auto;background:var(--bg);border-radius:10px;padding:10px;font-size:12px;white-space:pre-wrap;word-break:break-all;margin-top:6px";
+    try{const j=JSON.stringify(data,null,2);pre.textContent=j.length>6000?j.slice(0,6000)+"\n…":j}catch{}
+    dbg.append(sm,pre);card.appendChild(dbg);
+    result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API ";
+   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Jika muncul error CORS, endpoint perlu mengizinkan akses dari domain Xaerisoft."}
    finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
   };
   const openSpotify=()=>{const item=parseSpotify(input.value);if(!item){msg.textContent="Masukkan link Spotify yang valid terlebih dahulu.";return}window.open(item.url,"_blank","noopener,noreferrer")};
@@ -1171,6 +1231,271 @@ TOOLS.push({
  }
 });
 
+
+/* ============ TikTok Downloader ============
+   Sumber data dikelola lewat TT_SOURCES. Setiap sumber punya endpoint, params(url) dan kind ("mp4").
+   Tambah MP3 nanti: cukup tambahkan satu entri ber-kind "mp3" (endpoint + params) ke TT_SOURCES;
+   hasilnya otomatis tampil sebagai grup unduhan sendiri. Sampai ada, tidak ada tombol MP3 yang ditampilkan. */
+(function(){
+const TT_HOSTS=/^(?:www\.|m\.|vm\.|vt\.|t\.|lite\.)?tiktok\.com$/i;
+const TT_SOURCES={
+ mp4:{kind:"mp4",title:"Video MP4",ext:"mp4",endpoint:"https://api.izzxd.my.id/api/downloader/tiktok",
+  params(url){return{url,apikey:"izzxd-86cpjw6"}}}
+ /* mp3:{kind:"mp3",title:"Audio MP3",ext:"mp3",endpoint:"…",params(url){return{url,apikey:"…"}}} */
+};
+
+/* ---- URL ---- */
+function ttParse(raw){
+ let s=String(raw||"").trim();
+ if(!s)return{err:"Tempel link video TikTok terlebih dahulu."};
+ if(/\s/.test(s)){                              // teks share: ambil token yang berisi link TikTok
+  const tok=s.split(/\s+/).filter(x=>/tiktok\.com\//i.test(x));
+  if(tok.length!==1)return{err:"Link tidak valid. Tempel satu link TikTok saja."};
+  s=tok[0].replace(/^["'<(]+|["'>).,]+$/g,"");
+ }
+ if(!/^https?:\/\//i.test(s))s="https://"+s;
+ let u;try{u=new URL(s)}catch{return{err:"Format link tidak valid."}}
+ if(u.protocol!=="https:"&&u.protocol!=="http:")return{err:"Link harus diawali http atau https."};
+ if(!TT_HOSTS.test(u.hostname))return{err:"Link bukan dari TikTok. Gunakan link dari tiktok.com, vm.tiktok.com, atau vt.tiktok.com."};
+ if(u.pathname.length<3)return{err:"Link belum mengarah ke video TikTok tertentu."};
+ u.protocol="https:";
+ return{url:u.toString()};
+}
+
+/* ---- Pembaca respons (berdasarkan field yang benar-benar ada) ---- */
+const isUrl=v=>typeof v==="string"&&/^https?:\/\/[^\s]+$/i.test(v.trim());
+function walk(o,path,out,d){
+ if(o==null||d>7)return;
+ if(typeof o==="string"){if(isUrl(o))out.push({path:path.join(".").toLowerCase(),url:o.trim()});return}
+ if(Array.isArray(o)){o.forEach((x,i)=>walk(x,path.concat(String(i)),out,d+1));return}
+ if(typeof o==="object")for(const k in o)walk(o[k],path.concat(k),out,d+1);
+}
+function findKey(o,keys,test){
+ const q=[o];let n=0;
+ while(q.length&&n++<400){
+  const c=q.shift();if(c==null||typeof c!=="object")continue;
+  for(const k of keys){
+   const hit=Object.keys(c).find(x=>x.toLowerCase()===k);
+   if(hit!==undefined){const v=c[hit];if(!test||test(v))return v}
+  }
+  for(const k in c)if(c[k]&&typeof c[k]==="object")q.push(c[k]);
+ }
+ return undefined;
+}
+const asText=v=>typeof v==="string"&&v.trim()?v.trim():(typeof v==="number"?String(v):"");
+function ttMeta(j){
+ const m={};
+ m.title=asText(findKey(j,["title","desc","description","caption","text"],v=>asText(v)));
+ const a=findKey(j,["author","user","owner","creator","nickname","username","unique_id"],v=>v&&(typeof v==="object"||asText(v)));
+ if(a&&typeof a==="object")m.author=asText(a.nickname)||asText(a.unique_id)||asText(a.username)||asText(a.name);
+ else m.author=asText(a);
+ const c=findKey(j,["cover","origin_cover","thumbnail","thumb","thumbnail_url","poster","image"],v=>isUrl(v)||(Array.isArray(v)&&isUrl(v[0])));
+ m.cover=Array.isArray(c)?c[0]:(isUrl(c)?c:"");
+ const dur=findKey(j,["duration"],v=>typeof v==="number"||(typeof v==="string"&&/^\d+(\.\d+)?$/.test(v)));
+ m.duration=dur!==undefined?Number(dur):null;
+ const st=[["views","Ditonton",["play_count","playcount","views","view_count"]],["likes","Suka",["digg_count","diggcount","likes","like_count"]],["comments","Komentar",["comment_count","commentcount","comments"]],["shares","Dibagikan",["share_count","sharecount","shares"]]];
+ m.stats=[];
+ st.forEach(([,l,ks])=>{const v=findKey(j,ks,x=>(typeof x==="number")||(typeof x==="string"&&/^\d+$/.test(x)));if(v!==undefined)m.stats.push([l,Number(v)])});
+ return m;
+}
+function ttOptions(j,src,inputUrl){
+ const all=[];walk(j,[],all,0);
+ const seen=new Set(),opts=[];
+ const skip=/(cover|thumb|avatar|image|img|poster|music|audio|mp3|sound|profile|progress|icon)/;
+ const mediaExt=/\.(mp4|mov|webm)(\?|#|$)/i;
+ all.forEach(({path,url})=>{
+  if(seen.has(url)||url===inputUrl)return;
+  let host="";try{host=new URL(url).hostname}catch{return}
+  if(TT_HOSTS.test(host))return;               // halaman web TikTok, bukan file
+  const isMedia=mediaExt.test(url);
+  if(!isMedia&&skip.test(path))return;
+  if(!isMedia&&!/(video|play|download|nowm|hd|mp4|wm|dl|url|link|src|media)/.test(path))return;
+  seen.add(url);
+  let label="Video MP4",rank=5;
+  if(/(nowm|no_wm|nowatermark|no_watermark|without|tanpa)/.test(path)){label="Tanpa watermark";rank=1}
+  else if(/(^|[^a-z])hd([^a-z]|$)/.test(path)){label="Kualitas HD";rank=2}
+  else if(/(^|[^a-z])wm([^a-z]|$)|watermark/.test(path)){label="Dengan watermark";rank=9}
+  opts.push({label,url,rank});
+ });
+ opts.sort((a,b)=>a.rank-b.rank);
+ const n={};opts.forEach(o=>{n[o.label]=(n[o.label]||0)+1;if(n[o.label]>1)o.label+=" ("+n[o.label]+")"});
+ return opts;
+}
+function ttFailure(j){
+ if(!j||typeof j!=="object")return"Respons dari server tidak dikenali.";
+ const bad=j.status===false||j.success===false||j.ok===false||j.error===true||(typeof j.status==="number"&&j.status>=400)||(typeof j.code==="number"&&j.code>=400)||(typeof j.status==="string"&&/^(error|fail|failed)$/i.test(j.status))||(typeof j.error==="string"&&j.error);
+ if(!bad)return"";
+ let msg=asText(j.message)||asText(j.msg)||asText(j.error)||asText(j.detail)||asText(j.pesan)||asText(j.info);
+ if(!msg)for(const k in j){if(typeof j[k]==="string"&&j[k].trim()&&!/^(status|success|ok|code)$/i.test(k)){msg=j[k].trim();break}}
+ return msg||"Server menolak permintaan.";
+}
+async function ttCall(src,url,signal){
+ const res=await fetch(src.endpoint+"?"+new URLSearchParams(src.params(url)),{signal});
+ let j=null,txt="";
+ try{txt=await res.text();j=JSON.parse(txt)}catch{}
+ if(!res.ok){const e=new Error(ttFailure(j)||("Server mengembalikan status "+res.status+"."));e.shown=true;throw e}
+ if(j===null){const e=new Error("Respons server bukan JSON yang valid.");e.shown=true;throw e}
+ const f=ttFailure(j);if(f){const e=new Error(f);e.shown=true;throw e}
+ return{json:j,meta:ttMeta(j),options:ttOptions(j,src,url)};
+}
+const fmtN=n=>n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,"")+" jt":n>=1e3?(n/1e3).toFixed(1).replace(/\.0$/,"")+" rb":String(n);
+const fmtD=s=>{s=Math.round(s);if(s>86400)s=Math.round(s/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+const DL='<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>';
+const PASTE='<rect x="8" y="3" width="8" height="4" rx="1"/><path d="M16 5h2a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h2"/>';
+
+TOOLS.push({
+ id:"tiktok-downloader",name:"TikTok Downloader",desc:"Unduh video TikTok dalam format MP4 hanya dengan menempel link.",cat:"downloader",featured:false,
+ icon:'<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>',
+ render(el){
+  el.innerHTML=`<style>
+.tt-in{display:flex;gap:8px}.tt-in input{flex:1;min-width:0}
+.tt-in .btn.alt{padding:0 14px;justify-content:center}
+.tt-go{width:100%;justify-content:center;gap:8px}
+.tt-go[disabled]{opacity:.65;cursor:progress}
+.tt-sp{width:18px;height:18px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:ttspin .7s linear infinite;flex:none}
+@keyframes ttspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.tt-sp{animation-duration:2s}}
+.tt-load{display:flex;gap:14px;align-items:center;border:1px dashed var(--line);border-radius:14px;padding:14px;color:var(--mute);font-size:14px}
+.tt-load .tt-sp{color:var(--accent);width:24px;height:24px}
+.tt-res{display:grid;gap:14px}
+.tt-top{display:flex;gap:14px;align-items:flex-start}
+.tt-th{flex:none;width:112px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:var(--light);display:grid;place-items:center;color:var(--ic);border:1px solid var(--line)}
+.tt-th img{width:100%;height:100%;object-fit:cover;display:block}
+.tt-inf{min-width:0;display:grid;gap:8px}
+.tt-ti{font-weight:700;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.tt-au{color:var(--mute);font-size:14px}
+.tt-st{display:flex;flex-wrap:wrap;gap:6px}
+.tt-st span{background:var(--bg);border-radius:999px;padding:4px 10px;font-size:12.5px;color:var(--mute)}
+.tt-st b{color:var(--ink)}
+.tt-gh{font-size:13px;font-weight:700;color:var(--mute)}
+.tt-ol{display:grid;gap:8px;list-style:none;padding:0}
+.tt-op{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:14px;padding:10px 10px 10px 14px}
+.tt-op b{display:block;font-size:15px}.tt-op small{color:var(--mute);font-size:12.5px}
+.tt-op .btn{gap:6px;padding:10px 14px;flex:none}
+.tt-op .btn svg{width:18px;height:18px}
+.tt-dbg{font-size:12.5px;color:var(--mute)}
+.tt-dbg summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
+.tt-dbg pre{max-height:220px;overflow:auto;background:var(--bg);border-radius:10px;padding:10px;font-size:12px;white-space:pre-wrap;word-break:break-all;margin-top:6px}
+@media(min-width:640px){.tt-th{width:160px}.tt-top{gap:18px}.tt-ol{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.tt-op{flex-direction:column;align-items:stretch}.tt-op .btn{justify-content:center}}
+</style>
+<div class="panel">
+ <div class="f">
+  <label for="tt-url">Link video TikTok</label>
+  <div class="tt-in">
+   <input id="tt-url" type="text" inputmode="url" placeholder="https://www.tiktok.com/@akun/video/…" autocomplete="off" autocapitalize="off" spellcheck="false">
+   <button class="btn alt" id="tt-paste" type="button" aria-label="Tempel dari clipboard" title="Tempel">${ico(PASTE)}</button>
+  </div>
+ </div>
+ <button class="btn tt-go" id="tt-go" type="button">${ico(DL)}<span>Download</span></button>
+ <div id="tt-msg" role="status" aria-live="polite" class="hint">Tempel link video TikTok (termasuk link pendek vm.tiktok.com), lalu tekan Download.</div>
+ <div id="tt-out"></div>
+</div>`;
+  const $$=s=>el.querySelector(s);
+  const input=$$("#tt-url"),go=$$("#tt-go"),msg=$$("#tt-msg"),out=$$("#tt-out");
+  let ctl=null,seq=0;
+  const say=(t,bad)=>{msg.className=bad?"err":"hint";msg.textContent=t};
+  const busy=b=>{go.disabled=b;go.querySelector("span").textContent=b?"Memproses…":"Download";input.readOnly=b};
+
+  $$("#tt-paste").addEventListener("click",async()=>{
+   try{const t=await navigator.clipboard.readText();if(!t)return toast("Clipboard kosong");input.value=t.trim();input.focus()}
+   catch{toast("Tidak bisa membaca clipboard, tempel manual")}
+  });
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")run()});
+  go.addEventListener("click",run);
+
+  async function save(opt,btn,ext){
+   const lab=btn.querySelector("span"),old=lab.textContent;
+   btn.disabled=true;lab.textContent="Mengunduh…";
+   try{
+    const r=await fetch(opt.url);if(!r.ok)throw 0;
+    const b=await r.blob();if(!b.size)throw 0;
+    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="xaerisoft-tiktok-"+Date.now()+"."+ext;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    toast("Unduhan dimulai");
+   }catch{
+    /* Server file tidak mengizinkan unduhan langsung dari browser: buka di tab baru */
+    window.open(opt.url,"_blank","noopener,noreferrer");
+    toast("Dibuka di tab baru. Tahan/tekan lama video untuk menyimpan.");
+   }finally{btn.disabled=false;lab.textContent=old}
+  }
+
+  function show(url,groups,first){
+   const {meta}=first;
+   const box=document.createElement("div");box.className="tt-res enter";
+   const top=document.createElement("div");top.className="tt-top";
+   const th=document.createElement("div");th.className="tt-th";
+   if(meta.cover){
+    const im=new Image();im.alt="Thumbnail video";im.referrerPolicy="no-referrer";im.loading="lazy";
+    im.onerror=()=>{th.innerHTML=ico(DL)};im.src=meta.cover;th.appendChild(im);
+   }else th.innerHTML=ico(DL);
+   const inf=document.createElement("div");inf.className="tt-inf";
+   if(meta.title){const t=document.createElement("div");t.className="tt-ti";t.textContent=meta.title;inf.appendChild(t)}
+   if(meta.author){const a=document.createElement("div");a.className="tt-au";a.textContent="Oleh "+meta.author;inf.appendChild(a)}
+   const chips=[];
+   if(meta.duration!==null&&isFinite(meta.duration))chips.push(["Durasi",fmtD(meta.duration)]);
+   meta.stats.forEach(s=>chips.push([s[0],fmtN(s[1])]));
+   if(chips.length){const st=document.createElement("div");st.className="tt-st";chips.forEach(([l,v])=>{const s=document.createElement("span");s.append(l+" ");const b=document.createElement("b");b.textContent=v;s.appendChild(b);st.appendChild(s)});inf.appendChild(st)}
+   if(!inf.children.length){const t=document.createElement("div");t.className="tt-ti";t.textContent="Video TikTok";inf.appendChild(t)}
+   top.append(th,inf);box.appendChild(top);
+   groups.forEach(g=>{
+    const h=document.createElement("div");h.className="tt-gh";h.textContent="Pilihan unduhan · "+g.src.title;box.appendChild(h);
+    const ol=document.createElement("ul");ol.className="tt-ol";
+    g.options.forEach(o=>{
+     const li=document.createElement("li");li.className="tt-op";
+     const d=document.createElement("div");const b=document.createElement("b");b.textContent=o.label;const s=document.createElement("small");s.textContent=g.src.ext.toUpperCase();d.append(b,s);
+     const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.innerHTML=ico(DL)+"<span>Unduh</span>";
+     btn.setAttribute("aria-label","Unduh "+o.label);
+     btn.addEventListener("click",()=>save(o,btn,g.src.ext));
+     li.append(d,btn);ol.appendChild(li);
+    });
+    box.appendChild(ol);
+   });
+   const dbg=document.createElement("details");dbg.className="tt-dbg";
+   const sm=document.createElement("summary");sm.textContent="Lihat respons API";const pre=document.createElement("pre");
+   let raw="";try{raw=JSON.stringify(groups[0].json,null,2)}catch{}
+   pre.textContent=raw.length>6000?raw.slice(0,6000)+"\n…":raw;dbg.append(sm,pre);box.appendChild(dbg);
+   out.replaceChildren(box);
+  }
+
+  async function run(){
+   if(go.disabled)return;
+   const p=ttParse(input.value);
+   out.replaceChildren();
+   if(p.err){say(p.err,true);input.focus();return}
+   input.value=p.url;
+   if(ctl)ctl.abort();ctl=new AbortController();
+   const my=++seq,timer=setTimeout(()=>ctl.abort("timeout"),30000),signal=ctl.signal;
+   busy(true);say("Mengambil data video…");
+   out.innerHTML='<div class="tt-load" role="status"><span class="tt-sp" aria-hidden="true"></span><span>Sedang memproses link, mohon tunggu sebentar…</span></div>';
+   try{
+    const entries=Object.values(TT_SOURCES);
+    const rs=await Promise.allSettled(entries.map(s=>ttCall(s,p.url,signal)));
+    if(my!==seq)return;
+    const groups=[];let firstErr=null;
+    rs.forEach((r,i)=>{
+     if(r.status==="fulfilled"){if(r.value.options.length)groups.push({src:entries[i],options:r.value.options,meta:r.value.meta,json:r.value.json});else if(!firstErr){firstErr=Object.assign(new Error("Server merespons, tetapi tidak ada tautan unduhan yang ditemukan. Pastikan video bersifat publik."),{shown:true,json:r.value.json})}}
+     else if(!firstErr)firstErr=r.reason;
+    });
+    if(!groups.length)throw firstErr||new Error("Gagal memproses video.");
+    show(p.url,groups,groups[0]);
+    say("Video ditemukan. Pilih salah satu unduhan di bawah.");
+   }catch(e){
+    if(my!==seq)return;
+    out.replaceChildren();
+    let t;
+    if(e&&e.shown)t=e.message;
+    else if(signal.aborted||(e&&e.name==="AbortError"))t="Server terlalu lama merespons. Coba lagi beberapa saat lagi.";
+    else if(e instanceof TypeError)t="Tidak dapat terhubung ke server. Periksa koneksi internet kamu lalu coba lagi.";
+    else t="Terjadi kesalahan tak terduga. Coba lagi.";
+    say(t,true);
+    if(e&&e.json){const d=document.createElement("details");d.className="tt-dbg";const s=document.createElement("summary");s.textContent="Lihat respons API";const pre=document.createElement("pre");try{pre.textContent=JSON.stringify(e.json,null,2).slice(0,6000)}catch{}d.append(s,pre);out.appendChild(d)}
+    console.error("TikTok Downloader:",e);
+   }finally{clearTimeout(timer);if(my===seq)busy(false)}
+  }
+ }
+});
+})();
 
 /* ============ Aplikasi ============ */
 const state={cat:"Semua",q:"",scroll:0};
