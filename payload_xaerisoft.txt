@@ -891,6 +891,10 @@ Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast()
 /* ============ Spotify Tools — NexaDev API ============
    Menggunakan endpoint NexaDev untuk mengambil data Spotify.
    Audio tetap diputar melalui Spotify Embed resmi. */
+/* SPOTIFY_PROXY: URL Cloudflare Worker perantara CORS (lihat spotify-worker.js), tanpa garis miring di akhir,
+   contoh: "https://spotify-proxy.namakamu.workers.dev". Bila kosong, tool memanggil API langsung dari browser
+   (hanya jalan kalau API mengizinkan CORS dari domain ini). */
+const SPOTIFY_PROXY="";
 TOOLS.push({
  id:"spotify-player",name:"Spotify Tools",desc:"Ambil info lagu, dengarkan preview, dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
@@ -960,7 +964,8 @@ TOOLS.push({
   const saveTrack=async(opt,btn,name)=>{
    const lab=btn.querySelector("span"),old=lab.textContent;btn.disabled=true;lab.textContent="Mengunduh…";
    try{
-    const r=await fetch(opt.url);if(!r.ok)throw 0;
+    const px=SPOTIFY_PROXY.replace(/\/+$/,"");
+    const r=await fetch(px?px+"/dl?u="+encodeURIComponent(opt.url):opt.url);if(!r.ok)throw 0;
     const b=await r.blob();if(!b.size)throw 0;
     const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name+"."+opt.ext;
     document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Unduhan dimulai");
@@ -981,7 +986,8 @@ TOOLS.push({
    if(!item){msg.textContent="Link Spotify tidak valid. Masukkan URL track, album, playlist, atau episode.";return}
    fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API Wilverse";
    try{
-    const response=await fetch(API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
+    const px=SPOTIFY_PROXY.replace(/\/+$/,"");
+    const response=await fetch(px?px+"/spotify?url="+encodeURIComponent(item.url):API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
     const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
     if(!response.ok)throw new Error("API gagal dengan HTTP "+response.status);
     if(data&&data.success===false)throw new Error(data.message||data.error||"API menolak permintaan.");
@@ -1030,7 +1036,7 @@ TOOLS.push({
     try{const j=JSON.stringify(data,null,2);pre.textContent=j.length>6000?j.slice(0,6000)+"\n…":j}catch{}
     dbg.append(sm,pre);card.appendChild(dbg);
     result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API ";
-   }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Jika muncul error CORS, endpoint perlu mengizinkan akses dari domain Xaerisoft."}
+   }catch(err){msg.textContent=err instanceof TypeError?(SPOTIFY_PROXY?"Worker perantara tidak bisa dihubungi. Periksa URL SPOTIFY_PROXY dan pastikan Worker sudah di-deploy.":"Permintaan ke API diblokir browser (CORS). Deploy spotify-worker.js ke Cloudflare lalu isi SPOTIFY_PROXY dengan URL Worker-nya."):(err&&err.message?err.message:"Gagal menghubungi API.")}
    finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
   };
   const openSpotify=()=>{const item=parseSpotify(input.value);if(!item){msg.textContent="Masukkan link Spotify yang valid terlebih dahulu.";return}window.open(item.url,"_blank","noopener,noreferrer")};
