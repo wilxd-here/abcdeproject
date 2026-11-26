@@ -963,6 +963,11 @@ TOOLS.push({
    permintaan lintas-origin (CORS). Bila diblokir, tool otomatis beralih ke backend Node.js (folder backend/)
    jika NASA_API_BASE diisi, contoh: "https://nasa-name-xxxxx.a.run.app" (tanpa garis miring di akhir). */
 const NASA_API_BASE="";
+/* NASA_PROXY: URL Cloudflare Worker perantara (lihat worker/cloudflare-worker.js), tanpa garis miring di akhir,
+   contoh: "https://nasa-name.namakamu.workers.dev". Bila diisi, tool memakainya lebih dulu (cara paling praktis
+   kalau situs sumber memblokir akses langsung dari browser). */
+const NASA_PROXY="https://icy-dust-e435.ujicobakun299.workers.dev";
+const nnPx=()=>NASA_PROXY.replace(/\/+$/,"");
 const NN_BASE="https://nasanamegenerator.com";
 let nnEngineCache=null,nnEngineAt=0;
 const nnFetch=(u,o,ms)=>{let t;return Promise.race([fetch(u,o),new Promise((_,no)=>{t=setTimeout(()=>no(Object.assign(new Error("waktu habis"),{name:"AbortError"})),ms)})]).finally(()=>clearTimeout(t))};
@@ -981,8 +986,8 @@ const nnParse=html=>{
 };
 const nnLoad=async()=>{
  if(nnEngineCache&&Date.now()-nnEngineAt<36e5)return nnEngineCache;
- const r=await nnFetch(NN_BASE+"/",undefined,20000);
- if(!r.ok)throw new Error("HTTP "+r.status);
+ const r=await nnFetch(NASA_PROXY?nnPx()+"/page":NN_BASE+"/",undefined,20000);
+ if(!r.ok){let m="";try{const e=await r.json();m=e&&e.error||""}catch{}throw new Error(m||"HTTP "+r.status)}
  nnEngineCache=nnParse(await r.text());nnEngineAt=Date.now();return nnEngineCache;
 };
 const nnCleanLink=u=>!u||u==="https://none.com"?null:u;
@@ -1013,7 +1018,7 @@ const nnInline=async name=>{
  const blobs=new Map(),failed=[];
  await Promise.all(tiles.map(async t=>{
   t.image=t.url;
-  try{if(!/^https:\/\//.test(t.url))throw 0;const r=await nnFetch(t.url,undefined,20000);if(!r.ok)throw 0;blobs.set(t.tile,await r.blob())}catch{failed.push(t.tile)}
+  try{if(!/^https:\/\//.test(t.url))throw 0;const r=await nnFetch(NASA_PROXY?nnPx()+"/img?u="+encodeURIComponent(t.url):t.url,undefined,20000);if(!r.ok)throw 0;blobs.set(t.tile,await r.blob())}catch{failed.push(t.tile)}
  }));
  let frame=null,frameError=null;
  if(failed.length)frameError="beberapa gambar ubin tidak bisa diunduh dari browser";
@@ -1116,11 +1121,11 @@ TOOLS.push({
    if(!/^[A-Za-z ]+$/.test(name)||!/[A-Za-z]/.test(name)){say("Gunakan hanya huruf A–Z dan spasi.",true);return}
    setBusy(true);say("Mengambil ubin Landsat langsung dari browser…");
    let j=null,via="",why="";
-   try{j=await nnInline(name);via="langsung dari browser"}
+   try{j=await nnInline(name);via=NASA_PROXY?"lewat Worker":"langsung dari browser"}
    catch(e){if(e&&e.shown){out.replaceChildren();say(e.message,true);setBusy(false);return}why=e&&e.name==="AbortError"?"waktu habis":(e&&e.message)||"gagal";console.warn("NASA inline gagal:",e)}
    try{
     if(!j){
-     if(!NASA_API_BASE)throw Object.assign(new Error("Browser tidak bisa mengambil data dari nasanamegenerator.com ("+why+"). Penyebab umum: diblokir CORS, atau halaman dibuka di pratinjau yang membatasi jaringan. Isi NASA_API_BASE dengan URL backend (lihat backend/README.md) agar tool ini bisa jalan."),{shown:true});
+     if(!NASA_API_BASE)throw Object.assign(new Error(NASA_PROXY?(/^data huruf|JSON/.test(why)?"Worker dan situs sumber berjalan, tetapi data hurufnya tidak terbaca ("+why+"). Struktur halaman sumber kemungkinan berbeda dari yang diharapkan scraper.":/^Situs sumber|^Tidak bisa menjangkau situs sumber/.test(why)?"Worker berjalan, tetapi "+why.charAt(0).toLowerCase()+why.slice(1)+".":"Perantara (Worker) gagal: "+why+". Periksa NASA_PROXY dan ALLOWED_ORIGINS di Worker."):"Browser tidak bisa menjangkau nasanamegenerator.com ("+why+"). Kemungkinan diblokir CORS atau situs sumber sedang tidak bisa diakses. Isi NASA_PROXY dengan URL Cloudflare Worker (lihat worker/cloudflare-worker.js)."),{shown:true});
      say("Browser tidak bisa mengakses sumber, mencoba lewat backend…");
      const r=await nnFetch(NASA_API_BASE.replace(/\/+$/,"")+"/api/nasa-name?name="+encodeURIComponent(name),{headers:{accept:"application/json"}},60000);
      let jj=null;try{jj=await r.json()}catch{}
