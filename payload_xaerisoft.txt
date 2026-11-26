@@ -1046,6 +1046,71 @@ TOOLS.push({
 });
 
 
+
+/* ============ Web to APK V2 — Izzxd API ============ */
+TOOLS.push({
+ id:"web2apk-v2",name:"Web to APK V2",desc:"Ubah website menjadi aplikasi Android APK.",cat:"Utilities",featured:false,
+ icon:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 17h6"/>',
+ render(el){
+  el.innerHTML=`<div class="panel">
+   <div class="f"><label for="w2a-name">Nama aplikasi</label><input id="w2a-name" type="text" placeholder="Contoh: Xaerisoft" maxlength="80"></div>
+   <div class="f"><label for="w2a-package">Package name</label><input id="w2a-package" type="text" placeholder="com.example.xaerisoft" autocomplete="off" spellcheck="false"></div>
+   <div class="f"><label for="w2a-url">URL website</label><input id="w2a-url" type="text" placeholder="https://example.com" inputmode="url" autocomplete="url" spellcheck="false"></div>
+   <div class="row"><button class="btn" id="w2a-submit" type="button">Buat APK</button></div>
+   <div id="w2a-msg" class="hint" role="status" aria-live="polite">Isi nama aplikasi, package name, dan URL website.</div>
+   <div id="w2a-result"></div>
+  </div>`;
+  const $id=id=>el.querySelector("#"+id);
+  const name=$id("w2a-name"),pkg=$id("w2a-package"),url=$id("w2a-url");
+  const btn=$id("w2a-submit"),msg=$id("w2a-msg"),out=$id("w2a-result");
+  const addLink=(href,label)=>{
+   try{
+    const u=new URL(href);
+    if(!/^https?:$/.test(u.protocol))return;
+    const a=document.createElement("a");a.className="btn";a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";a.textContent=label;out.appendChild(a);
+   }catch{}
+  };
+  const collectLinks=(value,seen=new Set())=>{
+   if(!value||typeof value!=="object"||seen.has(value))return [];
+   seen.add(value);let found=[];
+   for(const [k,v] of Object.entries(value)){
+    if(typeof v==="string"&&/^https?:\/\//i.test(v)&&/(apk|download|url|link|file)/i.test(k))found.push({key:k,url:v});
+    else if(v&&typeof v==="object")found=found.concat(collectLinks(v,seen));
+   }
+   return found;
+  };
+  const submit=async()=>{
+   const appname=name.value.trim(),packageName=pkg.value.trim(),site=url.value.trim();
+   if(!appname||!packageName||!site){msg.textContent="Semua kolom wajib diisi.";return}
+   if(!/^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(packageName)){msg.textContent="Format package name tidak valid. Contoh: com.example.app";return}
+   let parsed;try{parsed=new URL(site)}catch{msg.textContent="URL website tidak valid.";return}
+   if(!/^https?:$/.test(parsed.protocol)){msg.textContent="URL harus menggunakan http:// atau https://.";return}
+   btn.disabled=true;btn.textContent="Memproses...";msg.textContent="Mengirim permintaan ke API Web to APK V2...";out.replaceChildren();
+   try{
+    const params=new URLSearchParams({appname,package:packageName,url:parsed.href,apikey:"izzxd-86cpjw6"});
+    const response=await fetch("https://api.izzxd.my.id/api/tools/web2apk-v2?"+params.toString());
+    const raw=await response.text();let data;
+    try{data=JSON.parse(raw)}catch{throw new Error("Respons API bukan JSON yang valid.")};
+    if(!response.ok)throw new Error("API mengembalikan HTTP "+response.status);
+    if(data&&((data.status===false)||(data.success===false)||(data.ok===false)))throw new Error(data.message||data.msg||"API gagal memproses permintaan.");
+    const pre=document.createElement("pre");pre.className="out";pre.style.whiteSpace="pre-wrap";pre.textContent=JSON.stringify(data,null,2);out.appendChild(pre);
+    const links=collectLinks(data);
+    const unique=[...new Map(links.map(x=>[x.url,x])).values()];
+    if(unique.length){
+     const heading=document.createElement("p");heading.className="hint";heading.style.marginTop="10px";heading.textContent="Tautan hasil:";out.appendChild(heading);
+     unique.forEach(x=>addLink(x.url,"Buka "+x.key));
+    }else{
+     const note=document.createElement("p");note.className="hint";note.style.marginTop="10px";note.textContent="Respons API diterima. Periksa data di atas untuk melihat hasil atau status proses.";out.appendChild(note);
+    }
+    msg.textContent="Permintaan selesai.";
+   }catch(err){msg.textContent=err&&err.message?err.message:"Gagal menghubungi API. Periksa koneksi atau dukungan CORS."}
+   finally{btn.disabled=false;btn.textContent="Buat APK"}
+  };
+  btn.addEventListener("click",submit);
+  [name,pkg,url].forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter")submit()}));
+ }
+});
+
 /* ============ NASA Name Generator ============
    Mengubah nama menjadi huruf dari citra satelit Landsat (sumber data: nasanamegenerator.com).
    Logika scraper (scrape-NasaNameGenerator.js) sudah dipindah inline: halaman sumber diambil dan
