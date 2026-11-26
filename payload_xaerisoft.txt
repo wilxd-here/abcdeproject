@@ -942,7 +942,7 @@ TOOLS.push({
   const fetchInfo=async()=>{
    const item=parseSpotify(input.value);result.replaceChildren();player.replaceChildren();
    if(!item){msg.textContent="Link Spotify tidak valid. Masukkan URL track, album, playlist, atau episode.";return}
-   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API NexaDev...";
+   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API Wilverse";
    try{
     const response=await fetch(API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
     const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
