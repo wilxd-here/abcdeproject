@@ -892,7 +892,7 @@ Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast()
    Menggunakan endpoint NexaDev untuk mengambil data Spotify.
    Audio tetap diputar melalui Spotify Embed resmi. */
 TOOLS.push({
- id:"spotify-player",name:"Spotify Tools",desc:"Ambil informasi lagu dari API NexaDev dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
+ id:"spotify-player",name:"Spotify Tools",desc:"Ambil info lagu, dengarkan preview, dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
  render(el){
   el.innerHTML=`<div class="panel" id="sp-panel">
@@ -915,7 +915,7 @@ TOOLS.push({
   const msg=el.querySelector("#sp-msg");
   const result=el.querySelector("#sp-result");
   const player=el.querySelector("#sp-player");
-  const API="https://spotify.ujicobakun299.workers.dev/?url=";
+  const API="https://api.nexadev.my.id/api/spotify?url=";
 
   const parseSpotify=raw=>{
    const value=String(raw||"").trim().replace(/^['"]|['"]$/g,"");
@@ -953,12 +953,22 @@ TOOLS.push({
     const artist=pick(obj,["artist","artists","author","artist_name"]);
     const cover=pick(obj,["thumbnail","cover","image","image_url","artwork"]);
     const duration=pick(obj,["duration","duration_ms","length"]);
+    const preview=pick(obj,["preview"]);
     const card=document.createElement("div");card.className="panel";card.style.marginTop="12px";
     if(cover&&/^https:\/\//i.test(cover)){const img=document.createElement("img");img.src=cover;img.alt="Cover lagu";img.loading="lazy";img.style.cssText="width:112px;height:112px;object-fit:cover;border-radius:12px;display:block;margin-bottom:10px";card.appendChild(img)}
     const h=document.createElement("div");h.style.fontWeight="700";h.textContent=title;card.appendChild(h);
     if(artist){const a=document.createElement("div");a.className="hint";a.textContent=artist;card.appendChild(a)}
     if(duration){const d=document.createElement("div");d.className="hint";d.textContent="Durasi: "+duration;card.appendChild(d)}
-    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";note.textContent="Data berhasil diambil dari API NexaDev. Pemutaran tersedia melalui Spotify resmi.";card.appendChild(note);
+    if(preview){
+     try{
+      const previewUrl=new URL(preview);
+      if(previewUrl.protocol==="https:"&&previewUrl.hostname==="p.scdn.co"){
+       const label=document.createElement("div");label.className="hint";label.style.marginTop="10px";label.textContent="Preview audio";card.appendChild(label);
+       const audio=document.createElement("audio");audio.controls=true;audio.preload="none";audio.src=previewUrl.href;audio.style.cssText="width:100%;margin-top:6px";card.appendChild(audio);
+      }
+     }catch{}
+    }
+    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";note.textContent="Info diambil dari NexaDev. Preview hanya cuplikan audio; lagu lengkap tersedia melalui pemutar resmi Spotify.";card.appendChild(note);
     result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API NexaDev.";
    }catch(err){msg.textContent=(err&&err.message?err.message:"Gagal menghubungi API.")+" Jika muncul error CORS, endpoint perlu mengizinkan akses dari domain Xaerisoft."}
    finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
