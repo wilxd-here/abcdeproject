@@ -894,7 +894,7 @@ Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast()
 /* SPOTIFY_PROXY: URL Cloudflare Worker perantara CORS (lihat spotify-worker.js), tanpa garis miring di akhir,
    contoh: "https://spotify-proxy.namakamu.workers.dev". Bila kosong, tool memanggil API langsung dari browser
    (hanya jalan kalau API mengizinkan CORS dari domain ini). */
-const SPOTIFY_PROXY="";
+const SPOTIFY_PROXY="https://spotify.ujicobakun299.workers.dev";
 TOOLS.push({
  id:"spotify-player",name:"Spotify Tools",desc:"Ambil info lagu, dengarkan preview, dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
