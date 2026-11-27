@@ -2195,79 +2195,137 @@ chips();list();route();
 </script>
 
 <style id="wil-ai-styles">
-#wil-ai-root{position:fixed;right:18px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:80;font-family:inherit;color:var(--ink)}
-#wil-ai-fab{width:58px;height:58px;border:0;border-radius:20px;background:linear-gradient(145deg,#8b5cf6,#5b21b6);color:#fff;box-shadow:0 10px 32px #5b21b655;display:grid;place-items:center;font-weight:900;font-size:23px;cursor:pointer;transition:transform .2s,box-shadow .2s}
-#wil-ai-fab:hover{transform:translateY(-3px);box-shadow:0 14px 38px #5b21b777}
-#wil-ai-panel{position:fixed;right:18px;bottom:calc(152px + env(safe-area-inset-bottom));width:min(390px,calc(100vw - 28px));height:min(620px,calc(100dvh - 190px));background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 22px 70px #0003;display:none;overflow:hidden;flex-direction:column}
-#wil-ai-panel.open{display:flex;animation:wilAiIn .22s var(--ease)}
-@keyframes wilAiIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.wai-head{display:flex;align-items:center;gap:10px;padding:13px 14px;background:linear-gradient(115deg,#21133e,#432078);color:white}
-.wai-avatar{width:39px;height:39px;border-radius:14px;background:linear-gradient(145deg,#a78bfa,#6d28d9);display:grid;place-items:center;font-size:20px;flex:none}
-.wai-headcopy{min-width:0;flex:1}.wai-headcopy b{display:flex;align-items:center;gap:5px;font-size:15px}.wai-headcopy small{display:block;color:#ddd1ff;font-size:11px}
-.wai-check{width:15px;height:15px;border-radius:50%;background:#168bea;color:white;display:inline-grid;place-items:center;font-size:10px;font-weight:900}
-.wai-head button{border:0;background:#ffffff18;color:white;width:32px;height:32px;border-radius:10px;font-size:18px}
-.wai-toolbar{display:flex;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line)}
-.wai-toolbar button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700}
-.wai-history{display:flex;gap:6px;overflow:auto;max-width:100%;padding:0 12px 8px}
-.wai-history button{flex:none;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--mute)}
-.wai-messages{flex:1;min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:11px;background:var(--bg)}
-.wai-welcome{padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--card);font-size:13px}
-.wai-bubble{max-width:90%;padding:10px 12px;border-radius:15px;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
-.wai-bubble.user{align-self:flex-end;background:#6d42c8;color:white;border-bottom-right-radius:5px}
-.wai-bubble.assistant{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}
-.wai-bubble small{display:block;font-size:10px;opacity:.65;margin-bottom:3px}
-.wai-status{font-size:11px;color:var(--mute);padding:0 14px 6px;min-height:18px}
-.wai-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--card)}
-.wai-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:var(--bg);font-size:13px;outline:none}
-.wai-form input:focus{border-color:#8b5cf6}
-.wai-form button{width:43px;border:0;border-radius:13px;background:#7042c8;color:white;font-size:18px;font-weight:900}
-.wai-form button:disabled{opacity:.45}
-.wai-empty{margin:auto;text-align:center;color:var(--mute);font-size:13px;padding:20px}
-@media(max-width:520px){
- #wil-ai-root{right:12px;bottom:calc(76px + env(safe-area-inset-bottom))}
- #wil-ai-fab{width:54px;height:54px;border-radius:18px}
- #wil-ai-panel{right:8px;left:8px;bottom:calc(138px + env(safe-area-inset-bottom));width:auto;height:min(68dvh,590px);border-radius:20px}
+/* Wil AI — halaman penuh, warna mengikuti tema aktif */
+#wil-ai-launcher{position:fixed;right:18px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:80;display:flex;align-items:center;gap:9px;padding:9px 15px 9px 10px;border:2px solid var(--bd);border-radius:999px;background:var(--card);color:var(--ink);box-shadow:4px 4px 0 var(--bd);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+#wil-ai-launcher:hover{transform:translateY(-3px);box-shadow:6px 7px 0 var(--accent)}
+#wil-ai-launcher:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--bd)}
+.wai-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-size:16px;font-weight:900;letter-spacing:-.08em}
+.wai-launch-copy{display:grid;gap:1px;text-align:left}.wai-launch-copy small{font-size:10px;color:var(--mute);font-weight:600}
+body.wil-ai-active{overflow:hidden}
+body.wil-ai-active footer{display:none}
+body.wil-ai-active #view{display:flex;flex-direction:column;height:calc(100dvh - 56px - var(--dh) - env(safe-area-inset-bottom));min-height:360px;padding:8px 0 10px;overflow:hidden}
+body.wil-ai-active #view>.th{display:none}
+body.wil-ai-active #view>.back{flex:none;align-self:flex-start;margin-bottom:8px}body.wil-ai-active #back svg{display:none}
+body.wil-ai-active #vBody{flex:1;min-height:0;display:flex;flex-direction:column}
+.wilai-page{--wai-border:var(--line);display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;border:2px solid var(--bd);border-radius:22px;background:var(--card);box-shadow:5px 5px 0 var(--blue);position:relative}
+.wilai-page:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--accent),var(--blue),var(--c3));z-index:2}
+.wilai-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--wai-border);background:var(--wash1);flex:none}
+.wilai-brand{display:flex;align-items:center;gap:11px;min-width:0}
+.wilai-brand-mark{width:42px;height:42px;display:grid;place-items:center;background:var(--ink);color:var(--bg);border-radius:13px;font-weight:900;font-size:20px;letter-spacing:-.08em;flex:none}
+.wilai-brand b{font-size:17px;letter-spacing:-.03em;display:flex;align-items:center;gap:6px}
+.wilai-brand small{display:block;color:var(--mute);font-size:11px;font-weight:600}
+.wilai-verified{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#1d9bf0;color:white;font-size:10px;font-weight:900;letter-spacing:0}
+.wilai-new{border:2px solid var(--bd);background:var(--accent);color:var(--on);border-radius:11px;padding:9px 13px;font-size:12px;font-weight:800;min-height:38px;white-space:nowrap}
+.wilai-new:hover{filter:brightness(1.06)}
+.wilai-layout{display:grid;grid-template-columns:230px minmax(0,1fr);flex:1;min-height:0}
+.wilai-side{border-right:1px solid var(--wai-border);padding:14px 11px;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+.wilai-side-title{display:flex;justify-content:space-between;align-items:center;padding:0 7px 10px;color:var(--mute);font-size:10px;font-weight:900;letter-spacing:.12em}
+.wilai-history{display:flex;flex-direction:column;gap:5px;overflow:auto;min-height:0}
+.wilai-history button{width:100%;text-align:left;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);padding:10px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wilai-history button:hover{background:var(--light)}
+.wilai-history button[aria-current=true]{background:var(--card);border-color:var(--bd);box-shadow:2px 2px 0 var(--blue);font-weight:800}
+.wilai-main{min-width:0;min-height:0;display:flex;flex-direction:column;position:relative;background:var(--card)}
+.wilai-conversation{flex:1;min-height:0;overflow:auto;padding:clamp(14px,3vw,30px);display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.wilai-welcome{margin:auto;width:min(100%,560px);padding:clamp(12px,3vw,28px) 0}
+.wilai-eyebrow{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--acc-t);text-transform:uppercase}
+.wilai-welcome h2{font-size:clamp(25px,5vw,39px);line-height:1.06;letter-spacing:-.055em;color:var(--ink);margin:12px 0 10px}
+.wilai-welcome p{color:var(--mute);font-size:14px;max-width:430px}
+.wilai-rule{height:1px;width:100%;background:linear-gradient(90deg,var(--accent),transparent);margin:22px 0 15px}
+.wilai-suggestions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wilai-suggestions button{border:1px solid var(--wai-border);border-radius:12px;background:var(--bg);color:var(--ink);padding:11px;text-align:left;font-size:12px;font-weight:700;min-height:54px}
+.wilai-suggestions button:hover{border-color:var(--accent);background:var(--light)}
+.wilai-message{display:flex;flex-direction:column;gap:4px;max-width:min(82%,680px);align-self:flex-start;animation:wai-rise .2s ease-out}
+.wilai-message.user{align-self:flex-end}
+.wilai-message-meta{font-size:10px;color:var(--mute);font-weight:800;letter-spacing:.04em;padding:0 4px}
+.wilai-message-bubble{padding:11px 14px;border:1px solid var(--wai-border);border-radius:15px 15px 15px 4px;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.wilai-message.user .wilai-message-bubble{background:var(--light);border-color:var(--bd);border-radius:15px 15px 4px 15px}
+.wilai-compose-wrap{padding:12px clamp(12px,3vw,24px) max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--wai-border);background:var(--wash1);flex:none}
+.wilai-status{min-height:18px;color:var(--mute);font-size:11px;padding:0 4px 5px}
+.wilai-compose{display:flex;align-items:flex-end;gap:8px;border:2px solid var(--bd);border-radius:16px;padding:6px;background:var(--card);box-shadow:2px 2px 0 var(--blue)}
+.wilai-compose textarea{flex:1;min-width:0;max-height:120px;min-height:42px;resize:none;border:0;outline:0;background:transparent;color:var(--ink);padding:10px 9px;font:inherit;font-size:14px}
+.wilai-compose button{align-self:stretch;min-width:78px;border:0;border-radius:11px;background:var(--accent);color:var(--on);font-size:12px;font-weight:900;padding:0 14px}
+.wilai-compose button:disabled{opacity:.45}
+.wilai-footnote{text-align:center;color:var(--mute);font-size:10px;margin-top:7px}
+.wilai-empty{margin:auto;color:var(--mute);font-size:13px;text-align:center;padding:20px}
+@keyframes wai-rise{from{opacity:0;transform:translateY(6px)}}
+@media(max-width:640px){
+ #wil-ai-launcher{right:12px;bottom:calc(76px + env(safe-area-inset-bottom))}
+ body.wil-ai-active #view{height:calc(100dvh - 56px - var(--dh) - env(safe-area-inset-bottom));padding-top:5px}
+ .wilai-page{border-radius:17px}
+ .wilai-top{padding:11px 12px}
+ .wilai-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+ .wilai-side{border-right:0;border-bottom:1px solid var(--wai-border);padding:7px 9px;max-height:94px}
+ .wilai-side-title{padding:0 4px 5px}
+ .wilai-history{flex-direction:row;overflow-x:auto;overflow-y:hidden}
+ .wilai-history button{width:auto;max-width:170px;flex:none;padding:7px 10px}
+ .wilai-message{max-width:92%}
+ .wilai-suggestions{grid-template-columns:1fr}
+ .wilai-suggestions button{min-height:42px}
+ .wilai-compose button{min-width:64px}
 }
-@media(prefers-reduced-motion:reduce){#wil-ai-panel.open{animation:none}#wil-ai-fab{transition:none}}
+@media(prefers-reduced-motion:reduce){.wilai-page *{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
-<div id="wil-ai-root">
- <section id="wil-ai-panel" aria-label="Percakapan Wil AI">
-  <header class="wai-head">
-   <div class="wai-avatar">✦</div>
-   <div class="wai-headcopy"><b>Wil AI <span class="wai-check" aria-label="Terverifikasi">✓</span></b><small>Asisten resmi Wilverse · Online</small></div>
-   <button type="button" id="wai-min" aria-label="Minimalkan">−</button>
-   <button type="button" id="wai-close" aria-label="Tutup">×</button>
-  </header>
-  <div class="wai-toolbar"><button type="button" id="wai-new">＋ Chat baru</button><button type="button" id="wai-history-toggle">Riwayat</button></div>
-  <div class="wai-history" id="wai-history" hidden></div>
-  <div class="wai-messages" id="wai-messages"><div class="wai-welcome"><b>Yo, Wil AI di sini 😹✌️</b><br>Ada yang mau lu tanyain tentang WilProject? Gas, kita bahas bareng 🙈</div></div>
-  <div class="wai-status" id="wai-status" aria-live="polite"></div>
-  <form class="wai-form" id="wai-form"><input id="wai-input" maxlength="1500" placeholder="Tanya sesuatu ke Wil AI…" autocomplete="off"><button id="wai-send" type="submit" aria-label="Kirim">➤</button></form>
- </section>
- <button id="wil-ai-fab" type="button" aria-label="Buka Wil AI">✦</button>
-</div>
+<button id="wil-ai-launcher" type="button" aria-label="Buka halaman Wil AI">
+ <span class="wai-mark">W</span><span class="wai-launch-copy">Wil AI<small>Asisten WilProject</small></span>
+</button>
 <script>
 (()=>{
- const $=id=>document.getElementById(id),panel=$("wil-ai-panel"),fab=$("wil-ai-fab"),msgs=$("wai-messages"),input=$("wai-input"),send=$("wai-send"),status=$("wai-status"),hist=$("wai-history");
- let conversationId=null,stopMessages=null,busy=false,historyOpen=false;
- const escText=v=>String(v??"");
- const show=()=>{panel.classList.add("open");fab.setAttribute("aria-expanded","true");if(!window.XA?.user){status.textContent="Masuk ke akun WilProject untuk menyimpan riwayat.";return}if(!conversationId)loadLatestOrNew()};
- const hide=()=>{panel.classList.remove("open");fab.setAttribute("aria-expanded","false")};
- const addBubble=m=>{const d=document.createElement("div");d.className="wai-bubble "+(m.role==="user"?"user":"assistant");const who=document.createElement("small");who.textContent=m.role==="user"?"Lu":"Wil AI ✓";const body=document.createElement("div");body.textContent=escText(m.text);d.append(who,body);msgs.append(d)};
- const renderMessages=arr=>{msgs.replaceChildren();if(!arr.length){const w=document.createElement("div");w.className="wai-welcome";w.textContent="Yo, Wil AI di sini 😹✌️ Ada yang mau lu tanyain?";msgs.append(w);return}arr.forEach(addBubble);msgs.scrollTop=msgs.scrollHeight};
- const watch=id=>{if(stopMessages)stopMessages();conversationId=id;stopMessages=window.XA.wilAIWatch(id,renderMessages,e=>{status.textContent="Gagal memuat riwayat. Periksa Firestore Rules.";console.error(e)});status.textContent=""};
- const loadHistory=async()=>{const x=window.XA;if(!x?.user||!x.wilAIList)return;try{const list=await x.wilAIList();hist.replaceChildren();list.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c.title||"Percakapan";b.onclick=()=>{watch(c.id);hist.hidden=true;historyOpen=false};hist.append(b)});if(!list.length){const n=document.createElement("span");n.textContent="Belum ada riwayat";n.style.cssText="font-size:11px;color:var(--mute)";hist.append(n)}}catch(e){status.textContent=e.message||"Riwayat belum bisa dimuat."}};
- const loadLatestOrNew=async()=>{const x=window.XA;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}try{const list=await x.wilAIList();if(list.length)watch(list[0].id);else await newChat();await loadHistory()}catch(e){status.textContent=e.message||"Gagal memuat Wil AI."}};
- const newChat=async()=>{const x=window.XA;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}try{if(stopMessages)stopMessages();stopMessages=null;const id=await x.wilAINew();watch(id);await loadHistory()}catch(e){status.textContent=e.message||"Gagal membuat percakapan."}};
- fab.addEventListener("click",()=>panel.classList.contains("open")?hide():show());
- $("wai-close").onclick=hide;$("wai-min").onclick=hide;$("wai-new").onclick=newChat;
- $("wai-history-toggle").onclick=async()=>{historyOpen=!historyOpen;hist.hidden=!historyOpen;if(historyOpen)await loadHistory()};
- $("wai-form").addEventListener("submit",async e=>{e.preventDefault();const text=input.value.trim(),x=window.XA;if(!text||busy)return;if(!x?.user){status.textContent="Masuk dulu untuk memakai Wil AI.";return}busy=true;send.disabled=true;input.disabled=true;status.textContent="Wil AI lagi mikir…";try{if(!conversationId)await newChat();await x.wilAIAsk(conversationId,text);input.value="";status.textContent=""}catch(er){status.textContent=(er?.message||"Wil AI belum bisa menjawab.")+" 😿"}finally{busy=false;send.disabled=false;input.disabled=false;input.focus()}});
- addEventListener("xa",()=>{if(panel.classList.contains("open")&&window.XA?.user&&!conversationId)loadLatestOrNew();if(!window.XA?.user){if(stopMessages)stopMessages();stopMessages=null;conversationId=null;msgs.replaceChildren();status.textContent="Masuk ke akun untuk memakai Wil AI."}});
- // Lightweight @Wil AI suggestion in the existing Global Chat composer.
- document.addEventListener("input",e=>{if(e.target?.id!=="ci")return;let box=document.getElementById("wai-mention-suggest");if(!box){box=document.createElement("button");box.id="wai-mention-suggest";box.type="button";box.textContent="✦  @Wil AI · Asisten resmi";box.style.cssText="position:fixed;z-index:90;left:16px;bottom:100px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card);color:var(--ink);box-shadow:0 8px 24px #0002;font-size:12px;display:none";document.body.append(box);box.onclick=()=>{const ci=document.getElementById("ci");if(ci){const v=ci.value,at=v.lastIndexOf("@");ci.value=(at>=0?v.slice(0,at):v)+"@Wil AI ";ci.dispatchEvent(new Event("input",{bubbles:true}));ci.focus()}box.style.display="none"}}
- const v=e.target.value;box.style.display=/(^|\s)@wil(?:\s*ai?)?$/i.test(v)?"block":"none";
- });
+ const launcher=document.getElementById("wil-ai-launcher");
+ launcher.addEventListener("click",()=>{location.hash="#wil-ai"});
+ const esc=v=>String(v??"");
+ const WILAI={
+  id:"wil-ai",name:"Wil AI",desc:"Asisten AI resmi WilProject",icon:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>',
+  render(el){
+   el.innerHTML=`<section class="wilai-page" aria-label="Halaman Wil AI">
+    <header class="wilai-top">
+     <div class="wilai-brand"><div class="wilai-brand-mark">W</div><div><b>Wil AI <span class="wilai-verified" aria-label="Terverifikasi">✓</span></b><small>Asisten resmi WilProject</small></div></div>
+     <button class="wilai-new" type="button" data-wai-new>+ Percakapan baru</button>
+    </header>
+    <div class="wilai-layout">
+     <aside class="wilai-side"><div class="wilai-side-title"><span>RIWAYAT PERCAKAPAN</span></div><div class="wilai-history" data-wai-history><div class="wilai-empty">Memuat riwayat…</div></div></aside>
+     <main class="wilai-main">
+      <div class="wilai-conversation" data-wai-messages>
+       <div class="wilai-welcome" data-wai-welcome><div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja seputar WilProject, minta bantuan, atau mulai ide baru. Kita bahas bareng dengan santai.</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div></div>
+      </div>
+      <div class="wilai-compose-wrap"><div class="wilai-status" data-wai-status aria-live="polite"></div>
+       <form class="wilai-compose" data-wai-form><textarea data-wai-input rows="1" maxlength="1500" placeholder="Tulis pesan untuk Wil AI…" aria-label="Pesan untuk Wil AI"></textarea><button type="submit" data-wai-send>Kirim</button></form>
+       <div class="wilai-footnote">Wil AI dapat membuat kekeliruan. Periksa kembali informasi penting.</div>
+      </div>
+     </main>
+    </div>
+   </section>`;
+   const q=sel=>el.querySelector(sel),history=q("[data-wai-history]"),messages=q("[data-wai-messages]"),input=q("[data-wai-input]"),status=q("[data-wai-status]"),send=q("[data-wai-send]");
+   let conversationId=null,stopMessages=null,busy=false,loading=false,creating=false;
+   const setStatus=t=>{status.textContent=t||""};
+   const x=()=>window.XA||{};
+   const renderMessages=arr=>{
+    messages.replaceChildren();
+    if(!arr.length){const w=document.createElement("div");w.className="wilai-welcome";w.innerHTML='<div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja seputar WilProject, minta bantuan, atau mulai ide baru. Kita bahas bareng dengan santai.</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div>';messages.append(w);return}
+    arr.forEach(m=>{const row=document.createElement("article");row.className="wilai-message "+(m.role==="user"?"user":"assistant");const meta=document.createElement("div");meta.className="wilai-message-meta";meta.textContent=m.role==="user"?"KAMU":"WIL AI";const bubble=document.createElement("div");bubble.className="wilai-message-bubble";bubble.textContent=esc(m.text);row.append(meta,bubble);messages.append(row)});
+    messages.scrollTop=messages.scrollHeight;
+   };
+   const renderHistory=arr=>{
+    history.replaceChildren();
+    if(!arr.length){const n=document.createElement("div");n.className="wilai-empty";n.textContent="Belum ada percakapan";history.append(n);return}
+    arr.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c.title||"Percakapan baru";b.setAttribute("aria-current",c.id===conversationId?"true":"false");b.addEventListener("click",()=>watch(c.id));history.append(b)});
+   };
+   const loadHistory=async()=>{if(!x().user)return;try{const arr=await x().wilAIList();renderHistory(arr)}catch(e){setStatus(e.message||"Riwayat belum dapat dimuat.")}};
+   const watch=id=>{if(stopMessages)stopMessages();conversationId=id;stopMessages=x().wilAIWatch(id,arr=>renderMessages(arr),e=>{console.error(e);setStatus("Gagal memuat percakapan. Periksa koneksi dan Firestore Rules.")});loadHistory()};
+   const newChat=async()=>{if(creating)return;const api=x();if(!api.user){setStatus("Masuk ke akun WilProject untuk menyimpan percakapan.");return}creating=true;try{if(stopMessages)stopMessages();stopMessages=null;const id=await api.wilAINew();watch(id);await loadHistory();input.focus()}catch(e){setStatus(e.message||"Gagal membuat percakapan baru.")}finally{creating=false}};
+   const load=async()=>{if(loading)return;loading=true;const api=x();if(!api.user){setStatus("Masuk ke akun WilProject untuk menggunakan Wil AI.");history.innerHTML='<div class="wilai-empty">Masuk untuk melihat riwayat</div>';loading=false;return}try{const arr=await api.wilAIList();if(arr.length)watch(arr[0].id);else await newChat();await loadHistory()}catch(e){setStatus(e.message||"Wil AI belum dapat dimuat.")}finally{loading=false}};
+   q("[data-wai-new]").addEventListener("click",newChat);
+   q("[data-wai-form]").addEventListener("submit",async e=>{e.preventDefault();const text=input.value.trim();if(!text||busy)return;if(!x().user){setStatus("Masuk ke akun WilProject terlebih dahulu.");return}busy=true;send.disabled=true;input.disabled=true;setStatus("Wil AI sedang menyusun jawaban…");try{if(!conversationId)await newChat();if(!conversationId)throw new Error("Percakapan belum tersedia.");await x().wilAIAsk(conversationId,text);input.value="";setStatus("")}catch(er){setStatus(er.message||"Wil AI belum dapat menjawab.")}finally{busy=false;send.disabled=false;input.disabled=false;input.focus()}});
+   messages.addEventListener("click",e=>{const b=e.target.closest("[data-wai-prompt]");if(b){input.value=b.dataset.waiPrompt;input.focus()}});
+   input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();q("[data-wai-form]").requestSubmit()}});
+   input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,120)+"px"});
+   el.start=()=>{document.body.classList.add("wil-ai-active");if(x().user)load();else setStatus("Masuk ke akun WilProject untuk menggunakan Wil AI.")};
+   el.stop=()=>{if(stopMessages)stopMessages();stopMessages=null;document.body.classList.remove("wil-ai-active")};
+   const authChanged=()=>{if(location.hash!=="#wil-ai")return;if(x().user){setStatus("");load()}else{if(stopMessages)stopMessages();stopMessages=null;conversationId=null;renderMessages([]);setStatus("Masuk ke akun WilProject untuk menggunakan Wil AI.")}};
+   addEventListener("xa",authChanged);
+   addEventListener("hashchange",()=>{if(location.hash!=="#wil-ai"){if(stopMessages)stopMessages();stopMessages=null;document.body.classList.remove("wil-ai-active")}});
+  }
+ };
+ PAGES["#wil-ai"]=WILAI;
 })();
 </script>
 
@@ -2293,8 +2351,9 @@ const XA=window.XA={ready:false,user:null,loaded:false,ar:false,photo:()=>"",rol
 const fire=()=>dispatchEvent(new Event("xa"));
 if(FIREBASE_CONFIG.apiKey){try{
  const B="https://www.gstatic.com/firebasejs/10.12.2/";
- const [A,Au,Fs,Fn]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js"),import(B+"firebase-functions.js")]);
- const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i),annCol=Fs.collection(db,"announcements"),tokenCol=Fs.collection(db,"pushTokens"),functions=Fn.getFunctions(app),askWilAICall=Fn.httpsCallable(functions,"askWilAI"),wilRoot=uid=>Fs.collection(db,"users",uid,"wilAiConversations");
+ const [A,Au,Fs]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
+ const app=A.initializeApp(FIREBASE_CONFIG),auth=Au.getAuth(app),db=Fs.getFirestore(app),col=Fs.collection(db,"messages"),P={},Q=new Set(),ud=i=>Fs.doc(db,"users",i),annCol=Fs.collection(db,"announcements"),tokenCol=Fs.collection(db,"pushTokens"),wilRoot=uid=>Fs.collection(db,"users",uid,"wilAiConversations");
+ const callWilAPI=async payload=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk memakai Wil AI.");const token=await u.getIdToken();const r=await fetch("/api/wil-ai",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify(payload)});let data={};try{data=await r.json()}catch{}if(!r.ok||!data.ok)throw new Error(data.error||("Wil AI gagal ("+r.status+")."));return data};
  const usernameKey=async n=>{const normalized=String(n??"").normalize("NFKC").trim().toLowerCase();if(!normalized)throw new Error("Nama tidak boleh kosong.");const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(normalized));return "v2_"+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")};
  const claimUsername=async(uid,name)=>{const display=String(name??"").trim();if(!display)throw new Error("Nama tidak boleh kosong.");const key=await usernameKey(display),newRef=Fs.doc(db,"usernames",key),userRef=ud(uid);await Fs.runTransaction(db,async tx=>{const us=await tx.get(userRef),oldKey=us.exists()?(us.data().usernameKey||""):"";const ns=await tx.get(newRef);let oldSnap=null,oldRef=null;if(oldKey&&oldKey!==key){oldRef=Fs.doc(db,"usernames",oldKey);oldSnap=await tx.get(oldRef)}if(ns.exists()&&ns.data().uid!==uid)throw new Error("Nama sudah dipakai akun lain. Coba nama berbeda.");tx.set(newRef,{uid,name:display,normalizedName:display.normalize("NFKC").toLowerCase(),updatedAt:Fs.serverTimestamp()},{merge:true});if(oldRef&&oldSnap&&oldSnap.exists()&&oldSnap.data().uid===uid)tx.delete(oldRef);tx.set(userRef,{name:display,nameLower:display.normalize("NFKC").toLowerCase(),usernameKey:key,usernameKeyVersion:2,updatedAt:Fs.serverTimestamp()},{merge:true})});return key;};
  const adminUid=uid=>!!uid&&(uid===ROLE_CONFIG.ownerUid||ROLE_CONFIG.adminUids.includes(uid));
@@ -2316,10 +2375,10 @@ if(FIREBASE_CONFIG.apiKey){try{
    if(p&&typeof p.photo==="string"&&p.photo)return p.photo;
    try{return localStorage.getItem("xa-pp:"+id)||""}catch(e){return ""}},
   pReady:id=>P[id]!==undefined,
-  send:(t,o)=>{const u=auth.currentUser,d={text:t,uid:u.uid,name:u.displayName||(u.isAnonymous?"Tamu":"Pengguna"),photo:u.photoURL||"",at:Fs.serverTimestamp()},r=o&&o.replyTo,f=o&&o.fwd;
+  send:async(t,o)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const d={text:t,uid:u.uid,name:u.displayName||(u.isAnonymous?"Tamu":"Pengguna"),photo:u.photoURL||"",at:Fs.serverTimestamp()},r=o&&o.replyTo,f=o&&o.fwd;
    if(r&&typeof r.id==="string"&&r.id)d.replyTo={id:r.id,uid:String(r.uid||""),name:String(r.name||"").slice(0,40),text:String(r.text||"").slice(0,120)};
    if(f)d.fwd={name:String(f.name||"").slice(0,40),uid:String(f.uid||"")};
-   return Fs.addDoc(col,d)},
+   const ref=await Fs.addDoc(col,d);if(!f&&/@wil[\s_-]*ai\b/i.test(String(t)))callWilAPI({mode:"global",messageId:ref.id}).catch(er=>console.warn("Wil AI Global mention:",er));return ref},
   react:(id,k)=>Fs.updateDoc(Fs.doc(db,"messages",id),{["reactions."+auth.currentUser.uid]:k}),
   unreact:id=>Fs.updateDoc(Fs.doc(db,"messages",id),{["reactions."+auth.currentUser.uid]:Fs.deleteField()}),
   del:id=>Fs.deleteDoc(Fs.doc(db,"messages",id)),
@@ -2338,7 +2397,7 @@ if(FIREBASE_CONFIG.apiKey){try{
   wilAINew:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk memakai Wil AI.");const r=await Fs.addDoc(wilRoot(u.uid),{title:"Percakapan baru",createdAt:Fs.serverTimestamp(),updatedAt:Fs.serverTimestamp()});return r.id},
   wilAIList:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(wilRoot(u.uid),Fs.orderBy("updatedAt","desc"),Fs.limit(30));const z=await Fs.getDocs(q);return z.docs.map(d=>({id:d.id,...d.data()}))},
   wilAIWatch:(id,cb,er)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(Fs.collection(wilRoot(u.uid),id,"messages"),Fs.orderBy("createdAt","asc"),Fs.limit(100));return Fs.onSnapshot(q,z=>cb(z.docs.map(d=>({id:d.id,...d.data()}))),er)},
-  wilAIAsk:async(id,text)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const r=await askWilAICall({conversationId:id,text});return r.data}
+  wilAIAsk:async(id,text)=>callWilAPI({mode:"private",conversationId:id,text})
 });
  Au.onAuthStateChanged(auth,async u=>{XA.user=u;XA.ar=true;if(u){XA.photo(u.uid);try{const us=await Fs.getDoc(ud(u.uid));if(!us.exists()||us.data().usernameKeyVersion!==2){let candidate=(u.displayName||((u.email||"").split("@")[0])||("Tamu"+u.uid.slice(0,5))).trim();try{await claimUsername(u.uid,candidate)}catch(er){if(/sudah dipakai/i.test(er.message)){candidate=candidate+"-"+u.uid;await claimUsername(u.uid,candidate);await Au.updateProfile(u,{displayName:candidate});XA.usernameNotice="Username lama bentrok, jadi disesuaikan menjadi "+candidate} else throw er}}}catch(er){console.warn("Username registry needs review:",er.message)}}fire()});
 }catch(e){console.error(e);XA.error=e.message}}
