@@ -1298,6 +1298,164 @@ TOOLS.push({
 });
 
 
+/* ============ WILNSTOR — The Mind Reader (IzzXd API) ============ */
+TOOLS.push({
+ id:"wilnstor",name:"WILNSTOR — The Mind Reader",desc:"Pikirkan satu karakter. Wilnstor akan mencoba menebaknya.",cat:"Fun Tools",featured:false,
+ icon:'<path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7z"/><path d="M19 15l1 2.5 2.5 1-2.5 1L19 22l-1-2.5-2.5-1 2.5-1z"/>',
+ render(el){
+  const API="https://api.izzxd.my.id/api/game/akinator";
+  const KEY="izzxd-86cpjw6";
+  let state="",busy=false,step=0,theme="1",lastResult=null;
+  el.innerHTML=`
+   <style>
+    .wn-wrap{display:grid;gap:14px}
+    .wn-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 104px;gap:10px;align-items:center;padding:18px;border:2px solid var(--bd);border-radius:22px;background:linear-gradient(135deg,#21133f,#493078 58%,#241a48);color:#fff;box-shadow:5px 5px 0 #171027}
+    .wn-kicker{font-size:10px;font-weight:900;letter-spacing:.18em;color:#d9c7ff}
+    .wn-hero h2{font-size:24px;line-height:1.05;color:#fff;margin:5px 0 7px}
+    .wn-hero p{font-size:12px;line-height:1.45;color:#e4dcf5;max-width:30em}
+    .wn-mascot{width:100px;height:108px;display:grid;place-items:center;position:relative}
+    .wn-mascot svg{width:100%;height:100%;filter:drop-shadow(0 8px 8px #120b2b88);animation:wn-float 3s ease-in-out infinite}
+    @keyframes wn-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .wn-panel{display:grid;gap:14px;padding:17px;border:2px solid var(--bd);border-radius:20px;background:var(--card)}
+    .wn-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .wn-step{font-size:12px;font-weight:800;color:var(--mute)}
+    .wn-track{height:8px;background:var(--light);border-radius:99px;overflow:hidden;margin-top:8px}
+    .wn-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9b78ed,#d2b7ff);border-radius:99px;transition:width .35s}
+    .wn-question{font-size:clamp(19px,5vw,24px);font-weight:900;line-height:1.25;letter-spacing:-.02em}
+    .wn-answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .wn-answer{min-height:48px;border:1.5px solid var(--bd);border-radius:13px;background:var(--card);font-weight:800;padding:10px;color:var(--ink);transition:transform .12s,background .15s}
+    .wn-answer:first-child{background:#eee7ff;border-color:#8d6bd1;color:#38245f}
+    .wn-answer:active{transform:scale(.97)}
+    .wn-answer:disabled,.wn-action:disabled{opacity:.55;cursor:wait}
+    .wn-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .wn-action{flex:1;min-width:110px;min-height:42px;border:1.5px solid var(--line);border-radius:12px;background:var(--light);font-size:13px;font-weight:800;padding:9px 12px}
+    .wn-status{min-height:18px;text-align:center;font-size:12px;color:var(--mute)}
+    .wn-thinking{display:none;align-items:center;justify-content:center;gap:8px;color:#8d6bd1;font-size:13px;font-weight:800}
+    .wn-thinking.show{display:flex}
+    .wn-thinking i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:wn-dot .8s infinite alternate}
+    .wn-thinking i:nth-child(2){animation-delay:.2s}.wn-thinking i:nth-child(3){animation-delay:.4s}
+    @keyframes wn-dot{to{opacity:.25;transform:translateY(-4px)}}
+    .wn-finish{display:none;text-align:center;padding:18px;border:2px solid #8d6bd1;border-radius:17px;background:linear-gradient(145deg,#f1eaff,#fff)}
+    .wn-finish.show{display:grid;gap:9px}
+    .wn-finish .wn-emoji{font-size:42px}
+    .wn-finish h3{font-size:21px;color:#38245f}
+    .wn-finish p{font-size:13px;color:#55466e}
+    .wn-finish button{justify-self:center}
+    .wn-foot{font-size:11px;color:var(--mute);text-align:center}
+    @media(max-width:390px){.wn-hero{grid-template-columns:1fr 78px;padding:14px}.wn-mascot{width:76px;height:88px}.wn-answers{grid-template-columns:1fr}.wn-answer{min-height:44px}}
+   </style>
+   <div class="wn-wrap">
+    <section class="wn-hero">
+     <div><div class="wn-kicker">THE MIND READER</div><h2>WILNSTOR</h2><p>Pikirkan satu karakter. Jangan sebutkan namanya. Jawab pertanyaannya dan biarkan aku menebaknya.</p></div>
+     <div class="wn-mascot" aria-label="Maskot Wilnstor">
+      <svg viewBox="0 0 110 120" role="img" aria-hidden="true">
+       <defs><linearGradient id="wn-cloak" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5a7ff"/><stop offset=".55" stop-color="#7652bd"/><stop offset="1" stop-color="#34205e"/></linearGradient><linearGradient id="wn-face" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f4eaff"/><stop offset="1" stop-color="#c9b4ed"/></linearGradient></defs>
+       <path d="M55 5 66 23 91 18 81 43Q101 61 100 110H10Q9 61 29 43L19 18 44 23Z" fill="url(#wn-cloak)" stroke="#e5d7ff" stroke-width="2"/>
+       <path d="M30 48Q55 31 80 48L74 82Q55 98 36 82Z" fill="url(#wn-face)" stroke="#d9c5ff" stroke-width="2"/>
+       <path d="M41 62q5-7 10 0M60 62q5-7 10 0" fill="none" stroke="#35215c" stroke-width="3" stroke-linecap="round"/>
+       <path d="M49 74q6 5 12 0" fill="none" stroke="#8c5fc1" stroke-width="2" stroke-linecap="round"/>
+       <path d="m55 11 3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#ffe6a6"/>
+       <path d="m91 72 2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#ffe6a6"/>
+       <path d="M23 91q-9 5-10 16 14-1 22-9M87 91q9 5 10 16-14-1-22-9" fill="#5b3b91" stroke="#d7c2ff" stroke-width="2"/>
+      </svg>
+     </div>
+    </section>
+    <section class="wn-panel">
+     <div class="wn-top"><b>Permainan tebak karakter</b><span class="wn-step" id="wn-step">Siap bermain</span></div>
+     <div><div class="wn-top"><span class="wn-step">PROGRES</span><span class="wn-step" id="wn-pct">0%</span></div><div class="wn-track"><span id="wn-bar"></span></div></div>
+     <div class="wn-question" id="wn-question">Siap menguji kemampuan Wilnstor?</div>
+     <div class="wn-answers" id="wn-answers" style="display:none"></div>
+     <div class="wn-thinking" id="wn-thinking"><i></i><i></i><i></i><span>Wilnstor sedang berpikir…</span></div>
+     <div class="wn-status" id="wn-status" role="status" aria-live="polite">Tekan Mulai untuk memulai permainan.</div>
+     <div class="wn-actions"><button class="wn-action" id="wn-start" type="button">✦ Mulai permainan</button><button class="wn-action" id="wn-back" type="button" disabled>Kembali</button><button class="wn-action" id="wn-exclude" type="button" disabled>Lewati karakter</button></div>
+     <div class="wn-finish" id="wn-finish"><div class="wn-emoji">🔮</div><h3 id="wn-finish-title">Tebakanku...</h3><p id="wn-finish-desc"></p><button class="btn" id="wn-again" type="button">Main lagi</button></div>
+    </section>
+    <div class="wn-foot">Powered by IzzXd API · Jawabanmu diproses sebagai sesi permainan tersendiri.</div>
+   </div>`;
+
+  const $=id=>el.querySelector("#"+id);
+  const question=$("wn-question"),answers=$("wn-answers"),status=$("wn-status");
+  const startBtn=$("wn-start"),backBtn=$("wn-back"),excludeBtn=$("wn-exclude");
+  const thinking=$("wn-thinking"),finish=$("wn-finish"),bar=$("wn-bar"),pct=$("wn-pct"),stepLabel=$("wn-step");
+  const setBusy=v=>{
+   busy=v;thinking.classList.toggle("show",v);
+   startBtn.disabled=v;backBtn.disabled=v||!state;
+   excludeBtn.disabled=v||!state;
+   answers.querySelectorAll("button").forEach(b=>b.disabled=v);
+  };
+  const setProgress=value=>{
+   let n=Number(value);if(!Number.isFinite(n))n=0;
+   n=Math.max(0,Math.min(100,n<=1?n*100:n));
+   bar.style.width=n+"%";pct.textContent=Math.round(n)+"%";
+  };
+  const pickText=obj=>{
+   if(!obj||typeof obj!=="object")return "";
+   const keys=["character","guess","name","title","person","akinetor","akinator","answer"];
+   for(const key of keys){
+    const v=obj[key];
+    if(typeof v==="string"&&v.trim())return v.trim();
+    if(v&&typeof v==="object"){const nested=pickText(v);if(nested)return nested}
+   }
+   return "";
+  };
+  const showEnd=result=>{
+   const guess=pickText(result)||"Aku belum berhasil memastikan karakter yang kamu pikirkan.";
+   $("wn-finish-title").textContent=guess==="Aku belum berhasil memastikan karakter yang kamu pikirkan."?"Belum berhasil menebak":"Apakah ini karaktermu?";
+   $("wn-finish-desc").textContent=guess;
+   finish.classList.add("show");answers.style.display="none";
+   question.textContent="Wilnstor sudah sampai pada hasil tebakannya.";
+   startBtn.textContent="Mulai sesi baru";startBtn.disabled=false;
+   backBtn.disabled=true;excludeBtn.disabled=true;
+   status.textContent="Permainan selesai.";
+  };
+  const renderQuestion=result=>{
+   const q=String(result.question||"").trim();
+   const choices=Array.isArray(result.answers)?result.answers:[];
+   if(!q||!choices.length){showEnd(result);return}
+   question.textContent=q;answers.replaceChildren();answers.style.display="grid";
+   choices.forEach((label,index)=>{
+    const b=document.createElement("button");b.type="button";b.className="wn-answer";
+    b.textContent=String(label);b.addEventListener("click",()=>sendAnswer(String(index)));
+    answers.appendChild(b);
+   });
+   step=Number(result.step)||0;stepLabel.textContent="Pertanyaan "+(step+1);
+   setProgress(result.progress);
+   finish.classList.remove("show");
+   startBtn.textContent="Mulai ulang";
+   backBtn.disabled=!state;excludeBtn.disabled=!state;
+   status.textContent="Pilih jawaban yang paling sesuai.";
+  };
+  const request=async({answer,reset=false}={})=>{
+   if(busy)return;
+   setBusy(true);status.textContent=reset?"Memulai permainan baru…":"Mengirim jawaban…";
+   if(reset){state="";step=0;finish.classList.remove("show");answers.style.display="none";question.textContent="Wilnstor sedang menyiapkan permainan…";setProgress(0)}
+   try{
+    const params=new URLSearchParams({theme});
+    if(!reset&&state){params.set("state",state);if(answer!==undefined)params.set("answer",answer)}
+    const res=await fetch(API+"?"+params.toString(),{method:"GET",headers:{Accept:"application/json"}});
+    let data;try{data=await res.json()}catch{throw new Error("Respons API bukan JSON yang valid.")}
+    if(!res.ok||data.status===false)throw new Error(data.message||data.error||("API gagal (HTTP "+res.status+")."));
+    const result=data.result&&typeof data.result==="object"?data.result:data;
+    if(typeof result.state==="string"&&result.state)state=result.state;
+    lastResult=result;
+    if(result.question&&Array.isArray(result.answers))renderQuestion(result);
+    else showEnd(result);
+   }catch(error){
+    status.textContent=error&&error.message?error.message:"Gagal menghubungi API. Coba lagi.";
+    if(!state){question.textContent="Belum bisa memulai permainan.";answers.style.display="none"}
+   }finally{setBusy(false)}
+  };
+  const sendAnswer=answer=>request({answer});
+  startBtn.addEventListener("click",()=>request({reset:true}));
+  backBtn.addEventListener("click",()=>request({answer:"back"}));
+  excludeBtn.addEventListener("click",()=>request({answer:"exclude"}));
+  $("wn-again").addEventListener("click",()=>request({reset:true}));
+  /* Sesi baru otomatis dimulai sekali ketika halaman tool dibuka. */
+  request({reset:true});
+ }
+});
+
+
 /* ============ Web to APK V2 — Izzxd API ============ */
 TOOLS.push({
  id:"web2apk-v2",name:"Web to APK V2",desc:"Ubah website menjadi aplikasi Android APK.",cat:"Utilities",featured:false,
