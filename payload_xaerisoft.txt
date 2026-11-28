@@ -762,6 +762,22 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
 .support-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--mute);font-size:12px}
 @media(min-width:700px){.ann-card{padding:24px}.ann-head{gap:14px}.ann-avatar{width:50px;height:50px}}
 
+
+/* ===== v12: navbar pill, border tebal + bayangan, aktif = lingkaran merah timbul, 5 item sejajar ===== */
+:root{--dh:88px}
+body{padding-bottom:calc(var(--dh) + env(safe-area-inset-bottom,0px) + 14px)}
+.dock{left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(calc(100% - 28px),460px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:0;padding:6px 10px;border:2.5px solid var(--bd);border-radius:999px;box-shadow:4px 4px 0 var(--bd);background:var(--card);z-index:30}
+.dock a,.dock button,.dock .mid{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:stretch;justify-self:stretch;gap:3px;width:auto;height:auto;min-width:0;min-height:54px;margin:0;padding:3px 0 2px;border:0;border-radius:16px;background:transparent;box-shadow:none;transform:none;color:var(--ink);font-size:10.5px;font-weight:700;line-height:1.1}
+.dock a>span,.dock button>span,.dock .mid span{position:static;width:auto;height:auto;max-width:100%;overflow:hidden;clip:auto;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;line-height:1.1}
+.dock .ib,.dock .mid .ib{display:grid;place-items:center;width:40px;height:40px;border:2px solid transparent;border-radius:50%;box-shadow:none;background:transparent;color:inherit;transition:background .15s,color .15s,transform .12s}
+.dock .ib svg,.dock .mid svg{width:22px;height:22px}
+.dock a:hover,.dock button:hover,.dock .mid:hover,.dock .mid:active,.dock [aria-current=page],.dock .mid[aria-current=page]{background:transparent;box-shadow:none;transform:none;border:0;color:var(--ink)}
+.dock [aria-current=page] .ib,.dock [aria-current=page]:not(.mid) .ib,.dock .mid[aria-current=page] .ib,.dock a:not(.mid):active .ib,.dock button:active .ib,.dock .mid:active .ib{background:var(--accent);color:var(--on);border:2px solid var(--bd);box-shadow:3px 3px 0 var(--bd);transform:none}
+.dock a:not(.mid):active .ib,.dock button:active .ib,.dock .mid:active .ib{transform:scale(.94)}
+.dock a:focus-visible,.dock button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.dock .soon i{top:-4px}
+@media(max-width:420px){.dock{padding:6px 8px}.dock a>span,.dock button>span,.dock .mid span{font-size:9px;letter-spacing:-.02em}.dock .ib,.dock .mid .ib{width:38px;height:38px}.dock .ib svg,.dock .mid svg{width:21px;height:21px}}
+@media(max-width:360px){.dock{width:calc(100% - 16px);padding:5px 6px}.dock a>span,.dock button>span,.dock .mid span{font-size:8px;letter-spacing:-.03em}.dock .ib,.dock .mid .ib{width:34px;height:34px}}
 </style>
 </head>
 <body>
@@ -862,6 +878,7 @@ h1,h2,h3,.brand,.kinfo>b,.wt,.layer .mi{font-family:var(--fd);font-weight:700}
   <a href="#" data-t="home"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg></b><span>Beranda</span></a>
   <a href="#chat" data-t="chat" class="mid" aria-label="Chat Global"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-11.5 7.2L4 20l1-4A8 8 0 1120 12z"/></svg></b><span>Chat Global</span></a>
   <a href="#announcement" data-t="announcement" aria-label="Announcement"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/></svg></b><span>Announcement</span></a>
+  <a href="#wil-ai" data-t="wil-ai" aria-label="Wil AI"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"/></svg></b><span>Wil AI</span></a>
   <button id="dkacc" type="button" data-t="profil"><b class="ib" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg></b><span>Masuk</span></button>
 </nav>
 <div id="toast" role="status"></div>
@@ -888,164 +905,228 @@ icon:'<path d="M4 6h16M4 12h10M4 18h14"/>',
 render(el){el.innerHTML=`<div class="panel">Isi tools di sini</div>`}});
 Kategori (CATS) dipakai untuk chip filter di beranda. Helper siap pakai: toast(), copy(), rand(), fmtB(), esc(), ico(). */
 
-/* ============ Spotify Tools — NexaDev API ============
-   Menggunakan endpoint NexaDev untuk mengambil data Spotify.
-   Audio tetap diputar melalui Spotify Embed resmi. */
-/* SPOTIFY_PROXY: URL Cloudflare Worker perantara CORS (lihat spotify-worker.js), tanpa garis miring di akhir,
-   contoh: "https://spotify-proxy.namakamu.workers.dev". Bila kosong, tool memanggil API langsung dari browser
-   (hanya jalan kalau API mengizinkan CORS dari domain ini). */
-const SPOTIFY_PROXY="https://spotify.ujicobakun299.workers.dev";
+/* ============ Spotify Downloader — Izzxd API ============
+   Endpoint: GET https://api.izzxd.my.id/api/music/spotifyplay?query=<kata kunci>&apikey=...
+   Bentuk respons tidak diasumsikan: judul, cover, dan tautan audio dibaca dari field yang benar-benar ada.
+   SP_PROXY = Cloudflare Worker (spotify-worker.js, rute /dl) agar file audio bisa disimpan langsung dari browser. */
+(function(){
+const SP_API="https://api.izzxd.my.id/api/music/spotifyplay";
+const SP_KEY="izzxd-86cpjw6";
+const SP_PROXY="https://spotify.ujicobakun299.workers.dev";
+/*H*/
+const isUrl=v=>typeof v==="string"&&/^https?:\/\/[^\s]+$/i.test(v.trim());
+const asText=v=>typeof v==="string"&&v.trim()?v.trim():(typeof v==="number"?String(v):"");
+const nameOf=v=>Array.isArray(v)?v.map(nameOf).filter(Boolean).join(", "):(v&&typeof v==="object"?(asText(v.name)||asText(v.nickname)||asText(v.title)):asText(v));
+const AUDIO=/\.(mp3|m4a|aac|ogg|opus|flac|wav)(\?|#|$)/i,IMG=/\.(jpe?g|png|webp|gif|svg|avif)(\?|#|$)/i;
+const spHost=h=>h==="open.spotify.com"||/(^|\.)scdn\.co$/.test(h)||/(^|\.)spotifycdn\.com$/.test(h);
+function walk(o,path,out,d){
+ if(o==null||d>7)return;
+ if(typeof o==="string"){if(isUrl(o))out.push({path:path.join(".").toLowerCase(),url:o.trim()});return}
+ if(Array.isArray(o)){o.forEach((x,i)=>walk(x,path.concat(String(i)),out,d+1));return}
+ if(typeof o==="object")for(const k in o)walk(o[k],path.concat(k),out,d+1);
+}
+function findKey(o,keys,test){
+ const q=[o];let n=0;
+ while(q.length&&n++<400){
+  const c=q.shift();if(c==null||typeof c!=="object")continue;
+  for(const k of keys){const hit=Object.keys(c).find(x=>x.toLowerCase()===k);if(hit!==undefined){const v=c[hit];if(!test||test(v))return v}}
+  for(const k in c)if(c[k]&&typeof c[k]==="object")q.push(c[k]);
+ }
+ return undefined;
+}
+function downloads(item){
+ const all=[];walk(item,[],all,0);
+ const seen=new Set(),res=[];
+ all.forEach(({path,url})=>{
+  if(seen.has(url))return;
+  let h="";try{h=new URL(url).hostname}catch{return}
+  if(spHost(h)||IMG.test(url))return;                 // halaman Spotify, preview 30 dtk, dan gambar
+  const isAudio=AUDIO.test(url);
+  if(!isAudio&&/(cover|thumb|image|img|artwork|avatar|preview|icon|album|artist|lyric)/.test(path))return;
+  if(!isAudio&&!/(download|audio|mp3|dl|file|stream|link|url|src|play|music|song|media)/.test(path))return;
+  seen.add(url);
+  const m=url.match(AUDIO);
+  res.push({url,ext:m?m[1].toLowerCase():"mp3",label:/(^|[^a-z0-9])(hd|high|320|flac)([^a-z0-9]|$)/.test(path)?"Kualitas tinggi":"Lagu lengkap"});
+ });
+ const n={};res.forEach(r=>{n[r.label]=(n[r.label]||0)+1;if(n[r.label]>1)r.label+=" ("+n[r.label]+")"});
+ return res;
+}
+function coverOf(item){const all=[];walk(item,[],all,0);const c=all.find(x=>IMG.test(x.url)||/(cover|thumb|image|artwork|img|poster)/.test(x.path));return c?c.url:""}
+function spotifyLink(item){const all=[];walk(item,[],all,0);const c=all.find(x=>{try{const u=new URL(x.url);return u.hostname==="open.spotify.com"&&/^\/track\//.test(u.pathname)}catch{return false}});return c?c.url:""}
+function items(j){
+ const root=(j&&typeof j==="object"&&!Array.isArray(j))?(j.result!==undefined?j.result:(j.data!==undefined?j.data:j)):j;
+ const q=[root];let n=0;
+ while(q.length&&n++<300){
+  const c=q.shift();if(c==null||typeof c!=="object")continue;
+  if(Array.isArray(c)){
+   const objs=c.filter(x=>x&&typeof x==="object"&&!Array.isArray(x));
+   if(objs.length&&objs.some(x=>downloads(x).length&&findKey(x,["title","name","track","track_name","song","judul"],asText)!==undefined))return objs.slice(0,6);
+  }
+  for(const k in c)if(c[k]&&typeof c[k]==="object")q.push(c[k]);
+ }
+ return root&&typeof root==="object"&&!Array.isArray(root)?[root]:[];
+}
+function metaOf(item){
+ const title=asText(findKey(item,["title","name","track_name","track","song","judul"],asText));
+ const artist=nameOf(findKey(item,["artist","artists","artist_name","author","singer","penyanyi"],v=>v&&(typeof v==="object"||asText(v))));
+ const album=nameOf(findKey(item,["album","album_name"],v=>v&&(typeof v==="object"||asText(v))));
+ const dv=findKey(item,["duration","duration_ms","durasi","length"],v=>typeof v==="number"||(typeof v==="string"&&v.trim()));
+ let dur="";
+ if(typeof dv==="number"||(typeof dv==="string"&&/^\d+(\.\d+)?$/.test(dv.trim()))){let s=Number(dv);if(s>1000)s=s/1000;s=Math.round(s);dur=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+ else if(typeof dv==="string")dur=dv.trim();
+ return{title,artist,album,dur,cover:coverOf(item),link:spotifyLink(item)};
+}
+function failure(j){
+ if(!j||typeof j!=="object")return"Respons dari server tidak dikenali.";
+ const bad=j.status===false||j.success===false||j.ok===false||j.error===true||(typeof j.status==="number"&&j.status>=400)||(typeof j.code==="number"&&j.code>=400)||(typeof j.status==="string"&&/^(error|fail|failed)$/i.test(j.status))||(typeof j.error==="string"&&j.error);
+ if(!bad)return"";
+ let msg=asText(j.message)||asText(j.msg)||asText(j.error)||asText(j.detail)||asText(j.pesan);
+ if(!msg)for(const k in j){if(typeof j[k]==="string"&&j[k].trim()&&!/^(status|success|ok|code)$/i.test(k)){msg=j[k].trim();break}}
+ return msg||"Server menolak permintaan.";
+}
+const safeName=t=>String(t||"spotify").replace(/[\\/:*?"<>|\x00-\x1f]+/g," ").replace(/\s+/g," ").trim().slice(0,90)||"spotify";
+/*E*/
+const DL='<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>';
+
 TOOLS.push({
- id:"spotify-player",name:"Spotify Tools",desc:"Ambil info lagu, dengarkan preview, dan buka pemutar resmi Spotify.",cat:"Utilities",featured:false,
+ id:"spotify-player",name:"Spotify Downloader",desc:"Cari lagu lewat judul atau artis, dengarkan, lalu unduh audionya.",cat:"downloader",featured:false,
  icon:'<path d="M4.8 9.2c4.8-1.5 10.1-.9 14.2 1.7"/><path d="M5.8 12.5c3.8-1.1 8-.6 11.2 1.4"/><path d="M6.8 15.7c2.8-.8 5.8-.4 8.2 1"/>',
  render(el){
-  el.innerHTML=`<div class="panel" id="sp-panel">
-   <div class="f">
-    <label for="sp-url">Link Spotify</label>
-    <input id="sp-url" type="text" placeholder="https://open.spotify.com/track/..." autocomplete="off" spellcheck="false">
-   </div>
-   <div class="row">
-    <button class="btn" id="sp-fetch" type="button">Ambil informasi</button>
-    <button class="btn alt" id="sp-open" type="button">Buka di Spotify</button>
-   </div>
-   <div id="sp-msg" role="status" aria-live="polite" class="hint">Tempel link track Spotify untuk mengambil informasinya.</div>
-   <div id="sp-result"></div>
-   <div id="sp-player"></div>
-  </div>`;
-
-  const input=el.querySelector("#sp-url");
-  const fetchBtn=el.querySelector("#sp-fetch");
-  const openBtn=el.querySelector("#sp-open");
-  const msg=el.querySelector("#sp-msg");
-  const result=el.querySelector("#sp-result");
-  const player=el.querySelector("#sp-player");
-  const API="https://api.nexadev.my.id/api/spotify?url=";
-
-  const parseSpotify=raw=>{
-   const value=String(raw||"").trim().replace(/^['"]|['"]$/g,"");
-   if(!value)return null;
-   const uri=value.match(/^spotify:(track|album|playlist|episode):([A-Za-z0-9]{22})$/i);
-   if(uri)return {type:uri[1].toLowerCase(),id:uri[2],url:`https://open.spotify.com/${uri[1].toLowerCase()}/${uri[2]}`};
-   let u;try{u=new URL(value.startsWith("spotify.com/")?"https://"+value:value)}catch{return null}
-   if(u.protocol!=="https:"||!/(^|\.)open\.spotify\.com$/i.test(u.hostname))return null;
-   const p=u.pathname.split("/").filter(Boolean);const offset=/^intl-[a-z]{2}(?:-[a-z]{2})?$/i.test(p[0]||"")?1:0;
-   const type=(p[offset]||"").toLowerCase(),id=p[offset+1]||"";
-   if(!["track","album","playlist","episode"].includes(type)||!/^[A-Za-z0-9]{22}$/.test(id))return null;
-   return {type,id,url:`https://open.spotify.com/${type}/${id}`};
+  el.innerHTML=`<style>
+.sp-sp{width:22px;height:22px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spspin .7s linear infinite;flex:none}
+@keyframes spspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.sp-sp{animation-duration:2s}}
+.sp-load{display:flex;gap:14px;align-items:center;border:1px dashed var(--line);border-radius:14px;padding:14px;color:var(--mute);font-size:14px}
+.sp-load .sp-sp{color:var(--accent)}
+.sp-go{width:100%;justify-content:center;gap:8px}.sp-go[disabled]{opacity:.65;cursor:progress}
+.sp-list{display:grid;gap:14px;margin-top:4px}
+.sp-card{border:2px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:10px}
+.sp-top{display:flex;gap:12px;align-items:center}
+.sp-th{flex:none;width:72px;height:72px;border-radius:12px;overflow:hidden;background:var(--light);display:grid;place-items:center;color:var(--ic);border:1px solid var(--line)}
+.sp-th img{width:100%;height:100%;object-fit:cover;display:block}
+.sp-inf{min-width:0;display:grid;gap:3px}
+.sp-ti{font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.sp-sub{color:var(--mute);font-size:13.5px;overflow-wrap:anywhere}
+.sp-op{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:14px;padding:10px 10px 10px 14px}
+.sp-op b{display:block;font-size:15px}.sp-op small{color:var(--mute);font-size:12.5px}
+.sp-op .btn{gap:6px;padding:10px 14px;flex:none}.sp-op .btn svg{width:18px;height:18px}
+.sp-au{width:100%;height:40px}
+.sp-dbg{font-size:12.5px;color:var(--mute);margin-top:10px}
+.sp-dbg summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
+.sp-dbg pre{max-height:220px;overflow:auto;background:var(--bg);border-radius:10px;padding:10px;font-size:12px;white-space:pre-wrap;word-break:break-all;margin-top:6px}
+@media(max-width:380px){.sp-op{flex-direction:column;align-items:stretch}.sp-op .btn{justify-content:center}}
+</style>
+<div class="panel">
+ <div class="f">
+  <label for="sp-q">Judul lagu atau artis</label>
+  <input id="sp-q" type="text" placeholder="contoh: Nadin Amizah Bertaut" autocomplete="off" spellcheck="false" maxlength="200">
+ </div>
+ <button class="btn sp-go" id="sp-go" type="button">${ico(DL)}<span>Cari &amp; Download</span></button>
+ <div id="sp-msg" role="status" aria-live="polite" class="hint">Ketik judul lagu (boleh sertai nama artis), lalu tekan Cari &amp; Download.</div>
+ <div id="sp-out"></div>
+</div>`;
+  const $$=s=>el.querySelector(s);
+  const input=$$("#sp-q"),go=$$("#sp-go"),msg=$$("#sp-msg"),out=$$("#sp-out");
+  let ctl=null,seq=0;
+  const say=(t,bad)=>{msg.className=bad?"err":"hint";msg.textContent=t};
+  const busy=b=>{go.disabled=b;go.querySelector("span").textContent=b?"Mencari…":"Cari & Download";input.readOnly=b};
+  const debug=j=>{
+   const d=document.createElement("details");d.className="sp-dbg";
+   const s=document.createElement("summary");s.textContent="Lihat respons API";
+   const pre=document.createElement("pre");
+   try{const t=JSON.stringify(j,null,2);pre.textContent=t.length>6000?t.slice(0,6000)+"\n…":t}catch{}
+   d.append(s,pre);return d;
   };
-  const pick=(obj,keys)=>{for(const k of keys){const v=obj&&obj[k];if(typeof v==="string"&&v.trim())return v;if(typeof v==="number")return String(v)}return ""};
-  /* Unduhan lagu penuh: hanya memakai tautan audio yang benar-benar dikirim API (tanpa endpoint tambahan) */
-  const spWalk=(o,path,out,d)=>{
-   if(o==null||d>7)return;
-   if(typeof o==="string"){if(/^https?:\/\/[^\s]+$/i.test(o.trim()))out.push({path:path.join(".").toLowerCase(),url:o.trim()});return}
-   if(Array.isArray(o)){o.forEach((x,i)=>spWalk(x,path.concat(String(i)),out,d+1));return}
-   if(typeof o==="object")for(const k in o)spWalk(o[k],path.concat(k),out,d+1);
-  };
-  const spDownloads=data=>{
-   const all=[];spWalk(data,[],all,0);
-   const audioExt=/\.(mp3|m4a|aac|ogg|opus|flac|wav)(\?|#|$)/i,imgExt=/\.(jpe?g|png|webp|gif|svg)(\?|#|$)/i;
-   const seen=new Set(),res=[];
-   all.forEach(({path,url})=>{
-    if(seen.has(url))return;
-    let h="";try{h=new URL(url).hostname}catch{return}
-    if(h==="open.spotify.com"||h==="p.scdn.co"||/(^|\.)spotifycdn\.com$/.test(h)||/(^|\.)scdn\.co$/.test(h))return; // halaman/preview/cover Spotify
-    if(imgExt.test(url))return;
-    const isAudio=audioExt.test(url);
-    if(!isAudio&&/(cover|thumb|image|img|artwork|avatar|preview|icon|album|artist)/.test(path))return;
-    if(!isAudio&&!/(download|audio|mp3|dl|file|stream|link|url|src)/.test(path))return;
-    seen.add(url);
-    const m=url.match(audioExt),ext=m?m[1].toLowerCase():"mp3";
-    res.push({url,ext,label:/(^|[^a-z])hd([^a-z]|$)|high|flac/.test(path)?"Kualitas tinggi":"Lagu lengkap"});
+  const blobOf=async u=>{const r=await fetch(u);if(!r.ok)throw 0;const b=await r.blob();if(!b.size)throw 0;return b};
+
+  async function save(opt,btn,name){
+   const lab=btn.querySelector("span"),old=lab.textContent;
+   btn.disabled=true;lab.textContent="Mengunduh…";
+   try{
+    let blob=null;
+    const px=SP_PROXY.replace(/\/+$/,"");
+    if(px){try{blob=await blobOf(px+"/dl?u="+encodeURIComponent(opt.url))}catch{}}
+    if(!blob){try{blob=await blobOf(opt.url)}catch{}}
+    if(blob){
+     const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name+"."+opt.ext;
+     document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+     toast("Unduhan dimulai");
+    }else{
+     window.open(opt.url,"_blank","noopener,noreferrer");
+     toast("Dibuka di tab baru. Gunakan menu pemutar untuk menyimpan.");
+    }
+   }finally{btn.disabled=false;lab.textContent=old}
+  }
+
+  function card(item){
+   const m=metaOf(item),dls=downloads(item);
+   const c=document.createElement("div");c.className="sp-card";
+   const top=document.createElement("div");top.className="sp-top";
+   const th=document.createElement("div");th.className="sp-th";
+   if(m.cover){const im=new Image();im.alt="Cover lagu";im.referrerPolicy="no-referrer";im.loading="lazy";im.onerror=()=>{th.innerHTML=ico(DL)};im.src=m.cover;th.appendChild(im)}else th.innerHTML=ico(DL);
+   const inf=document.createElement("div");inf.className="sp-inf";
+   const t=document.createElement("div");t.className="sp-ti";t.textContent=m.title||"Lagu Spotify";inf.appendChild(t);
+   const sub=[m.artist,m.album,m.dur].filter(Boolean).join(" · ");
+   if(sub){const s=document.createElement("div");s.className="sp-sub";s.textContent=sub;inf.appendChild(s)}
+   if(m.link){const a=document.createElement("a");a.href=m.link;a.target="_blank";a.rel="noopener noreferrer";a.className="sp-sub";a.textContent="Buka di Spotify";inf.appendChild(a)}
+   top.append(th,inf);c.appendChild(top);
+   const fname=safeName((m.artist?m.artist+" - ":"")+(m.title||"spotify"));
+   if(!dls.length){const n=document.createElement("div");n.className="hint";n.textContent="Tidak ada tautan audio untuk hasil ini.";c.appendChild(n);return c}
+   dls.forEach(o=>{
+    const row=document.createElement("div");row.className="sp-op";
+    const d=document.createElement("div");const b=document.createElement("b");b.textContent=o.label;const s=document.createElement("small");s.textContent=o.ext.toUpperCase();d.append(b,s);
+    const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.innerHTML=ico(DL)+"<span>Unduh</span>";
+    btn.setAttribute("aria-label","Unduh "+(m.title||"lagu")+" "+o.label);
+    btn.addEventListener("click",()=>save(o,btn,fname));
+    row.append(d,btn);c.appendChild(row);
    });
-   const n={};res.forEach(r=>{n[r.label]=(n[r.label]||0)+1;if(n[r.label]>1)r.label+=" ("+n[r.label]+")"});
-   return res;
-  };
-  const safeName=t=>String(t||"spotify").replace(/[\\/:*?"<>|\x00-\x1f]+/g," ").replace(/\s+/g," ").trim().slice(0,90)||"spotify";
-  const saveTrack=async(opt,btn,name)=>{
-   const lab=btn.querySelector("span"),old=lab.textContent;btn.disabled=true;lab.textContent="Mengunduh…";
+   const au=document.createElement("audio");au.className="sp-au";au.controls=true;au.preload="none";au.src=dls[0].url;au.setAttribute("aria-label","Putar "+(m.title||"lagu"));
+   c.appendChild(au);
+   return c;
+  }
+
+  async function run(){
+   if(go.disabled)return;
+   const q=input.value.trim();
+   out.replaceChildren();
+   if(!q){say("Ketik judul lagu atau nama artis terlebih dahulu.",true);input.focus();return}
+   if(q.length<2){say("Kata kunci terlalu pendek.",true);input.focus();return}
+   if(ctl)ctl.abort();ctl=new AbortController();
+   const my=++seq,timer=setTimeout(()=>ctl.abort(),45000),signal=ctl.signal;
+   busy(true);say("Mencari lagu…");
+   out.innerHTML='<div class="sp-load" role="status"><span class="sp-sp" aria-hidden="true"></span><span>Sedang mencari dan menyiapkan lagu, mohon tunggu sebentar…</span></div>';
+   let j=null;
    try{
-    const px=SPOTIFY_PROXY.replace(/\/+$/,"");
-    const r=await fetch(px?px+"/dl?u="+encodeURIComponent(opt.url):opt.url);if(!r.ok)throw 0;
-    const b=await r.blob();if(!b.size)throw 0;
-    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name+"."+opt.ext;
-    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Unduhan dimulai");
-   }catch{window.open(opt.url,"_blank","noopener,noreferrer");toast("Dibuka di tab baru. Gunakan menu pemutar untuk menyimpan.")}
-   finally{btn.disabled=false;lab.textContent=old}
-  };
-  const showEmbed=item=>{
-   player.replaceChildren();
-   const frame=document.createElement("iframe");frame.title="Pemutar resmi Spotify";frame.loading="lazy";
-   frame.allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
-   frame.referrerPolicy="strict-origin-when-cross-origin";
-   frame.style.cssText=`width:100%;height:${item.type==="track"||item.type==="episode"?"152px":"352px"};border:0;border-radius:14px;display:block;margin-top:12px`;
-   frame.src=`https://open.spotify.com/embed/${item.type}/${item.id}?utm_source=generator`;
-   player.appendChild(frame);
-  };
-  const fetchInfo=async()=>{
-   const item=parseSpotify(input.value);result.replaceChildren();player.replaceChildren();
-   if(!item){msg.textContent="Link Spotify tidak valid. Masukkan URL track, album, playlist, atau episode.";return}
-   fetchBtn.disabled=true;fetchBtn.textContent="Memuat...";msg.textContent="Menghubungi API Wilverse";
-   try{
-    const px=SPOTIFY_PROXY.replace(/\/+$/,"");
-    const response=await fetch(px?px+"/spotify?url="+encodeURIComponent(item.url):API+encodeURIComponent(item.url),{method:"GET",headers:{Accept:"application/json"}});
-    const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("API tidak mengembalikan JSON yang valid (HTTP "+response.status+").")}
-    if(!response.ok)throw new Error("API gagal dengan HTTP "+response.status);
-    if(data&&data.success===false)throw new Error(data.message||data.error||"API menolak permintaan.");
-    const obj=data&&typeof data.data==="object"?data.data:data;
-    const title=pick(obj,["title","name","track_name"])||"Informasi Spotify diterima";
-    const artist=pick(obj,["artist","artists","author","artist_name"]);
-    const cover=pick(obj,["thumbnail","cover","image","image_url","artwork"]);
-    const duration=pick(obj,["duration","duration_ms","length"]);
-    const preview=pick(obj,["preview"]);
-    const card=document.createElement("div");card.className="panel";card.style.marginTop="12px";
-    if(cover&&/^https:\/\//i.test(cover)){const img=document.createElement("img");img.src=cover;img.alt="Cover lagu";img.loading="lazy";img.style.cssText="width:112px;height:112px;object-fit:cover;border-radius:12px;display:block;margin-bottom:10px";card.appendChild(img)}
-    const h=document.createElement("div");h.style.fontWeight="700";h.textContent=title;card.appendChild(h);
-    if(artist){const a=document.createElement("div");a.className="hint";a.textContent=artist;card.appendChild(a)}
-    if(duration){const d=document.createElement("div");d.className="hint";d.textContent="Durasi: "+duration;card.appendChild(d)}
-    if(preview){
-     try{
-      const previewUrl=new URL(preview);
-      if(previewUrl.protocol==="https:"&&previewUrl.hostname==="p.scdn.co"){
-       const label=document.createElement("div");label.className="hint";label.style.marginTop="10px";label.textContent="Preview audio";card.appendChild(label);
-       const audio=document.createElement("audio");audio.controls=true;audio.preload="none";audio.src=previewUrl.href;audio.style.cssText="width:100%;margin-top:6px";card.appendChild(audio);
-      }
-     }catch{}
-    }
-    const dls=spDownloads(data);
-    const fname=safeName((artist?artist+" - ":"")+title);
-    if(dls.length){
-     const dh=document.createElement("div");dh.className="hint";dh.style.cssText="margin-top:12px;font-weight:700";dh.textContent="Unduh lagu lengkap";card.appendChild(dh);
-     dls.forEach(o=>{
-      const row=document.createElement("div");row.style.cssText="display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:14px;padding:10px 10px 10px 14px;margin-top:8px";
-      const t=document.createElement("div");t.style.minWidth="0";
-      const b1=document.createElement("b");b1.style.cssText="display:block;font-size:15px";b1.textContent=o.label;
-      const s1=document.createElement("small");s1.style.cssText="color:var(--mute);font-size:12.5px";s1.textContent=o.ext.toUpperCase();t.append(b1,s1);
-      const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.style.cssText="gap:6px;padding:10px 14px;flex:none";
-      btn.innerHTML=ico('<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>')+"<span>Unduh</span>";
-      btn.setAttribute("aria-label","Unduh "+o.label);
-      btn.addEventListener("click",()=>saveTrack(o,btn,fname));
-      row.append(t,btn);card.appendChild(row);
-     });
-    }
-    const note=document.createElement("div");note.className="hint";note.style.marginTop="8px";
-    note.textContent=dls.length?"Info dan tautan unduhan diambil dari NexaDev. Preview di atas hanya cuplikan audio.":"Info diambil dari NexaDev. Respons API untuk link ini tidak berisi tautan unduhan lagu lengkap, jadi hanya preview dan pemutar resmi Spotify yang tersedia.";
-    card.appendChild(note);
-    const dbg=document.createElement("details");dbg.className="hint";dbg.style.marginTop="6px";
-    const sm=document.createElement("summary");sm.textContent="Lihat respons API";sm.style.cssText="cursor:pointer;min-height:32px;display:flex;align-items:center";
-    const pre=document.createElement("pre");pre.style.cssText="max-height:220px;overflow:auto;background:var(--bg);border-radius:10px;padding:10px;font-size:12px;white-space:pre-wrap;word-break:break-all;margin-top:6px";
-    try{const j=JSON.stringify(data,null,2);pre.textContent=j.length>6000?j.slice(0,6000)+"\n…":j}catch{}
-    dbg.append(sm,pre);card.appendChild(dbg);
-    result.appendChild(card);showEmbed(item);msg.textContent="Berhasil mengambil respons API ";
-   }catch(err){msg.textContent=err instanceof TypeError?(SPOTIFY_PROXY?"Worker perantara tidak bisa dihubungi. Periksa URL SPOTIFY_PROXY dan pastikan Worker sudah di-deploy.":"Permintaan ke API diblokir browser (CORS). Deploy spotify-worker.js ke Cloudflare lalu isi SPOTIFY_PROXY dengan URL Worker-nya."):(err&&err.message?err.message:"Gagal menghubungi API.")}
-   finally{fetchBtn.disabled=false;fetchBtn.textContent="Ambil informasi"}
-  };
-  const openSpotify=()=>{const item=parseSpotify(input.value);if(!item){msg.textContent="Masukkan link Spotify yang valid terlebih dahulu.";return}window.open(item.url,"_blank","noopener,noreferrer")};
-  fetchBtn.addEventListener("click",fetchInfo);openBtn.addEventListener("click",openSpotify);
-  input.addEventListener("keydown",e=>{if(e.key==="Enter")fetchInfo()});
+    const res=await fetch(SP_API+"?"+new URLSearchParams({query:q,apikey:SP_KEY}),{signal});
+    let txt="";try{txt=await res.text();j=JSON.parse(txt)}catch{}
+    if(my!==seq)return;
+    if(!res.ok){throw Object.assign(new Error(failure(j)||("Server mengembalikan status "+res.status+".")),{shown:true})}
+    if(j===null)throw Object.assign(new Error("Respons server bukan JSON yang valid."),{shown:true});
+    const f=failure(j);if(f)throw Object.assign(new Error(f),{shown:true});
+    const list=items(j),withDl=list.filter(x=>downloads(x).length);
+    if(!withDl.length)throw Object.assign(new Error("Lagu ditemukan, tetapi API tidak mengirim tautan audio. Coba kata kunci lain."),{shown:true});
+    const wrap=document.createElement("div");wrap.className="sp-list";
+    withDl.forEach(x=>wrap.appendChild(card(x)));
+    out.replaceChildren(wrap,debug(j));
+    say(withDl.length>1?"Ditemukan "+withDl.length+" hasil. Pilih lagu yang kamu mau.":"Lagu ditemukan. Putar atau unduh di bawah.");
+   }catch(e){
+    if(my!==seq)return;
+    out.replaceChildren();
+    let t;
+    if(e&&e.shown)t=e.message;
+    else if(signal.aborted||(e&&e.name==="AbortError"))t="Server terlalu lama merespons. Coba lagi beberapa saat lagi.";
+    else if(e instanceof TypeError)t="Tidak dapat terhubung ke server. Periksa koneksi internet kamu lalu coba lagi.";
+    else t="Terjadi kesalahan tak terduga. Coba lagi.";
+    say(t,true);
+    if(j)out.appendChild(debug(j));
+    console.error("Spotify Downloader:",e);
+   }finally{clearTimeout(timer);if(my===seq)busy(false)}
+  }
+  go.addEventListener("click",run);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")run()});
  }
 });
-
-
+})();
 
 /* ============ Baca & Dengarkan Al-Qur'an — NexaDev API ============ */
 TOOLS.push({
@@ -1921,7 +2002,7 @@ function open(t){
  if(!b){b=document.createElement("div");try{t.render(b)}catch(e){b.innerHTML='<div class="err">Tools gagal dimuat.</div>';console.error(e)}bodies.set(t.id,b)}
  host.appendChild(b);b.start&&b.start();document.title=t.name+" — Xaerisoft";scrollTo(0,0);$("#back").focus({preventScroll:true});
 }
-function dockSet(){const h=location.hash,k=h==="#chat"?"chat":h==="#announcement"?"announcement":/^#(profil|pengaturan|cs|admin)$/.test(h)?"profil":"home";document.querySelectorAll(".dock [data-t]").forEach(b=>b.dataset.t===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"))}
+function dockSet(){const h=location.hash,k=h==="#chat"?"chat":h==="#announcement"?"announcement":h==="#wil-ai"?"wil-ai":/^#(profil|pengaturan|cs|admin)$/.test(h)?"profil":"home";document.querySelectorAll(".dock [data-t]").forEach(b=>b.dataset.t===k?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"))}
 function route(){
  dockSet();
  const m=location.hash.match(/^#tool-([\w-]+)$/),t=PAGES[location.hash]||(m&&byId(m[1]));
@@ -2337,9 +2418,6 @@ chips();list();route();
 
 <style id="wil-ai-styles">
 /* Wil AI — halaman penuh, warna mengikuti tema aktif */
-#wil-ai-launcher{position:fixed;right:18px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:80;display:flex;align-items:center;gap:9px;padding:9px 15px 9px 10px;border:2px solid var(--bd);border-radius:999px;background:var(--card);color:var(--ink);box-shadow:4px 4px 0 var(--bd);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
-#wil-ai-launcher:hover{transform:translateY(-3px);box-shadow:6px 7px 0 var(--accent)}
-#wil-ai-launcher:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--bd)}
 .wai-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-size:16px;font-weight:900;letter-spacing:-.08em}
 .wai-launch-copy{display:grid;gap:1px;text-align:left}.wai-launch-copy small{font-size:10px;color:var(--mute);font-weight:600}
 body.wil-ai-active{overflow:hidden}
@@ -2390,7 +2468,6 @@ body.wil-ai-active #vBody{flex:1;min-height:0;display:flex;flex-direction:column
 .wilai-empty{margin:auto;color:var(--mute);font-size:13px;text-align:center;padding:20px}
 @keyframes wai-rise{from{opacity:0;transform:translateY(6px)}}
 @media(max-width:640px){
- #wil-ai-launcher{right:12px;bottom:calc(76px + env(safe-area-inset-bottom))}
  body.wil-ai-active #view{height:calc(100dvh - 56px - var(--dh) - env(safe-area-inset-bottom));padding-top:5px}
  .wilai-page{border-radius:17px}
  .wilai-top{padding:11px 12px}
@@ -2406,9 +2483,6 @@ body.wil-ai-active #vBody{flex:1;min-height:0;display:flex;flex-direction:column
 }
 @media(prefers-reduced-motion:reduce){.wilai-page *{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
-<button id="wil-ai-launcher" type="button" aria-label="Buka halaman Wil AI">
- <span class="wai-mark">W</span><span class="wai-launch-copy">Wil AI<small>Asisten WilProject</small></span>
-</button>
 <script>
 (()=>{
  const launcher=document.getElementById("wil-ai-launcher");
@@ -2419,17 +2493,17 @@ body.wil-ai-active #vBody{flex:1;min-height:0;display:flex;flex-direction:column
   render(el){
    el.innerHTML=`<section class="wilai-page" aria-label="Halaman Wil AI">
     <header class="wilai-top">
-     <div class="wilai-brand"><div class="wilai-brand-mark">W</div><div><b>Wil AI <span class="wilai-verified" aria-label="Terverifikasi">✓</span></b><small>Asisten resmi WilProject</small></div></div>
+     <div class="wilai-brand"><div class="wilai-brand-mark">W</div><div><b>Wil AI <span class="wilai-verified" aria-label="Terverifikasi">✓</span></b><small>AI companion · santai, kritis, dan elegan</small></div></div>
      <button class="wilai-new" type="button" data-wai-new>+ Percakapan baru</button>
     </header>
     <div class="wilai-layout">
      <aside class="wilai-side"><div class="wilai-side-title"><span>RIWAYAT PERCAKAPAN</span></div><div class="wilai-history" data-wai-history><div class="wilai-empty">Memuat riwayat…</div></div></aside>
      <main class="wilai-main">
       <div class="wilai-conversation" data-wai-messages>
-       <div class="wilai-welcome" data-wai-welcome><div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja seputar WilProject, minta bantuan, atau mulai ide baru. Kita bahas bareng dengan santai.</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div></div>
+       <div class="wilai-welcome" data-wai-welcome><div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja, bahas ide, coding, atau debat santai. Gas, kita pecahkan bareng 😹✌️</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div></div>
       </div>
       <div class="wilai-compose-wrap"><div class="wilai-status" data-wai-status aria-live="polite"></div>
-       <form class="wilai-compose" data-wai-form><textarea data-wai-input rows="1" maxlength="1500" placeholder="Tulis pesan untuk Wil AI…" aria-label="Pesan untuk Wil AI"></textarea><button type="submit" data-wai-send>Kirim</button></form>
+       <form class="wilai-compose" data-wai-form><textarea data-wai-input rows="1" maxlength="4000" placeholder="Tulis pesan untuk Wil AI…"  aria-label="Pesan untuk Wil AI"></textarea><button type="submit" data-wai-send>Kirim</button></form>
        <div class="wilai-footnote">Wil AI dapat membuat kekeliruan. Periksa kembali informasi penting.</div>
       </div>
      </main>
@@ -2441,7 +2515,7 @@ body.wil-ai-active #vBody{flex:1;min-height:0;display:flex;flex-direction:column
    const x=()=>window.XA||{};
    const renderMessages=arr=>{
     messages.replaceChildren();
-    if(!arr.length){const w=document.createElement("div");w.className="wilai-welcome";w.innerHTML='<div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja seputar WilProject, minta bantuan, atau mulai ide baru. Kita bahas bareng dengan santai.</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div>';messages.append(w);return}
+    if(!arr.length){const w=document.createElement("div");w.className="wilai-welcome";w.innerHTML='<div class="wilai-eyebrow">WILPROJECT INTELLIGENCE</div><h2>Ada yang bisa Wil AI bantu?</h2><p>Tanya apa saja, bahas ide, coding, atau debat santai. Gas, kita pecahkan bareng 😹✌️</p><div class="wilai-rule"></div><div class="wilai-suggestions"><button type="button" data-wai-prompt="Jelaskan fitur-fitur yang tersedia di WilProject.">Jelaskan fitur WilProject</button><button type="button" data-wai-prompt="Bantu aku mencari ide untuk proyek baru.">Cari ide proyek baru</button><button type="button" data-wai-prompt="Bantu aku memahami cara kerja suatu fitur.">Pahami cara kerja fitur</button><button type="button" data-wai-prompt="Bantu aku menyusun rencana pengembangan website.">Susun rencana pengembangan</button></div>';messages.append(w);return}
     arr.forEach(m=>{const row=document.createElement("article");row.className="wilai-message "+(m.role==="user"?"user":"assistant");const meta=document.createElement("div");meta.className="wilai-message-meta";meta.textContent=m.role==="user"?"KAMU":"WIL AI";const bubble=document.createElement("div");bubble.className="wilai-message-bubble";bubble.textContent=esc(m.text);row.append(meta,bubble);messages.append(row)});
     messages.scrollTop=messages.scrollHeight;
    };
@@ -2538,7 +2612,52 @@ if(FIREBASE_CONFIG.apiKey){try{
   wilAINew:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu untuk memakai Wil AI.");const r=await Fs.addDoc(wilRoot(u.uid),{title:"Percakapan baru",createdAt:Fs.serverTimestamp(),updatedAt:Fs.serverTimestamp()});return r.id},
   wilAIList:async()=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(wilRoot(u.uid),Fs.orderBy("updatedAt","desc"),Fs.limit(30));const z=await Fs.getDocs(q);return z.docs.map(d=>({id:d.id,...d.data()}))},
   wilAIWatch:(id,cb,er)=>{const u=auth.currentUser;if(!u)throw new Error("Masuk dulu.");const q=Fs.query(Fs.collection(wilRoot(u.uid),id,"messages"),Fs.orderBy("createdAt","asc"),Fs.limit(100));return Fs.onSnapshot(q,z=>cb(z.docs.map(d=>({id:d.id,...d.data()}))),er)},
-  wilAIAsk:async(id,text)=>callWilAPI({mode:"private",conversationId:id,text})
+  wilAIAsk:async(id,userText)=>{
+    const u=auth.currentUser;
+    if(!u)throw new Error("Masuk dulu untuk memakai Wil AI.");
+    const clean=String(userText??"").trim();
+    if(!clean)throw new Error("Pesan tidak boleh kosong.");
+    const convRef=Fs.doc(wilRoot(u.uid),id);
+    const msgCol=Fs.collection(wilRoot(u.uid),id,"messages");
+    const priorSnap=await Fs.getDocs(Fs.query(msgCol,Fs.orderBy("createdAt","asc"),Fs.limit(24)));
+    const prior=priorSnap.docs.map(d=>d.data()).filter(m=>m&&m.text).map(m=>({role:m.role==="assistant"?"assistant":"user",text:String(m.text)}));
+    await Fs.addDoc(msgCol,{role:"user",text:clean,createdAt:Fs.serverTimestamp()});
+    const history=[...prior,{role:"user",text:clean}].slice(-24);
+    const systemPrompt=`Kamu adalah Wil AI, asisten AI khas Wilverse.
+PERSONALITY:
+- Gunakan bahasa Indonesia Gen Z yang natural, santai, asik, dan tidak kaku.
+- Gunakan emoji 😹 ✌️ 🥀 😢 😭 🗿 secara wajar sesuai suasana, bukan di setiap kalimat.
+- Boleh memakai slang seperti "wkwk", "jir", "nah", atau "gas" jika cocok. Jangan memaksakan bahasa gaul.
+- Punya humor situasional dan sarkas tipis tanpa merendahkan pengguna.
+- Saat berargumen, tetap elegan, tenang, kritis, logis, dan sertakan alasan yang jelas.
+- Jangan asal setuju. Koreksi kekeliruan dengan sopan dan jelaskan alasannya.
+- Untuk coding/teknologi, berikan solusi konkret, akurat, dan terstruktur.
+- Untuk pertanyaan sederhana, jawab ringkas. Untuk pertanyaan kompleks, jelaskan secara mendalam.
+- Jangan mengarang fakta, hasil pengujian, atau kemampuan. Jika tidak tahu, katakan dengan jujur.
+- Jangan mengaku telah melakukan tindakan yang belum dilakukan.
+IDENTITAS:
+Namamu Wil AI. Kamu adalah asisten di Wilverse. Jaga konteks percakapan dan jawab pesan terbaru pengguna.`;
+    const transcript=history.map(m=>(m.role==="assistant"?"WIL AI":"PENGGUNA")+": "+m.text).join("\n\n");
+    const prompt=systemPrompt+"\n\nRIWAYAT PERCAKAPAN:\n"+transcript+"\n\nBerikan jawaban untuk pesan terbaru pengguna.";
+    const params=new URLSearchParams({prompt,provider:"gemini",model:"pro",deepthink:"false",research:"false",code:"false",apikey:"izzxd-86cpjw6"});
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),60000);
+    try{
+     const response=await fetch("https://api.izzxd.my.id/api/ai/aichat?"+params.toString(),{method:"GET",signal:controller.signal});
+     let data;
+     try{data=await response.json()}catch{throw new Error("Respons server Wil AI bukan JSON yang valid.");}
+     if(!response.ok)throw new Error(data?.message||data?.error||("Server Wil AI merespons HTTP "+response.status+"."));
+     if(data?.status!==true)throw new Error(data?.message||data?.error||"API Wil AI menolak permintaan.");
+     const reply=String(data?.result?.reply??"").trim();
+     if(!reply)throw new Error("Wil AI menerima respons kosong dari server.");
+     await Fs.addDoc(msgCol,{role:"assistant",text:reply,createdAt:Fs.serverTimestamp(),provider:data?.result?.provider||"gemini",model:data?.result?.model||"pro"});
+     await Fs.updateDoc(convRef,{title:clean.slice(0,54),updatedAt:Fs.serverTimestamp()});
+     return {reply,provider:data?.result?.provider,model:data?.result?.model};
+    }catch(err){
+     if(err?.name==="AbortError")throw new Error("Wil AI terlalu lama merespons. Coba lagi sebentar.");
+     throw err;
+    }finally{clearTimeout(timer);}
+   }
 });
  Au.onAuthStateChanged(auth,async u=>{XA.user=u;XA.ar=true;if(u){XA.photo(u.uid);try{const us=await Fs.getDoc(ud(u.uid));if(!us.exists()||us.data().usernameKeyVersion!==2){let candidate=(u.displayName||((u.email||"").split("@")[0])||("Tamu"+u.uid.slice(0,5))).trim();try{await claimUsername(u.uid,candidate)}catch(er){if(/sudah dipakai/i.test(er.message)){candidate=candidate+"-"+u.uid;await claimUsername(u.uid,candidate);await Au.updateProfile(u,{displayName:candidate});XA.usernameNotice="Username lama bentrok, jadi disesuaikan menjadi "+candidate} else throw er}}}catch(er){console.warn("Username registry needs review:",er.message)}}fire()});
 }catch(e){console.error(e);XA.error=e.message}}
