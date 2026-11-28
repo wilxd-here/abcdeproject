@@ -2611,12 +2611,12 @@ const WILAI={
  id:"wil-ai",name:"Wil AI",desc:"Asisten AI resmi WilProject",icon:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>',
  render(el){
   el.innerHTML=`<section class="wa" aria-label="Wil AI">
-   <header class="wa-top"><span class="wa-mark2" aria-hidden="true">W</span><div class="wa-tt"><b>Wil AI</b><small>Tengil tapi pintar. Chat tersimpan di perangkat ini.</small></div><button class="wa-btn" type="button" data-wa="hist">Riwayat</button><button class="wa-btn p" type="button" data-wa="new">+ Baru</button></header>
+   <header class="wa-top"><span class="wa-mark2" aria-hidden="true">W</span><div class="wa-tt"><b>Wil AI</b><small>Tengil tapi pintar. Chat tersimpan di perangkat ini.</small></div><button class="wa-btn" type="button" data-wa="hist">Obrolan</button><button class="wa-btn p" type="button" data-wa="new">+ Obrolan Baru</button></header>
    <div class="wa-log" data-log aria-live="polite"></div>
    <form class="wa-comp" data-form><div class="wa-st" data-st aria-live="polite"></div><div class="wa-files wa-fl" data-files></div>
     <div class="wa-box"><button class="wa-ic" type="button" data-wa="att" aria-label="Lampirkan file"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5 5 0 01-7.1-7.1l9-9a3.3 3.3 0 014.7 4.7l-9 9a1.7 1.7 0 01-2.4-2.4l8.3-8.3"/></svg></button><textarea data-in rows="1" maxlength="4000" placeholder="Tulis pesan untuk Wil AI" aria-label="Pesan untuk Wil AI" enterkeyhint="send"></textarea><button class="wa-send" type="submit" data-send>Kirim</button></div>
    </form>
-   <div class="wa-dr" data-dr><div class="wa-drp"><div class="wa-drh"><b>Riwayat</b><button class="wa-btn" type="button" data-wa="drx">Tutup</button></div><div class="wa-drl" data-drl></div><button class="wa-btn" type="button" data-wa="clear">Hapus semua</button></div><button class="wa-drbg" type="button" data-wa="drx" aria-label="Tutup riwayat"></button></div>
+   <div class="wa-dr" data-dr><div class="wa-drp"><div class="wa-drh"><b>Percakapan</b><button class="wa-btn" type="button" data-wa="drx">Tutup</button></div><div class="wa-drl" data-drl></div><button class="wa-btn" type="button" data-wa="clear">Hapus semua</button></div><button class="wa-drbg" type="button" data-wa="drx" aria-label="Tutup riwayat"></button></div>
    <input type="file" data-fi multiple hidden>
   </section>`;
   const q=s=>el.querySelector(s),root=q(".wa"),log=q("[data-log]"),st=q("[data-st]"),input=q("[data-in]"),sendBtn=q("[data-send]"),fbox=q("[data-files]"),dr=q("[data-dr]"),drl=q("[data-drl]"),fi=q("[data-fi]");
@@ -2625,7 +2625,8 @@ const WILAI={
   const load=()=>{const k=uidKey();if(S&&lastKey===k)return;lastKey=k;S=store.load();if(!S.c.some(c=>c.id===S.a))S.a=""};
   const save=()=>{if(!store.save(S))setSt("Penyimpanan perangkat penuh, riwayat lama dihapus.")};
   const active=()=>S.c.find(c=>c.id===S.a)||null;
-  const mk=()=>{const cur=active();if(cur&&!cur.m.length)return cur;const c={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:"Percakapan baru",u:Date.now(),m:[]};S.c.unshift(c);if(S.c.length>30)S.c.length=30;S.a=c.id;return c};
+  /* Pesan lanjutan tetap berada di percakapan aktif. Sesi baru hanya dibuat lewat tombol Obrolan Baru. */
+  const mk=(force=false)=>{const cur=active();if(cur&&!force)return cur;const c={id:Date.now().toString(36)+Math.random().toString(36).slice(2,8),t:"Percakapan baru",u:Date.now(),m:[]};S.c.unshift(c);if(S.c.length>30)S.c.length=30;S.a=c.id;return c};
   const fit=()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,120)+"px"};
   const chipsHtml=(arr,rm)=>arr.map((f,i)=>{const warn=f.kind!=="text";const im=f.url?`<img src="${h(f.url)}" alt="">`:"";return `<span class="wa-chip${warn?" warn":""}" title="${warn?"Belum bisa dibaca API Wil AI":"Isi file dikirim ke Wil AI"}">${im}<span>${h(f.name)}</span>${rm?`<button type="button" data-rm="${i}" aria-label="Hapus lampiran">×</button>`:""}</span>`}).join("");
   function renderFiles(){
@@ -2645,7 +2646,13 @@ const WILAI={
    log.innerHTML=html;log.scrollTop=log.scrollHeight}
   function renderDrawer(){
    const arr=[...S.c].sort((a,b)=>b.u-a.u);
-   drl.innerHTML=arr.length?arr.map(c=>`<div><button type="button" class="wa-it" data-open="${h(c.id)}" aria-current="${c.id===S.a}"><b>${h(c.t)}</b><small>${h(new Date(c.u).toLocaleString("id-ID",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))} · ${c.m.length} pesan</small></button><button type="button" class="wa-dx" data-del="${h(c.id)}" aria-label="Hapus percakapan">×</button></div>`).join(""):'<div class="wa-none">Belum ada percakapan.</div>'}
+   drl.innerHTML=arr.length?arr.map(c=>{
+    const last=[...c.m].reverse().find(m=>m&&m.x);
+    const preview=last?String(last.x).replace(/\\s+/g," ").slice(0,72):"Percakapan baru";
+    const date=new Date(c.u).toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+    return `<div><button type="button" class="wa-it" data-open="${h(c.id)}" aria-current="${c.id===S.a}"><b>${h(c.t||"Percakapan baru")}</b><small>${h(preview)} · ${h(date)}</small></button><button type="button" class="wa-dx" data-del="${h(c.id)}" aria-label="Hapus percakapan">×</button></div>`
+   }).join(""):'<div class="wa-none">Belum ada percakapan.</div>'
+  }
   const setBusy=(b,c)=>{busy=b;busyConv=b?c:null;sendBtn.disabled=b;sendBtn.textContent=b?"…":"Kirim"};
   async function run(c,um,att){
    err=null;setBusy(true,c);renderLog();
@@ -2697,7 +2704,7 @@ const WILAI={
   root.addEventListener("click",e=>{
    const t=e.target;let b;
    if((b=t.closest("[data-wa]"))){const a=b.dataset.wa;
-    if(a==="new"){if(busy){say("Tunggu Wil AI selesai dulu");return}mk();save();renderLog();renderDrawer();input.focus()}
+    if(a==="new"){if(busy){say("Tunggu Wil AI selesai dulu");return}mk(true);save();renderLog();renderDrawer();input.focus()}
     else if(a==="hist"){renderDrawer();dr.classList.add("on")}
     else if(a==="drx")dr.classList.remove("on");
     else if(a==="att")fi.click();
