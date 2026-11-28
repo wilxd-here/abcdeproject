@@ -982,7 +982,8 @@ function failure(j){
  if(!bad)return"";
  let msg=asText(j.message)||asText(j.msg)||asText(j.error)||asText(j.detail)||asText(j.pesan);
  if(!msg)for(const k in j){if(typeof j[k]==="string"&&j[k].trim()&&!/^(status|success|ok|code)$/i.test(k)){msg=j[k].trim();break}}
- return msg||"Server menolak permintaan.";
+ if(/\bapi(key|-key)?\b/i.test(msg))msg="";
+ return msg||"Layanan sedang bermasalah. Coba lagi beberapa saat lagi.";
 }
 const safeName=t=>String(t||"spotify").replace(/[\\/:*?"<>|\x00-\x1f]+/g," ").replace(/\s+/g," ").trim().slice(0,90)||"spotify";
 /*E*/
@@ -1030,13 +1031,6 @@ TOOLS.push({
   let ctl=null,seq=0;
   const say=(t,bad)=>{msg.className=bad?"err":"hint";msg.textContent=t};
   const busy=b=>{go.disabled=b;go.querySelector("span").textContent=b?"Mencari…":"Cari & Download";input.readOnly=b};
-  const debug=j=>{
-   const d=document.createElement("details");d.className="sp-dbg";
-   const s=document.createElement("summary");s.textContent="Lihat respons API";
-   const pre=document.createElement("pre");
-   try{const t=JSON.stringify(j,null,2);pre.textContent=t.length>6000?t.slice(0,6000)+"\n…":t}catch{}
-   d.append(s,pre);return d;
-  };
   const blobOf=async u=>{const r=await fetch(u);if(!r.ok)throw 0;const b=await r.blob();if(!b.size)throw 0;return b};
 
   async function save(opt,btn,name){
@@ -1104,10 +1098,10 @@ TOOLS.push({
     if(j===null)throw Object.assign(new Error("Respons server bukan JSON yang valid."),{shown:true});
     const f=failure(j);if(f)throw Object.assign(new Error(f),{shown:true});
     const list=items(j),withDl=list.filter(x=>downloads(x).length);
-    if(!withDl.length)throw Object.assign(new Error("Lagu ditemukan, tetapi API tidak mengirim tautan audio. Coba kata kunci lain."),{shown:true});
+    if(!withDl.length)throw Object.assign(new Error("Lagu ditemukan, tetapi file audionya belum tersedia. Coba kata kunci lain."),{shown:true});
     const wrap=document.createElement("div");wrap.className="sp-list";
     withDl.forEach(x=>wrap.appendChild(card(x)));
-    out.replaceChildren(wrap,debug(j));
+    out.replaceChildren(wrap);
     say(withDl.length>1?"Ditemukan "+withDl.length+" hasil. Pilih lagu yang kamu mau.":"Lagu ditemukan. Putar atau unduh di bawah.");
    }catch(e){
     if(my!==seq)return;
@@ -1118,7 +1112,6 @@ TOOLS.push({
     else if(e instanceof TypeError)t="Tidak dapat terhubung ke server. Periksa koneksi internet kamu lalu coba lagi.";
     else t="Terjadi kesalahan tak terduga. Coba lagi.";
     say(t,true);
-    if(j)out.appendChild(debug(j));
     console.error("Spotify Downloader:",e);
    }finally{clearTimeout(timer);if(my===seq)busy(false)}
   }
@@ -1656,7 +1649,8 @@ function ttFailure(j){
  if(!bad)return"";
  let msg=asText(j.message)||asText(j.msg)||asText(j.error)||asText(j.detail)||asText(j.pesan)||asText(j.info);
  if(!msg)for(const k in j){if(typeof j[k]==="string"&&j[k].trim()&&!/^(status|success|ok|code)$/i.test(k)){msg=j[k].trim();break}}
- return msg||"Server menolak permintaan.";
+ if(/\bapi(key|-key)?\b/i.test(msg))msg="";
+ return msg||"Layanan sedang bermasalah. Coba lagi beberapa saat lagi.";
 }
 async function ttCall(src,url,signal){
  const res=await fetch(src.endpoint+"?"+new URLSearchParams(src.params(url)),{signal});
@@ -1780,10 +1774,6 @@ TOOLS.push({
     });
     box.appendChild(ol);
    });
-   const dbg=document.createElement("details");dbg.className="tt-dbg";
-   const sm=document.createElement("summary");sm.textContent="Lihat respons API";const pre=document.createElement("pre");
-   let raw="";try{raw=JSON.stringify(groups[0].json,null,2)}catch{}
-   pre.textContent=raw.length>6000?raw.slice(0,6000)+"\n…":raw;dbg.append(sm,pre);box.appendChild(dbg);
    out.replaceChildren(box);
   }
 
@@ -1818,7 +1808,6 @@ TOOLS.push({
     else if(e instanceof TypeError)t="Tidak dapat terhubung ke server. Periksa koneksi internet kamu lalu coba lagi.";
     else t="Terjadi kesalahan tak terduga. Coba lagi.";
     say(t,true);
-    if(e&&e.json){const d=document.createElement("details");d.className="tt-dbg";const s=document.createElement("summary");s.textContent="Lihat respons API";const pre=document.createElement("pre");try{pre.textContent=JSON.stringify(e.json,null,2).slice(0,6000)}catch{}d.append(s,pre);out.appendChild(d)}
     console.error("TikTok Downloader:",e);
    }finally{clearTimeout(timer);if(my===seq)busy(false)}
   }
