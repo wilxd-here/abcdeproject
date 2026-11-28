@@ -2205,6 +2205,155 @@ TOOLS.push({
  }
 });
 
+
+/* ============ Fun Tools — NexaDev endpoints + QR lokal ============ */
+(function(){
+ const UPLOAD="https://clooud.my.id/uploder/";
+ const API="https://api.nexadev.my.id/";
+ const ICONS={
+  ff:'<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h8"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>',
+  image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/>',
+  qr:'<rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><path d="M15 15h2v2h-2zM19 15h2v6h-6v-2"/>'
+ };
+ const escText=v=>String(v??"—");
+ function walkUrl(v){
+  if(typeof v==="string" && /^https?:\/\//i.test(v)) return v;
+  if(v&&typeof v==="object"){for(const k of Object.keys(v)){const x=walkUrl(v[k]);if(x)return x}}
+  return "";
+ }
+ async function upload(file){
+  const fd=new FormData();fd.append("file",file,file.name);
+  const r=await fetch(UPLOAD,{method:"POST",body:fd});
+  const raw=await r.text();let j;try{j=JSON.parse(raw)}catch{j=raw}
+  if(!r.ok)throw new Error("Upload gambar gagal (HTTP "+r.status+").");
+  const u=typeof j==="string"?(j.match(/https?:\/\/[^\s"'<>]+/)||[])[0]||"":walkUrl(j);
+  if(!u)throw new Error("URL hasil upload tidak ditemukan pada respons server.");
+  return u;
+ }
+ function addFieldHtml(id,label,placeholder,type="text"){
+  return `<div class="f"><label for="${id}">${label}</label><input id="${id}" type="${type}" placeholder="${placeholder||""}" ${type==="file"?'accept="image/*"':""}></div>`;
+ }
+ function tool({id,name,desc,icon,fields,endpoint,mode="image",build}){
+  TOOLS.push({id,name,desc,cat:"Fun Tools",featured:false,icon,render(el){
+   el.innerHTML=`<div class="panel"><div class="stack">${fields.map(f=>addFieldHtml(id+"-"+f.key,f.label,f.placeholder,f.file?"file":"text")).join("")}</div>
+    <button class="btn" id="${id}-go" type="button">Proses</button>
+    <div class="hint" id="${id}-msg" role="status" aria-live="polite">Isi parameter lalu tekan Proses.</div><div class="stack" id="${id}-out"></div></div>`;
+   const $=s=>el.querySelector(s),btn=$("#"+id+"-go"),msg=$("#"+id+"-msg"),out=$("#"+id+"-out");
+   const say=(t,bad=false)=>{msg.textContent=t;msg.className=bad?"err":"hint"};
+   btn.onclick=async()=>{
+    if(btn.disabled)return;
+    btn.disabled=true;out.replaceChildren();
+    try{
+     const values={};
+     for(const f of fields){
+      const node=$("#"+id+"-"+f.key);
+      let value=f.file?(node.files&&node.files[0]):node.value.trim();
+      if(f.file&&value){say("Mengunggah "+f.label.toLowerCase()+"…");value=await upload(value)}
+      values[f.key]=value||"";
+     }
+     const url=build(values);
+     say(mode==="json"?"Mengambil data akun…":"Membuat gambar…");
+     const r=await fetch(url,{headers:{Accept:"application/json,image/*,*/*"}});
+     if(!r.ok)throw new Error("Permintaan gagal (HTTP "+r.status+").");
+     const ct=(r.headers.get("content-type")||"").toLowerCase();
+     if(ct.startsWith("image/")){
+      const blob=await r.blob(),src=URL.createObjectURL(blob),img=document.createElement("img");
+      img.src=src;img.alt="Hasil "+name;img.style.cssText="width:100%;max-height:560px;object-fit:contain;border:2px solid var(--bd);border-radius:14px;background:var(--bg)";
+      out.append(img);
+      const a=document.createElement("a");a.href=src;a.download=id+"-result";a.className="btn alt";a.textContent="Simpan gambar";out.append(a);
+      say("Gambar berhasil dibuat.");return;
+     }
+     const raw=await r.text();let data;try{data=JSON.parse(raw)}catch{data=raw}
+     if(mode==="json"){
+      renderJson(out,data,id);
+      say("Data berhasil diterima.");return;
+     }
+     const link=walkUrl(data);
+     if(link){const img=new Image();img.src=link;img.alt="Hasil "+name;img.style.cssText="width:100%;max-height:560px;object-fit:contain;border:2px solid var(--bd);border-radius:14px";out.append(img);
+      const a=document.createElement("a");a.href=link;a.target="_blank";a.rel="noopener noreferrer";a.className="out";a.textContent=link;out.append(a);
+      say("Hasil diterima.");return}
+     const pre=document.createElement("pre");pre.className="out";pre.style.whiteSpace="pre-wrap";pre.textContent=typeof data==="string"?data:JSON.stringify(data,null,2);out.append(pre);
+     say("Respons diterima; format gambar tidak terdeteksi.");
+    }catch(e){say(e.message||"Terjadi kesalahan.",true)}
+    finally{btn.disabled=false}
+   };
+  }});
+ }
+ function renderJson(out,data,id){
+  const d=data&&data.profile?data.profile:(data&&data.data?data.data:data);
+  if(id==="stalker-ff"&&d&&typeof d==="object"){
+   const profile=d.profile||d;
+   const avatar=profile.avatar&&(profile.avatar.url||profile.avatar);
+   if(avatar){const img=new Image();img.src=avatar;img.alt="Avatar Free Fire";img.style.cssText="width:104px;height:104px;object-fit:cover;border-radius:16px;border:2px solid var(--bd)";out.append(img)}
+   const title=document.createElement("h3");title.textContent=profile.nickname||"Profil Free Fire";out.append(title);
+   const rows=[
+    ["UID",profile.uid||d.uid],["Level",profile.level],["EXP",profile.exp],["Region",profile.region],
+    ["Server",profile.server],["Likes",profile.likesText||profile.likes],["Prime",profile.prime?.level],
+    ["BR Points",profile.ranks?.br?.pointsText||profile.ranks?.br?.points],
+    ["CS Rank",profile.ranks?.cs?.tier],["CS Star",profile.ranks?.cs?.star],
+    ["Booyah Pass",profile.booyahPass?.text],["Credit Score",profile.creditScore?.value],
+    ["Clan",profile.clan?.name],["Signature",profile.signature],
+    ["Dibuat",profile.dates?.createdAtText],["Last Login",profile.dates?.lastLoginAtText],
+    ["Estimasi",profile.estimate?.text]
+   ];
+   const box=document.createElement("div");box.className="stats";
+   rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="").forEach(([k,v])=>{const c=document.createElement("div");c.className="stat";const b=document.createElement("b");b.textContent=escText(v);b.style.fontSize="16px";const s=document.createElement("span");s.textContent=k;c.append(b,s);box.append(c)});
+   out.append(box);return;
+  }
+  if(id==="stalker-tiktok"&&d&&typeof d==="object"){
+   if(d.photo){const img=new Image();img.src=d.photo;img.alt="Foto profil TikTok";img.style.cssText="width:100px;height:100px;object-fit:cover;border-radius:50%;border:2px solid var(--bd)";out.append(img)}
+   const title=document.createElement("h3");title.textContent="@"+(d.username||"");out.append(title);
+   const stats=document.createElement("div");stats.className="stats";
+   [["Nama",d.name],["Followers",d.followers],["Following",d.following],["Posts",d.posts],["Likes",d.likes],["Verified",d.verified?"Ya":"Tidak"],["Private",d.private?"Ya":"Tidak"],["Bio",d.bio]].forEach(([k,v])=>{if(v===undefined)return;const c=document.createElement("div");c.className="stat";const b=document.createElement("b");b.textContent=escText(v);b.style.fontSize="16px";const s=document.createElement("span");s.textContent=k;c.append(b,s);stats.append(c)});
+   out.append(stats);return;
+  }
+  const pre=document.createElement("pre");pre.className="out";pre.style.whiteSpace="pre-wrap";pre.textContent=JSON.stringify(data,null,2);out.append(pre);
+ }
+ const textField=(key,label,placeholder)=>({key,label,placeholder});
+ const fileField=(key,label)=>({key,label,file:true});
+ tool({id:"stalker-ff",name:"Stalker Free Fire",desc:"Lihat informasi profil Free Fire menggunakan UID.",icon:ICONS.ff,mode:"json",
+  fields:[textField("uid","UID Free Fire","Masukkan UID")],build:v=>API+"api/ff?id="+encodeURIComponent(v.uid)});
+ tool({id:"stalker-tiktok",name:"TikTok Stalker",desc:"Lihat statistik akun TikTok publik berdasarkan username.",icon:ICONS.user,mode:"json",
+  fields:[textField("username","Username TikTok","contoh: xaerisoft")],build:v=>API+"api/tiktokstalker?username="+encodeURIComponent(v.username)});
+ tool({id:"bratvid",name:"Brat Video",desc:"Buat gambar video Brat dari teks.",icon:ICONS.image,
+  fields:[textField("text","Teks","Tulis teks untuk gambar")],build:v=>API+"api/bratvid2?text="+encodeURIComponent(v.text)});
+ tool({id:"fake-ff-duo",name:"Fake FF Duo",desc:"Buat gambar pasangan nickname Free Fire.",icon:ICONS.ff,
+  fields:[textField("nickname1","Nickname pertama","Will1"),textField("nickname2","Nickname kedua","will2")],
+  build:v=>API+"fakeffduo?nickname1="+encodeURIComponent(v.nickname1)+"&nickname2="+encodeURIComponent(v.nickname2)});
+ tool({id:"qcwa",name:"QCWA",desc:"Buat tampilan chat WhatsApp palsu. Foto profil dan gambar chat bisa diunggah.",icon:ICONS.image,
+  fields:[textField("usn","Username","Nama pengirim"),textField("phone","Nomor telepon","628123456789"),fileField("pp","Foto profil (unggah gambar)"),textField("ppurl","URL foto profil (opsional)","https://…"),textField("text","Isi chat","Tulis pesan"),textField("mode","Mode","light / dark"),textField("tag","Tag","ambacrot"),fileField("img","Gambar chat (unggah gambar)"),textField("imgurl","URL gambar chat (opsional)","https://…")],
+  build:v=>{const p=new URLSearchParams({usn:v.usn,phone:v.phone,text:v.text,mode:v.mode||"light",tag:v.tag||""});if(v.pp)p.set("pp",v.pp);else if(v.ppurl)p.set("pp",v.ppurl);if(v.img)p.set("img",v.img);else if(v.imgurl)p.set("img",v.imgurl);return API+"qcwa?"+p.toString()}});
+ tool({id:"fake-call",name:"Fake Call",desc:"Buat gambar layar panggilan dengan foto dan nama.",icon:ICONS.image,
+  fields:[fileField("pp","Foto profil (unggah gambar)"),textField("ppurl","URL foto profil (opsional)","https://…"),textField("name","Nama","Wildev"),textField("duration","Durasi","00.00")],
+  build:v=>{const p=new URLSearchParams({name:v.name,duration:v.duration});if(v.pp)p.set("ppurl",v.pp);else if(v.ppurl)p.set("ppurl",v.ppurl);return API+"fakecall?"+p.toString()}});
+ tool({id:"igstory-image",name:"Instagram Story Image",desc:"Buat mockup Instagram Story dari foto dan avatar.",icon:ICONS.image,
+  fields:[fileField("photo","Foto story (unggah gambar)"),textField("photourl","URL foto story (opsional)","https://…"),fileField("avatar","Avatar (unggah gambar)"),textField("avatarurl","URL avatar (opsional)","https://…"),textField("usn","Username","Willdev"),textField("name","Nama tampilan","Wil")],
+  build:v=>{const p=new URLSearchParams({usn:v.usn,name:v.name});if(v.photo)p.set("photo",v.photo);else if(v.photourl)p.set("photo",v.photourl);if(v.avatar)p.set("avatar",v.avatar);else if(v.avatarurl)p.set("avatar",v.avatarurl);return API+"igstory-img?"+p.toString()}});
+ tool({id:"ttqc",name:"TTQC",desc:"Buat tampilan quote TikTok dari foto, nama, dan teks.",icon:ICONS.image,
+  fields:[fileField("photo","Foto (unggah gambar)"),textField("url","URL foto (opsional)","https://…"),textField("name","Nama","WillDev"),textField("text","Teks","halo gua Wil")],
+  build:v=>{const p=new URLSearchParams({name:v.name,text:v.text});if(v.photo)p.set("url",v.photo);else if(v.url)p.set("url",v.url);return API+"ttqc?"+p.toString()}});
+ tool({id:"iqc",name:"IQC",desc:"Buat gambar quote chat dari teks.",icon:ICONS.image,
+  fields:[textField("text","Teks","hasbunallah wa nikmal wakil")],build:v=>API+"api/canvas/iqc?text="+encodeURIComponent(v.text)});
+ tool({id:"nokia",name:"Nokia Text",desc:"Buat gambar pesan Nokia dengan judul, pengirim, tanggal, dan waktu.",icon:ICONS.image,
+  fields:[textField("text","Isi pesan","Kata-kata hari ini"),textField("from","Dari","Wil"),textField("date","Tanggal","08/06/2026"),textField("time","Waktu","12:00"),textField("title","Judul","nWil")],
+  build:v=>API+"nokia?"+new URLSearchParams(v).toString()});
+ /* QR dibuat di browser; tidak memakai endpoint NexaDev. */
+ TOOLS.push({id:"toqr",name:"Text to QR",desc:"Ubah teks atau tautan menjadi QR Code langsung di browser.",cat:"Fun Tools",featured:false,icon:ICONS.qr,
+  render(el){
+   el.innerHTML=`<div class="panel"><div class="f"><label for="toqr-text">Teks atau URL</label><textarea id="toqr-text" placeholder="Tulis teks yang ingin dijadikan QR"></textarea></div><div class="row"><button class="btn" id="toqr-go" type="button">Buat QR</button><button class="btn alt" id="toqr-save" type="button" disabled>Simpan PNG</button></div><div class="hint" id="toqr-msg">QR dibuat secara lokal di browser.</div><div id="toqr-out" style="display:grid;place-items:center;padding:12px"></div></div>`;
+   const input=el.querySelector("#toqr-text"),go=el.querySelector("#toqr-go"),save=el.querySelector("#toqr-save"),out=el.querySelector("#toqr-out"),msg=el.querySelector("#toqr-msg");
+   let canvas=null;
+   const load=()=>new Promise((resolve,reject)=>{if(window.QRCode)return resolve();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=resolve;s.onerror=()=>reject(new Error("Library QR tidak dapat dimuat. Periksa koneksi."));document.head.append(s)});
+   go.onclick=async()=>{const value=input.value.trim();if(!value){msg.textContent="Masukkan teks terlebih dahulu.";return}go.disabled=true;out.replaceChildren();save.disabled=true;
+    try{await load();const holder=document.createElement("div");holder.style.cssText="background:#fff;padding:12px;border-radius:12px";out.append(holder);new QRCode(holder,{text:value,width:256,height:256,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});setTimeout(()=>{canvas=holder.querySelector("canvas");if(!canvas){const img=holder.querySelector("img");if(img){canvas=document.createElement("canvas");canvas.width=256;canvas.height=256;const c=canvas.getContext("2d"),im=new Image();im.onload=()=>{c.drawImage(im,0,0,256,256);save.disabled=false};im.src=img.src}else throw new Error("QR gagal dibuat.")}else save.disabled=false;},80);msg.textContent="QR Code berhasil dibuat."}
+    catch(e){msg.textContent=e.message||"Gagal membuat QR."}finally{go.disabled=false}
+   };
+   save.onclick=()=>{if(!canvas)return;const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download="xaerisoft-qr.png";a.click()};
+  }});
+})();
+
+
 /* ============ Aplikasi ============ */
 const state={cat:"Semua",q:"",scroll:0};
 const bodies=new Map();            // cache DOM tools agar state tidak hilang
